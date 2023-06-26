@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import config
-import src.auth.router as auth_module
+import src.auth.router as _auth_module
 
 # Fastapi instance
 app = FastAPI()
@@ -17,4 +17,4 @@ app.add_middleware(
 )
 
 # Routers
-app.include_router(auth_module.router)
+app.include_router(_auth_module.router)

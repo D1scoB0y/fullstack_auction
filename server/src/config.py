@@ -11,20 +11,51 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    DB_URL = os.environ.get('DEV_DB_URL', '')
-    CLIENT_APP_URL = os.environ.get('DEV_CLIENT_APP_URL', '')
+
+    # Database url
+    DB_URL = os.getenv('DEV_DB_URL', '')
+    TEST_DB_URL = os.getenv('TEST_DB_URL', '')
+
     SQL_COMMAND_ECHO = True
+
+    # Frontend app url
+    CLIENT_APP_URL = os.getenv('DEV_CLIENT_APP_URL', '')
+
+    # SMTP user
+    SMTP_USER = os.getenv('DEV_SMTP_USER', '')
+
+    # SMTP password
+    SMTP_PASSWORD = os.getenv('DEV_SMTP_PASSWORD', '')
+
+    # Celery broker url
+    CELERY_BROKER_URL = os.getenv('DEV_CELERY_BROKER_URL', '')
+
 
 
 class ProductionConfig(Config):
-    DB_URL = os.environ.get('PROD_DB_URL', '')
-    CLIENT_APP_URL = os.environ.get('PROD_CLIENT_APP_URL', '')
+
+    # Database url
+    DB_URL = os.getenv('PROD_DB_URL', '')
+    TEST_DB_URL = ""
+
     SQL_COMMAND_ECHO = False
+
+    # Frontend app url
+    CLIENT_APP_URL = os.getenv('PROD_CLIENT_APP_URL', '')
+
+    # SMTP user
+    SMTP_USER = os.getenv('PROD_SMTP_USER', '')
+
+    # SMTP password
+    SMTP_PASSWORD = os.getenv('PROD_SMTP_PASSWORD', '')
+
+    # Celery broker url
+    CELERY_BROKER_URL = os.getenv('PROD_CELERY_BROKER_URL', '')
 
 
 def get_config() -> DevelopmentConfig|ProductionConfig:
-    env = os.getenv('DEV_MODE')
-    if env == 'true':
+    dev_mode = os.getenv('DEV_MODE')
+    if dev_mode == 'true':
         return DevelopmentConfig()
     return ProductionConfig()
 
