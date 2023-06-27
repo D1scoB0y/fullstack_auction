@@ -14,6 +14,5 @@ mail_client_config = ConnectionConfig(
 )
 
 
-
 async def get_mail_client() -> FastMail:
     return FastMail(mail_client_config)

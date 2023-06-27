@@ -1,5 +1,5 @@
 import jwt
-from fastapi import HTTPException
+from fastapi import BackgroundTasks, HTTPException
 from fastapi_mail import FastMail, MessageSchema, MessageType
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -100,7 +100,8 @@ async def create_user(
 async def send_email_verif_link(
         email: str,
         mail_client: FastMail,
-        session: AsyncSession
+        session: AsyncSession,
+        background_tasks: BackgroundTasks,
     ) -> str:
 
     user = await get_user_by_email(email, session)
@@ -118,7 +119,7 @@ async def send_email_verif_link(
         subtype=MessageType.plain,
     )
 
-    await mail_client.send_message(message)
+    background_tasks.add_task(mail_client.send_message, message)
 
     return verif_token
 
