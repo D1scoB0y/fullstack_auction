@@ -21,6 +21,7 @@ async def test_auth_user(ac: AsyncClient):
     })
 
     assert response.status_code == 200
+    assert response.json()
 
 
 async def test_email_verification(ac: AsyncClient):
