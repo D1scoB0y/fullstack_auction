@@ -1,5 +1,7 @@
 from httpx import AsyncClient
 
+import src.auth.schemas as _auth_schemas
+
 
 async def test_create_user(ac: AsyncClient):
 
@@ -11,6 +13,7 @@ async def test_create_user(ac: AsyncClient):
     })
 
     assert response.status_code == 200
+    assert _auth_schemas.ReadUserSchema(**response.json())
 
 
 async def test_auth_user(ac: AsyncClient):
@@ -21,25 +24,4 @@ async def test_auth_user(ac: AsyncClient):
     })
 
     assert response.status_code == 200
-    assert response.json()
-
-
-async def test_email_verification(ac: AsyncClient):
-
-    # Getting verif token
-    send_token_response = await ac.post("/auth/get-email-verif-link", params={
-        "email": "jyjyartem@gmail.com",
-    })
-
-    assert send_token_response.status_code == 200
-
-    token = send_token_response.json()
-
-    assert token
-
-    # Checking verif token
-    check_token_response = await ac.get(f'/auth/check-email-verif-link', params={
-        'token': token
-    })
-
-    assert check_token_response.status_code == 200
+    assert _auth_schemas.ReadUserSchema(**response.json())

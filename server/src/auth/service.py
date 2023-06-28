@@ -1,13 +1,17 @@
-import jwt
-from fastapi import BackgroundTasks, HTTPException
-from fastapi_mail import FastMail, MessageSchema, MessageType
+from fastapi import HTTPException
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.config import config
 import src.auth.models as _auth_models
 import src.auth.schemas as _auth_schemas
 import src.auth.security as _auth_security
+
+
+async def get_user_by_id(
+        id: int,
+        session: AsyncSession
+    ) -> _auth_models.User | None:
+    return await session.get(_auth_models.User, id)
 
 
 async def get_user_by_email(
@@ -95,44 +99,3 @@ async def create_user(
     await session.refresh(new_user)
 
     return _auth_schemas.ReadUserSchema.from_orm(new_user)
-
-
-async def send_email_verif_link(
-        email: str,
-        mail_client: FastMail,
-        session: AsyncSession,
-        background_tasks: BackgroundTasks,
-    ) -> str:
-
-    user = await get_user_by_email(email, session)
-
-    if user is None:
-        raise HTTPException(status_code=401, detail='Email does not exist')
-
-    verif_token = jwt.encode({'email': email}, config.SECRET_KEY, algorithm="HS256")
-
-    message = MessageSchema(
-        recipients=[email], # type: ignore
-        subject='Подтвердите почту для FotoJager`s Auctions',
-        body=f'''Перейдите по ссылке для подтверджения адреса электронной почты:
-            http://localhost:8000/auth/check-email-verif-link?token={verif_token}''',
-        subtype=MessageType.plain,
-    )
-
-    background_tasks.add_task(mail_client.send_message, message)
-
-    return verif_token
-
-
-async def parse_email_verif_token(
-        token: str,
-        session: AsyncSession
-    ) -> _auth_models.User | None:
-
-    try:
-        payload = jwt.decode(token, config.SECRET_KEY, algorithms=['HS256'])
-        user = await get_user_by_email(payload['email'], session)
-    except:
-        raise HTTPException(status_code=401, detail='Invalid token')
-
-    return user

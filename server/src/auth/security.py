@@ -1,4 +1,8 @@
+import jwt
 import bcrypt
+from fastapi import HTTPException
+
+from src.config import config
 
 
 async def hash_password(password: str) -> str:
@@ -7,3 +11,17 @@ async def hash_password(password: str) -> str:
 
 async def check_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode(), hashed_password.encode())
+
+
+async def generate_jwt(payload) -> str:
+    return jwt.encode(payload, config.SECRET_KEY, algorithm="HS256")
+
+
+async def parse_jwt(token: str) -> dict:
+
+    try:
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=["HS256"])
+    except:
+        raise HTTPException(status_code=400, detail='Invalid token')
+
+    return payload
