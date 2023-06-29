@@ -6,10 +6,10 @@ from src.config import config
 
 class MailClient:
     '''Mail client can provide convenient verification
-    message generator and send_message method'''
+    message generator and `send_message` method'''
 
     def __init__(self, config: ConnectionConfig) -> None:
-        self.client = FastMail(config)
+        self.__client = FastMail(config)
 
 
     async def generate_verification_message(self, recipient_username: str, recipient_email: str, token: str) -> MessageSchema:
@@ -17,7 +17,7 @@ class MailClient:
             recipients=[recipient_email], # type: ignore
             subject='Подтвердите почту для FotoJager`s Auctions',
             body=f'''Здравсвуйте, {recipient_username}! Перейдите по ссылке для подтверджения адреса электронной почты:
-            http://localhost:8000/auth/check-email-verif-link?token={token}''',
+            http://localhost:8000/auth/validate-verification-token?token={token}''',
             subtype=MessageType.plain,
         )
 
@@ -28,7 +28,7 @@ class MailClient:
             bg_tasks: BackgroundTasks
         ) -> None:
 
-        bg_tasks.add_task(self.client.send_message, message)
+        bg_tasks.add_task(self.__client.send_message, message)
 
 
 mail_client_config = ConnectionConfig(

@@ -1,11 +1,11 @@
 from httpx import AsyncClient
 
 
-async def test_email_verification(ac: AsyncClient):
+async def test_email_verification(ac: AsyncClient, test_user):
 
     # Getting verif token
-    send_token_response = await ac.post("/auth/mail/send-email-verif-link", params={
-        "email": "jyjyartem@gmail.com",
+    send_token_response = await ac.post("/auth/mail/verification-message-request", params={
+        "email": test_user.email,
     })
 
     assert send_token_response.status_code == 200
@@ -14,9 +14,9 @@ async def test_email_verification(ac: AsyncClient):
 
     assert token
 
-    # Checking verif token
-    check_token_response = await ac.get(f'/auth/mail/check-email-verif-link', params={
+    # Checking verification token
+    validation_token_response = await ac.get('/auth/mail/validate-verification-token', params={
         'token': token
     })
 
-    assert check_token_response.status_code == 200
+    assert validation_token_response.status_code == 200

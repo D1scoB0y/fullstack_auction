@@ -11,8 +11,8 @@ import src.auth.mail.client as _mail_client
 router = APIRouter(prefix='/mail')
 
 
-@router.post('/send-email-verif-link', tags=['Email verification'])
-async def send_email_verif_link_path(
+@router.post('/verification-message-request', tags=['Email verification'])
+async def verification_message_request_path(
         email: str,
         bg_tasks: BackgroundTasks,
         mail_client: _mail_client.MailClient = Depends(_mail_client.get_mail_client),
@@ -42,8 +42,8 @@ async def send_email_verif_link_path(
     return token
 
 
-@router.get('/check-email-verif-link', tags=['Email verification'])
-async def check_email_verif_link_path(
+@router.get('/validate-verification-token', tags=['Email verification'])
+async def validate_verification_token_path(
         token: str,
         session: AsyncSession = Depends(_db.get_session)
     ):
@@ -56,6 +56,7 @@ async def check_email_verif_link_path(
     if email is None:
         raise HTTPException(status_code=400, detail='Invalid token')
 
+    print(f'\n{email}\n')
     user = await _auth_service.get_user_by_email(email, session)
 
     if user is None:

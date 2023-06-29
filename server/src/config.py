@@ -16,10 +16,10 @@ class DevelopmentConfig(Config):
     DB_URL = os.getenv('DEV_DB_URL', '')
     TEST_DB_URL = os.getenv('TEST_DB_URL', '')
 
-    SQL_COMMAND_ECHO = True
+    SQL_COMMAND_ECHO = False
 
     # Frontend app url
-    CLIENT_APP_URL = os.getenv('DEV_CLIENT_APP_URL', '')
+    CLIENT_APP_URL = os.getenv('DEV_CLIENT_ORIGIN', '')
 
     # SMTP user
     SMTP_USER = os.getenv('DEV_SMTP_USER', '')
@@ -30,6 +30,7 @@ class DevelopmentConfig(Config):
     # Celery broker url
     CELERY_BROKER_URL = os.getenv('DEV_CELERY_BROKER_URL', '')
 
+    PHONE_SERVICE_PUBLIC_KEY = os.getenv('DEV_PUBLIC_KEY', '')
 
 
 class ProductionConfig(Config):
@@ -41,7 +42,7 @@ class ProductionConfig(Config):
     SQL_COMMAND_ECHO = False
 
     # Frontend app url
-    CLIENT_APP_URL = os.getenv('PROD_CLIENT_APP_URL', '')
+    CLIENT_APP_URL = os.getenv('PROD_CLIENT_ORIGIN', '')
 
     # SMTP user
     SMTP_USER = os.getenv('PROD_SMTP_USER', '')
@@ -51,6 +52,8 @@ class ProductionConfig(Config):
 
     # Celery broker url
     CELERY_BROKER_URL = os.getenv('PROD_CELERY_BROKER_URL', '')
+
+    PHONE_SERVICE_PUBLIC_KEY = ''
 
 
 def get_config() -> DevelopmentConfig|ProductionConfig:

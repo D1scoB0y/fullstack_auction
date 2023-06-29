@@ -3,7 +3,6 @@ from typing import AsyncGenerator
 from httpx import AsyncClient
 
 import pytest
-from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 import src.main as _app
@@ -21,6 +20,20 @@ async def overriden_get_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 _app.app.dependency_overrides[_db.get_session] = overriden_get_session
+
+
+TEST_USER_DATA = {
+    'username': 'DiscoBoy',
+    'email': 'fake38536267129419364@gmail.com',
+
+}
+
+
+class TestUserData:
+    username = 'DiscoBoy'
+    email = 'fake38536267129419364@gmail.com'
+    phone_number = '+79274662618'
+    password = 'test_password'
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -45,11 +58,14 @@ def event_loop(request):
     loop.close()
 
 
-client = TestClient(_app.app)
-
-
 @pytest.fixture(scope="session", autouse=True)
 async def ac() -> AsyncGenerator[AsyncClient, None]:
 
     async with AsyncClient(app=_app.app, base_url="http://test") as ac:
         yield ac
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def test_user() -> TestUserData:
+
+    return TestUserData()

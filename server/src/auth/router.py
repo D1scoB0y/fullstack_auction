@@ -5,6 +5,7 @@ import src.database as _db
 import src.auth.schemas as _auth_schemas
 import src.auth.service as _auth_service
 import src.auth.mail.router as _mail_module
+import src.auth.mobile.router as _mobile_module
 
 
 # Router
@@ -12,6 +13,7 @@ router = APIRouter(prefix='/auth')
 
 # Nested routers
 router.include_router(_mail_module.router)
+router.include_router(_mobile_module.router)
 
 
 @router.post('/login', response_model=_auth_schemas.ReadUserSchema, tags=['Authentication'])

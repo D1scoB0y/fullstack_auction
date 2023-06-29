@@ -1,3 +1,5 @@
+import random
+
 import jwt
 import bcrypt
 from fastapi import HTTPException
@@ -25,3 +27,8 @@ async def parse_jwt(token: str) -> dict:
         raise HTTPException(status_code=400, detail='Invalid token')
 
     return payload
+
+
+async def generate_4_digit_code() -> int:
+    '''Generating a random 4-digit number'''
+    return random.randrange(1_000, 10_000)
