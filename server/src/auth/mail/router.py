@@ -56,7 +56,6 @@ async def validate_verification_token_path(
     if email is None:
         raise HTTPException(status_code=400, detail='Invalid token')
 
-    print(f'\n{email}\n')
     user = await _auth_service.get_user_by_email(email, session)
 
     if user is None:

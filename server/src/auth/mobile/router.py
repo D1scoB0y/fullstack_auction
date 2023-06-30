@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import src.database as _db
 import src.auth.service as _auth_service
 import src.auth.mobile.service as _mobile_service
+import src.auth.security as _auth_security
 
 
 router = APIRouter(prefix='/mobile')
@@ -19,8 +20,10 @@ async def verification_call_request(
     if user is None:
         raise HTTPException(status_code=404, detail=f'User with id: {id}, does not exist')
 
-    
-    verif_code = await _mobile_service.verification_call(user.phone_number)
+    # Verification code (it will be last 4 digits of bot's phone number)
+    verif_code = await _auth_security.generate_4_digit_code()
+
+    await _mobile_service.verification_call(user.phone_number, verif_code)
 
     user.phone_number_verif_code = verif_code
     await session.commit()
