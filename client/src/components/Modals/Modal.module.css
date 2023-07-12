@@ -97,6 +97,8 @@
 .showPasswordIcon{    
     position: absolute;
     right: 16px;
+
+    cursor: pointer;
 }
 
 .submitButton{
@@ -110,7 +112,7 @@
 
     background: var(--blue);
 
-    font-size: 19px;
+    font-size: 16px;
     font-weight: 400;
     color: var(--white);
 
@@ -125,6 +127,8 @@
     border: 1px solid var(--border-color);
     background: var(--white);
     color: var(--muted-text);
+
+    cursor: default;
 }
 
 .underFormInfo{

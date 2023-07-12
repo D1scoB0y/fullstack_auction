@@ -3,6 +3,10 @@ import Portal from "../Portal";
 import styles from './Modal.module.css'
 import { SubmitHandler, useForm } from "react-hook-form";
 import Image from "next/image";
+import { checkEmail, checkUsername } from "@/service/userService";
+import { IRegistrationData } from "@/types/user.interface";
+import useAuthStore from "@/store/AuthStore";
+
 
 type Props = {
     isActive: boolean,
@@ -10,23 +14,20 @@ type Props = {
     setLoginFormActive: Dispatch<SetStateAction<boolean>>,
 }
 
-interface IRegistrationFields {
-    username: string
-    email: string
-    password: string
-    confirmPassword: string
-}
-
 const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive}) => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
 
-    const {register, handleSubmit, reset, watch,formState: {isValid, errors}} = useForm<IRegistrationFields>({
-        mode: "onChange"
+    const {register, handleSubmit, reset, formState: {isValid, errors}} = useForm<IRegistrationData>({
+        mode: "onSubmit"
     })
 
-    const onSubmit: SubmitHandler<IRegistrationFields> = (data) => {
+    const authStore = useAuthStore()
+
+    const onSubmit: SubmitHandler<IRegistrationData> = (registrationData) => {
         reset()
-        console.log(data)
+        authStore.registration(registrationData)
+        setIsActive(false)
+        setLoginFormActive(true)
     }
 
     return (
@@ -52,7 +53,9 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                             value: 20,
                                             message: 'Длина - от 3 до 20 символов'
                                         },
+                                        validate: async (username: string) => await checkUsername(username) || 'Имя пользователя уже занято',
                                     })}
+                                    
                                     maxLength={20}
                                     className={styles.input}
                                     placeholder={'Имя пользователя'}
@@ -68,7 +71,8 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                         pattern: {
                                             value: /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
                                             message: 'Введите корректный адрес'
-                                        }
+                                        },
+                                        validate: async (email: string) => await checkEmail(email) || 'Эта почта уже занята'
                                     })}
                                     className={styles.input}
                                     placeholder={'Электронная почта'}

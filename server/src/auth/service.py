@@ -76,9 +76,6 @@ async def valid_registration_credentials(
     if await get_user_by_email(credentials.email, session) is not None:
         raise HTTPException(status_code=409, detail='Email is already taken')
     
-    elif await get_user_by_phone_number(credentials.phone_number, session) is not None:
-        raise HTTPException(status_code=409, detail='Phone number is already taken')
-    
     elif await get_user_by_username(credentials.username, session) is not None:
         raise HTTPException(status_code=409, detail='Username is already taken')
 

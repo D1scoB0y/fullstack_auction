@@ -1,4 +1,5 @@
 from fastapi import Depends, APIRouter
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database as _db
@@ -34,3 +35,33 @@ async def registration_path(
     '''Creating user with credentials (email: str, password: str)'''
 
     return await _auth_service.create_user(credentials, session)
+
+
+@router.get('/check-username', response_model=bool)
+async def check_username_path(
+    username: str,
+    session: AsyncSession = Depends(_db.get_session)
+    ):
+    '''Checks that given username is unique'''
+
+    user = await _auth_service.get_user_by_username(username, session)
+
+    if user is None:
+        return JSONResponse(content={}, status_code=200)
+    else:
+        return JSONResponse(content={}, status_code=409)
+
+
+@router.get('/check-email', response_model=bool)
+async def check_email_path(
+    email: str,
+    session: AsyncSession = Depends(_db.get_session)
+    ):
+    '''Checks that given email is unique'''
+
+    user = await _auth_service.get_user_by_email(email, session)
+
+    if user is None:
+        return JSONResponse(content={}, status_code=200)
+    else:
+        return JSONResponse(content={}, status_code=409)
