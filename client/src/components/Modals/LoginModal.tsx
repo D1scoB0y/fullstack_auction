@@ -19,7 +19,7 @@ const LoginModal: FC<Props> = ({isActive, setIsActive, setRegistrationFormActive
     return (
         <>
             {isActive && (
-                <Portal>v
+                <Portal>
                     <div className={styles.overlay} onClick={() => setIsActive(false)}>
                         <div className={styles.modalBody} onClick={e => e.stopPropagation()}>
                             <span className={styles.modalTitle}>Вход</span>

@@ -82,6 +82,23 @@
     color: var(--muted-text);
 }
 
+.passwordFieldContainer{
+    margin-bottom: 12px;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.passwordField{
+    margin-bottom: 0;
+}
+
+.showPasswordIcon{    
+    position: absolute;
+    right: 16px;
+}
+
 .submitButton{
     width: 300px;
     height: 48px;
@@ -135,4 +152,3 @@
 .underFormHref:hover{
     color: var(--hovered-blue);
 }
-

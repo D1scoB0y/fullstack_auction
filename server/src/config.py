@@ -7,7 +7,7 @@ class BaseConfig(BaseSettings):
     DEV_MODE: str
 
     class Config:
-        env_file = '.env.development'
+        env_file = 'dev.env'
 
 
 class Config(BaseConfig):
@@ -22,7 +22,7 @@ class Config(BaseConfig):
     PHONE_SERVICE_COMPAIGN_ID: str
 
     class Config:
-        env_file = '.env.development' if BaseConfig().DEV_MODE == 'true' else '.env.production'
+        env_file = 'dev.env' if BaseConfig().DEV_MODE == 'true' else 'prod.env' # type: ignore
 
 
-config = Config()
+config = Config() # type: ignore
