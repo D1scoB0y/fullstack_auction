@@ -53,7 +53,7 @@ async def get_user_by_phone_number(
 async def auth_user(
         credentials: _auth_schemas.AuthUserSchema,
         session: AsyncSession
-    ) -> _auth_schemas.ReadUserSchema | None:
+    ) -> str:
 
     user = await get_user_by_email(credentials.email, session)
 
@@ -65,7 +65,7 @@ async def auth_user(
     if not await _auth_security.check_password(credentials.password, str(user.password)):
         raise HTTPException(status_code=401, detail='Invalid credentials')
 
-    return _auth_schemas.ReadUserSchema.from_orm(user)
+    return await _auth_security.generate_jwt({'email': user.email})
 
 
 async def valid_registration_credentials(
@@ -83,7 +83,7 @@ async def valid_registration_credentials(
 async def create_user(
         credentials: _auth_schemas.RegistrationUserSchema,
         session: AsyncSession
-    ) -> _auth_schemas.ReadUserSchema | None:
+    ) -> str:
 
     await valid_registration_credentials(credentials, session)
 
@@ -93,6 +93,20 @@ async def create_user(
 
     session.add(new_user)
     await session.commit()
-    await session.refresh(new_user)
 
-    return _auth_schemas.ReadUserSchema.from_orm(new_user)
+    return await _auth_security.generate_jwt({'email': credentials.email})
+
+
+async def get_user_by_token(
+        token: str,
+        session: AsyncSession
+    ) -> _auth_schemas.ReadUserSchema:
+
+    payload = await _auth_security.parse_jwt(token)
+    email = payload['email']
+
+    user = await get_user_by_email(email, session)
+    if user is None:
+        raise HTTPException(status_code=400, detail='Invalid token')
+
+    return _auth_schemas.ReadUserSchema.from_orm(user)

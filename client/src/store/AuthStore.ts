@@ -5,53 +5,48 @@ import { registerUser, loginUser } from "@/service/userService";
 
 
 interface IAuthStore {
+    token: string|null,
     isAuthenticated: boolean;
-    user: null | IUser;
-    login: (loginData: ILoginData) => Promise<void>;
+    login: (loginData: ILoginData) => Promise<void|null>;
     registration: (registrationData: IRegistrationData) => Promise<void>;
     logout: () => void;
-  }
+}
 
 
 const useAuthStore = create<IAuthStore>()(
     persist(
         (set) => ({
-            
+            token: null,
             isAuthenticated: false,
-            user: null,
-
             login: async (loginData) => {
+                const token = await loginUser(loginData)
 
-                const user = await loginUser(loginData)
-
-                if (user) {
+                if (token) {
                     set(state => ({
                         ...state,
+                        token: token,
                         isAuthenticated: true,
-                        user: user,
                     }))
+                } else {
+                    return null
                 }
-                
             },
-
             registration: async (registrationData) => {
+                const token = await registerUser(registrationData)
 
-                const newUser = await registerUser(registrationData)
-
-                if (newUser) {
+                if (token) {
                     set(state => ({
                         ...state,
+                        token: token,
                         isAuthenticated: true,
-                        user: newUser,
                     }))
                 }
             },
-
             logout: () => {
                 set(state => ({
                     ...state,
+                    token: null,
                     isAuthenticated: false,
-                    user: null
                 }))
             }
         }),

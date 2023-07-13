@@ -5,16 +5,20 @@ import useAuthStore from '@/store/AuthStore'
 import Link from 'next/link'
 import LoginModal from '../Modals/LoginModal'
 import RegistrationModal from '../Modals/RegistrationModal'
+import useUser from '@/store/useUser'
+import useStore from '@/store/useStore'
+import UserMenu from './UserMenu/UserMenu'
 
 
 const Header = () => {
-
-	const isAuthenticated = useAuthStore(state => state.isAuthenticated)
-	const username = useAuthStore(state => state.user?.username)
-
 	const [loginFormActive, setLoginFormActive] = useState<boolean>(false)
 	const [registerFormActive, setRegisterFormActive] = useState<boolean>(false)
 
+	const [menuActive, setMenuActive] = useState<boolean>(false)
+
+	const isAuthenticated = useStore(useAuthStore, state => state.isAuthenticated)
+	const user = useUser()
+	
 	return (
 		<div className={styles.header}>
 			<div className={styles.innerHeader}>
@@ -27,11 +31,12 @@ const Header = () => {
 				</Link>
 
 				<div className={styles.authBox}>
-					{isAuthenticated ? (
+					{(isAuthenticated && user) ? (
 						<>
-							<div className={styles.userBox}>
+							<div className={styles.userBox} onMouseLeave={() => setMenuActive(false)} onMouseEnter={() => setMenuActive(true)}>
 								<img className={styles.userIcon} src="/user_icon.png" alt="user icon" />
-								<span className={styles.username}>{username}</span>
+								<span className={styles.username}>{user.username}</span>
+								<UserMenu isActive={menuActive} user={user} />
 							</div>
 						</>
 					) : (

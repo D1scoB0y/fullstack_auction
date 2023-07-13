@@ -17,7 +17,7 @@ router.include_router(_mail_module.router)
 router.include_router(_mobile_module.router)
 
 
-@router.post('/login', response_model=_auth_schemas.ReadUserSchema, tags=['Authentication'])
+@router.post('/login', response_model=str, tags=['Authentication'])
 async def login_path(
         credentials: _auth_schemas.AuthUserSchema,
         session: AsyncSession = Depends(_db.get_session),
@@ -27,7 +27,7 @@ async def login_path(
     return await _auth_service.auth_user(credentials, session)
 
 
-@router.post('/registration', response_model=_auth_schemas.ReadUserSchema, tags=['Authentication'])
+@router.post('/registration', response_model=str, tags=['Authentication'])
 async def registration_path(
         credentials: _auth_schemas.RegistrationUserSchema,
         session: AsyncSession = Depends(_db.get_session),
@@ -37,7 +37,15 @@ async def registration_path(
     return await _auth_service.create_user(credentials, session)
 
 
-@router.get('/check-username', response_model=bool)
+@router.get('/get-user', response_model=_auth_schemas.ReadUserSchema, tags=['Authentication'])
+async def get_user_path(
+        token: str,
+        session: AsyncSession = Depends(_db.get_session)
+    ):
+    return await _auth_service.get_user_by_token(token, session)
+
+
+@router.get('/check-username', response_model=bool, tags=['Authentication'])
 async def check_username_path(
     username: str,
     session: AsyncSession = Depends(_db.get_session)
@@ -52,7 +60,7 @@ async def check_username_path(
         return JSONResponse(content={}, status_code=409)
 
 
-@router.get('/check-email', response_model=bool)
+@router.get('/check-email', response_model=bool, tags=['Authentication'])
 async def check_email_path(
     email: str,
     session: AsyncSession = Depends(_db.get_session)

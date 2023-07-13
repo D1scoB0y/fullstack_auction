@@ -6,7 +6,7 @@ import Image from "next/image";
 import { checkEmail, checkUsername } from "@/service/userService";
 import { IRegistrationData } from "@/types/user.interface";
 import useAuthStore from "@/store/AuthStore";
-
+import useStore from "@/store/useStore";
 
 type Props = {
     isActive: boolean,
@@ -18,14 +18,14 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
     const [showPassword, setShowPassword] = useState<boolean>(false)
 
     const {register, handleSubmit, reset, formState: {isValid, errors}} = useForm<IRegistrationData>({
-        mode: "onSubmit"
+        mode: "onChange"
     })
 
-    const authStore = useAuthStore()
+    const registration = useAuthStore(state => state.registration)
 
     const onSubmit: SubmitHandler<IRegistrationData> = (registrationData) => {
         reset()
-        authStore.registration(registrationData)
+        registration(registrationData) 
         setIsActive(false)
         setLoginFormActive(true)
     }
