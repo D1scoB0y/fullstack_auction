@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
-import Portal from "../Portal";
+import Portal from "./Portal";
 import styles from './Modal.module.css'
 import { SubmitHandler, useForm } from "react-hook-form";
 import Image from "next/image";
@@ -41,7 +41,6 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                             <form onSubmit={handleSubmit(onSubmit)} noValidate>
 
                                 <span className={styles.errorMessage}>{errors.username && <>{errors.username.message}</>}</span>
-
                                 <input
                                     {...register('username', {
                                         required: 'Заполните это поле',
@@ -64,7 +63,6 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                 />
 
                                 <span className={styles.errorMessage}>{errors.email && <>{errors.email.message}</>}</span>
-
                                 <input
                                     {...register('email', {
                                         required: 'Заполните это поле',
@@ -81,7 +79,6 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                 />
 
                                 <span className={styles.errorMessage}>{errors.password && <>{errors.password.message}</>}</span>  
-                                
                                 <div className={styles.passwordFieldContainer}>
                                     <input
                                         {...register('password', {

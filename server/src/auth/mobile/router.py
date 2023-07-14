@@ -23,9 +23,9 @@ async def verification_call_request(
     # Verification code (it will be last 4 digits of bot's phone number)
     verif_code = await _auth_security.generate_4_digit_code()
 
-    await _mobile_service.verification_call(user.phone_number, verif_code)
+    await _mobile_service.verification_call(user.phone_number, verif_code) # type: ignore
 
-    user.phone_number_verif_code = verif_code
+    user.phone_number_verif_code = verif_code # type: ignore
     await session.commit()
 
     return verif_code
@@ -45,5 +45,5 @@ async def validate_verification_code(
     if verif_code != user.phone_number_verif_code:
         raise HTTPException(status_code=400, detail='Phone number verification code is wrong')
 
-    user.phone_number_is_verified = True
+    user.phone_number_is_verified = True # type: ignore
     await session.commit()

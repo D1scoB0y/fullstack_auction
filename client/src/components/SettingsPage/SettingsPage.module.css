@@ -1,0 +1,41 @@
+.pageTitle{
+    display: block;
+
+    padding-top: 36px;
+
+    font-family: 'Lora', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+.errorMessage{
+    display: block;
+
+    min-height: 16px;
+    margin-bottom: 4px;
+
+
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--red);
+}
+
+.input{
+    width: 300px;
+    height: 50px;
+
+    margin-bottom: 12px;
+
+    display: flex;
+    align-items: center;
+
+    padding-left: 14px;
+    
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--black);
+}

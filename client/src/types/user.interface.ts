@@ -18,3 +18,11 @@ export interface ILoginData {
     email: string
     password: string
 }
+
+
+export interface ISettingsData {
+    username: string
+    email: string
+    phone_number: string
+    password: string
+}

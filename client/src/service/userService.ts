@@ -9,14 +9,27 @@ const registerUser: TypeRegisterUser = async (registrationData) => {
         return response.data
     } catch(e) {
         console.log(e)
+        return null
     }
 }
 
 
 type TypeLoginUser = (loginData: ILoginData) => Promise<string|null>
 const loginUser: TypeLoginUser = async (loginData) => {
+
+    const data = JSON.stringify(
+        `grant_type=&username=${loginData.email}&password=${loginData.password}&scope=&client_id=&client_secret=`
+    )
+
+    const requestConfig = {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+    }
+
     try {
-        const response = await api.post('/auth/login', loginData)
+        JSON.stringify
+        const response = await api.post('/auth/login', data, requestConfig)
         return response.data
     } catch(e) {
         console.log(e)
@@ -27,11 +40,19 @@ const loginUser: TypeLoginUser = async (loginData) => {
 
 type TypeGetUser = (token: string) => Promise<IUser|null>
 const getUser: TypeGetUser = async (token) => {
+
+    const requestConfig = {
+        headers: {
+            Authorization: 'Bearer ' + token
+        }
+    }
+
     try{
-        const response = await api.get('/auth/get-user', {params: {token}})
+        const response = await api.get('/auth/get-user', requestConfig)
         return response.data
     } catch(e) {
         console.log(e)
+        return null
     }
 }
 

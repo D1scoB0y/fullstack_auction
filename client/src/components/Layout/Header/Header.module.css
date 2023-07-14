@@ -23,7 +23,7 @@
 
 .companyName{
     font-family: 'Lora', serif;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 400;
     color: var(--black);
 }
@@ -32,7 +32,7 @@
     margin-top: -9px;
 
     font-family: 'Lora', serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
     color: var(--black);
 }

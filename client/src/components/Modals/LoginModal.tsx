@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
-import Portal from "../Portal";
+import Portal from "./Portal";
 import styles from './Modal.module.css'
 import useAuthStore from "@/store/AuthStore";
 import { useForm, SubmitHandler } from "react-hook-form";

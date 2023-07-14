@@ -1,7 +1,9 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+import src.database as _db
 import src.auth.models as _auth_models
 import src.auth.schemas as _auth_schemas
 import src.auth.security as _auth_security
@@ -50,12 +52,26 @@ async def get_user_by_phone_number(
     return res.scalar()
 
 
+async def get_current_user(
+        token = Depends(_auth_schemas.oauth2schema),
+        session: AsyncSession = Depends(_db.get_session),
+    ) -> _auth_models.User:
+    user = await get_user_by_token(token, session)
+
+    if user is None:
+        raise HTTPException(status_code=401, detail='Invalid token')
+    
+    return user
+
+
 async def auth_user(
-        credentials: _auth_schemas.AuthUserSchema,
-        session: AsyncSession
+        credentials: OAuth2PasswordRequestForm,
+        session: AsyncSession,
     ) -> str:
 
-    user = await get_user_by_email(credentials.email, session)
+    email = credentials.username # 'OAuth2PasswordRequestForm' object has no attribute 'email'
+
+    user = await get_user_by_email(email, session)
 
     # If user is not exist
     if user is None:
@@ -100,7 +116,7 @@ async def create_user(
 async def get_user_by_token(
         token: str,
         session: AsyncSession
-    ) -> _auth_schemas.ReadUserSchema:
+    ) -> _auth_models.User:
 
     payload = await _auth_security.parse_jwt(token)
     email = payload['email']
@@ -109,4 +125,4 @@ async def get_user_by_token(
     if user is None:
         raise HTTPException(status_code=400, detail='Invalid token')
 
-    return _auth_schemas.ReadUserSchema.from_orm(user)
+    return user
