@@ -1,0 +1,100 @@
+.header{
+    width: 100%;
+    height: 64px;
+    box-shadow: 0px 2px 16px 2px rgba(0, 0, 0, 0.25); 
+}
+
+.innerHeader{
+    width: 1100px;
+    height: 100%;
+
+    padding: 0 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: auto;
+}
+
+.companyNameBox{
+    display: flex;
+    flex-direction: column;
+}
+
+.companyName{
+    font-family: 'Lora', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+.auctionsWord{
+    margin-top: -9px;
+
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+.authBox{
+    display: flex;
+    align-items: center;
+}
+
+.userBox{
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    padding: 8px 16px;
+
+    border: 1px solid var(--border-color);
+}
+
+.userBox:hover .dropDown{
+    display: block;
+}
+
+.userIcon{
+    width: 24px;
+    height: 24px;
+}
+
+.username{
+    padding-left: 16px;
+
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--black);
+}
+
+.registrationHref{
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--black);
+
+    cursor: pointer;
+}
+
+.loginHref{
+    margin-left: 30px;
+
+    padding: 10px 24px;
+
+    border-radius: 8px;
+    background: var(--blue);
+
+    font-size: 16px;
+    font-weight: 400px;
+    color: var(--white);
+
+    cursor: pointer;
+}
+
+.loginHref:hover{
+    background: var(--hovered-blue);
+}
+
+

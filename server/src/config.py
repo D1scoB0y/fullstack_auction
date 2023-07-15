@@ -1,65 +1,28 @@
-import os
-
-from dotenv import load_dotenv
+from pydantic import BaseSettings
 
 
-load_dotenv()
+class BaseConfig(BaseSettings):
+
+    SECRET_KEY: str
+    DEV_MODE: str
+
+    class Config:
+        env_file = 'dev.env'
 
 
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', '')
+class Config(BaseConfig):
+
+    DB_URL: str
+    TEST_DB_URL: str
+    CLIENT_ORIGIN: str
+    MAIL_SENDER: str
+    MAIL_PASSWORD: str
+    CELERY_BROKER_URL: str
+    PHONE_SERVICE_API_KEY: str
+    PHONE_SERVICE_COMPAIGN_ID: str
+
+    class Config:
+        env_file = 'dev.env' if BaseConfig().DEV_MODE == 'true' else 'prod.env' # type: ignore
 
 
-class DevelopmentConfig(Config):
-
-    # Database url
-    DB_URL = os.getenv('DEV_DB_URL', '')
-    TEST_DB_URL = os.getenv('TEST_DB_URL', '')
-
-    SQL_COMMAND_ECHO = False
-
-    # Frontend app url
-    CLIENT_APP_URL = os.getenv('DEV_CLIENT_ORIGIN', '')
-
-    # SMTP user
-    SMTP_USER = os.getenv('DEV_SMTP_USER', '')
-
-    # SMTP password
-    SMTP_PASSWORD = os.getenv('DEV_SMTP_PASSWORD', '')
-
-    # Celery broker url
-    CELERY_BROKER_URL = os.getenv('DEV_CELERY_BROKER_URL', '')
-
-    PHONE_SERVICE_PUBLIC_KEY = os.getenv('DEV_PUBLIC_KEY', '')
-
-
-class ProductionConfig(Config):
-
-    # Database url
-    DB_URL = os.getenv('PROD_DB_URL', '')
-    TEST_DB_URL = ""
-
-    SQL_COMMAND_ECHO = False
-
-    # Frontend app url
-    CLIENT_APP_URL = os.getenv('PROD_CLIENT_ORIGIN', '')
-
-    # SMTP user
-    SMTP_USER = os.getenv('PROD_SMTP_USER', '')
-
-    # SMTP password
-    SMTP_PASSWORD = os.getenv('PROD_SMTP_PASSWORD', '')
-
-    # Celery broker url
-    CELERY_BROKER_URL = os.getenv('PROD_CELERY_BROKER_URL', '')
-
-    PHONE_SERVICE_PUBLIC_KEY = ''
-
-
-def get_config() -> DevelopmentConfig|ProductionConfig:
-    dev_mode = os.getenv('DEV_MODE')
-    if dev_mode == 'true':
-        return DevelopmentConfig()
-    return ProductionConfig()
-
-config = get_config()
+config = Config() # type: ignore

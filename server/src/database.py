@@ -13,7 +13,7 @@ def get_async_engine(db_url: str|None) -> AsyncEngine:
     if db_url is None:
         raise ValueError('db_url is not a valid database url')
     
-    return create_async_engine(db_url, echo=config.SQL_COMMAND_ECHO)
+    return create_async_engine(db_url)
 
 
 async_engine = get_async_engine(config.DB_URL)

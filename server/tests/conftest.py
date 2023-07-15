@@ -22,20 +22,6 @@ async def overriden_get_session() -> AsyncGenerator[AsyncSession, None]:
 _app.app.dependency_overrides[_db.get_session] = overriden_get_session
 
 
-TEST_USER_DATA = {
-    'username': 'DiscoBoy',
-    'email': 'fake38536267129419364@gmail.com',
-
-}
-
-
-class TestUserData:
-    username = 'DiscoBoy'
-    email = 'fake38536267129419364@gmail.com'
-    phone_number = '+79274662618'
-    password = 'test_password'
-
-
 @pytest.fixture(scope='session', autouse=True)
 async def create_test_records():
 
@@ -65,7 +51,13 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
 
-@pytest.fixture(scope="session", autouse=True)
-async def test_user() -> TestUserData:
+test_user_data = {
+    'username': 'DiscoBoy',
+    'email': 'fake38536267129419364@gmail.com',
+    'phone_number': '+79274662618',
+    'password': 'test_password'
+    }
 
-    return TestUserData()
+@pytest.fixture(scope="session", autouse=True)
+async def test_user() -> dict[str, str]:
+    return test_user_data
