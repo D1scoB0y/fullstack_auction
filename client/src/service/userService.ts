@@ -1,5 +1,5 @@
 import api from "@/api";
-import { IUser, IRegistrationData, ILoginData } from "@/types/user.interface";
+import { IUser, IRegistrationData, ILoginData, IUpdateData } from "@/types/user.interface";
 
 
 type TypeRegisterUser = (registrationData: IRegistrationData) => Promise<string|null>
@@ -57,6 +57,24 @@ const getUser: TypeGetUser = async (token) => {
 }
 
 
+type TypeUdateUser = (freshData: IUpdateData, token: string) => Promise<number|null>
+const updateUser: TypeUdateUser = async (freshData, token) => {
+
+    const requestConfig = {
+        headers: {
+            Authorization: 'Bearer ' + token
+        }
+    }
+
+    try {
+        const response = await api.put('/auth/update-user', freshData, requestConfig)
+        return response.status
+    } catch(e) {
+        return null
+    }
+}
+
+
 type TypeCheckEmail = (email: string) => Promise<boolean>
 const checkEmail: TypeCheckEmail = async (email) => {
     try {
@@ -78,10 +96,24 @@ const checkUsername: TypeCheckUsername = async (username) => {
     }
 }
 
+
+type TypeCheckPhone = (phone_number: string) => Promise<boolean>
+const checkPhone: TypeCheckPhone = async (phone_number) => {
+    try {
+        await api.get('/auth/check-phone', {params: {phone_number}})
+        return true
+    } catch(e) {
+        return false
+    }
+}
+
+
 export {
     registerUser,
     loginUser,
     getUser,
+    updateUser,
     checkEmail,
     checkUsername,
+    checkPhone,
 }

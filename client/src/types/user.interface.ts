@@ -8,21 +8,21 @@ export interface IUser {
     is_seller: boolean
 }
 
-export interface IRegistrationData {
-    username: string
-    email: string
-    password: string
-}
-
 export interface ILoginData {
     email: string
     password: string
 }
 
+export interface IRegistrationData extends ILoginData {
+    username: string
+}
 
-export interface ISettingsData {
+export interface IUpdateData {
     username: string
     email: string
     phone_number: string
+}
+
+export interface ISettingsData extends IUpdateData {
     password: string
 }

@@ -37,7 +37,7 @@ async def registration_path(
     return await _auth_service.create_user(credentials, session)
 
 
-@router.put('/update-user', tags=['Update user'])
+@router.put('/update-user', status_code=204, tags=['Update user'])
 async def update_user_path(
         user_data: _auth_schemas.UpdateUserSchema,
         user: _auth_models.User = Depends(_auth_service.get_current_user),
@@ -46,10 +46,10 @@ async def update_user_path(
     
     user.username = user_data.username # type: ignore
     user.email = user_data.email # type: ignore
-    user.phone_number = user_data.phone_number # type: ignore
+    user.phone_number = user_data.phone_number.replace(' ', '') # type: ignore
     await session.commit()
  
-    return JSONResponse(content={}, status_code=204)
+    return None
 
 
 @router.get('/get-user', response_model=_auth_schemas.ReadUserSchema, tags=['Authentication'])
@@ -95,6 +95,8 @@ async def check_phone_path(
     session: AsyncSession = Depends(_db.get_session)
     ):
     '''Checks that given phone number is unique'''
+
+    phone_number = phone_number.replace(' ', '')
 
     user = await _auth_service.get_user_by_phone_number(phone_number, session)
 

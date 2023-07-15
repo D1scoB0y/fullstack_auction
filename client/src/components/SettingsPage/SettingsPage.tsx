@@ -1,26 +1,55 @@
 import { useEffect, useState } from 'react'
 import styles from './SettingsPage.module.css'
 import { SubmitHandler, useForm,  } from 'react-hook-form'
-import { IRegistrationData } from '@/types/user.interface'
 import useAuthStore from '@/store/AuthStore'
 import useUser from '@/store/useUser'
 import { useRouter } from 'next/router'
-import { checkUsername } from '@/service/userService'
+import { checkEmail, checkPhone, checkUsername, updateUser } from '@/service/userService'
+import { ISettingsData } from '@/types/user.interface'
+import Image from 'next/image'
+import IMask from 'imask'
+import { useStore } from 'zustand'
+
 
 const SettingsPage = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
+    const [wrongPassword, setWrongPassword] = useState<boolean>(false)
 
-    const {register, handleSubmit, formState: {isValid, errors}} = useForm<IRegistrationData>({
+
+    const {register, handleSubmit, reset, formState: {isValid, errors}} = useForm<ISettingsData>({
         mode: "onChange"
     })
 
-    const onSubmit: SubmitHandler<IRegistrationData> = (registrationData) => {
-        
+    const token = useStore(useAuthStore, state => state.token)
+
+    const onSubmit: SubmitHandler<ISettingsData> = async (settingsData) => {
+        const freshData = {
+            username: settingsData.username,
+            email: settingsData.email,
+            phone_number: settingsData.phone_number
+        }
+
+        if (token) {
+            const response = await updateUser(freshData, token)
+            if (response !== 204) {
+                setWrongPassword(true)
+            }
+        }
     }
 
     const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
+    const user = useUser()
+
     const router = useRouter()
+
+    useEffect(() => {
+        reset({
+            username: user?.username,
+            email: user?.email,
+            phone_number: user?.phone_number || ''
+        })
+    }, [user])
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -28,13 +57,23 @@ const SettingsPage = () => {
         }
     }, [isAuthenticated])
 
+    useEffect(() => {
+        const element = document.getElementById('phoneInput')
+        const maskOptions = {
+            mask: '+{7} 000 000 00 00'
+        }
+        if (element) {
+            const mask = IMask(element, maskOptions);
+        }
+    })
     return (
         <>
             <span className={styles.pageTitle}>Настройки аккаунта</span>
 
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
 
-                <span className={styles.errorMessage}>{errors.username && <>{errors.username.message}</>}</span>
+                <span className={styles.inputLabel}>Имя пользователя</span>
+                {errors.username && <span className={styles.errorMessage}>{errors.username.message}</span>}
                 <input
                     {...register('username', {
                         required: 'Заполните это поле',
@@ -46,20 +85,91 @@ const SettingsPage = () => {
                             value: 20,
                             message: 'Длина - от 3 до 20 символов'
                         },
-                        validate: async (username: string) => await checkUsername(username) || 'Имя пользователя уже занято',
+                        validate: async (username: string) => username === user?.username || await checkUsername(username) || 'Имя пользователя уже занято',
                     })}
-                    
                     maxLength={20}
                     className={styles.input}
-                    placeholder={'Имя пользователя'}
                     type="text"
                     autoComplete="off"
                 />
 
+                <span className={styles.inputLabel}>Электронная почта</span>
+                {errors.email && <span className={styles.errorMessage}>{errors.email.message}</span>}
+                <div className={styles.fieldContainer}>
+                    <input
+                        style={{marginBottom: 0}}
+                        {...register('email', {
+                            required: 'Заполните это поле',
+                            pattern: {
+                                value: /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
+                                message: 'Введите корректный адрес'
+                            },
+                            validate: async (email: string) => email === user?.email || await checkEmail(email) || 'Эта почта уже занята'
+                        })}
+                        maxLength={20}
+                        className={styles.input}
+                        type="text"
+                        autoComplete="off"
+                    />
+                    {user?.email_is_verified
+                        ? <span className={styles.okSymbol}>✓</span>
+                        : <button type='button' className={styles.confirmButton} onClick={() => {}} disabled={!user?.email}>Подтвердить</button>
+                    }
+                </div>
 
+                <span className={styles.inputLabel}>Номер телефона</span>
+                {errors.phone_number && <span className={styles.errorMessage}>{errors.phone_number.message}</span>}
+                <div className={styles.fieldContainer}>
+                    <input
+                        style={{marginBottom: 0}}
+                        id='phoneInput'
+                        {...register('phone_number', {
+                            required: 'Заполните это поле',
+                            validate: async (phoneNumber: string) => phoneNumber.replaceAll(' ', '') === user?.phone_number || await checkPhone(phoneNumber) || 'Этот номер уже занят'
+                        })}
+                        maxLength={20}
+                        className={styles.input}
+                        type="text"
+                        autoComplete="off"
+                        onClick={() => console.log(errors)}
+                    />
+                    {user?.phone_number_is_verified
+                        ? <span className={styles.okSymbol}>✓</span>
+                        : <button type='button' className={styles.confirmButton} onClick={() => {}} disabled={!user?.phone_number}>Подтвердить</button>
+                    }
+                </div>
 
+                <span className={styles.inputLabel}>Текущий пароль</span>
+                {errors.password && <span className={styles.errorMessage}>
+                    {wrongPassword ? (
+                        <>Неверный пароль</>
+                        ) : (errors.email && (
+                        <>{errors.email.message}</>
+                    ))}
+                </span>}
+                <div className={styles.passwordFieldContainer}>
+                    <input
+                        {...register('password', {
+                            required: 'Заполните это поле',
+                        })}
+                        maxLength={50}
+                        className={`${styles.input} ${styles.passwordField}`}
+                        type={showPassword ? 'text' : 'password'}
+                        autoComplete="off"
+                    />
+                    <Image
+                        className={styles.showPasswordIcon}
+                        src={showPassword ? '/hide.png' : '/view.png'}
+                        alt="eye icon"
+                        width={20}
+                        height={20}
+                        onClick={() => {
+                            setShowPassword(prev => !prev)
+                        }}
+                    />
+                </div>
 
-
+                <button className={styles.submitButton} disabled={!isValid}>Сохранить</button>
             </form>
         </>
     )
