@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from 'zustand/middleware'
 import { IUser, IRegistrationData, ILoginData } from "@/types/user.interface";
-import { registerUser, loginUser } from "@/service/userService";
+import { registerUser, loginUser } from "@/services/userService";
 
 
 interface IAuthStore {

@@ -1,5 +1,4 @@
 from fastapi import Depends, APIRouter, HTTPException
-from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,6 +6,7 @@ import src.database as _db
 import src.auth.schemas as _auth_schemas
 import src.auth.service as _auth_service
 import src.auth.models as _auth_models
+import src.auth.security as _auth_security
 import src.auth.mail.router as _mail_module
 import src.auth.mobile.router as _mobile_module
 
@@ -43,6 +43,9 @@ async def update_user_path(
         user: _auth_models.User = Depends(_auth_service.get_current_user),
         session: AsyncSession = Depends(_db.get_session),
     ):
+
+    if not await _auth_security.check_password(user_data.password, user.password): # type: ignore
+        raise HTTPException(status_code=401, detail='Wrong password')
     
     user.username = user_data.username # type: ignore
     user.email = user_data.email # type: ignore

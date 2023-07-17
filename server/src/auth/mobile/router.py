@@ -5,20 +5,19 @@ import src.database as _db
 import src.auth.service as _auth_service
 import src.auth.mobile.service as _mobile_service
 import src.auth.security as _auth_security
-
+import src.auth.models as _auth_models
 
 router = APIRouter(prefix='/mobile')
 
 
-@router.post('/verification-call-request', tags=['Phone number verification'])
+@router.get('/verification-call-request', status_code=204, tags=['Phone number verification'])
 async def verification_call_request(
-        phone_number: str,
+        user: _auth_models.User = Depends(_auth_service.get_current_user),
         session: AsyncSession = Depends(_db.get_session)
     ):
-    user = await _auth_service.get_user_by_phone_number(phone_number, session)
 
-    if user is None:
-        raise HTTPException(status_code=404, detail=f'User with id: {id}, does not exist')
+    if user.phone_number is None:
+        raise HTTPException(status_code=400, detail='User does not set their phone number')
 
     # Verification code (it will be last 4 digits of bot's phone number)
     verif_code = await _auth_security.generate_4_digit_code()
@@ -28,16 +27,16 @@ async def verification_call_request(
     user.phone_number_verif_code = verif_code # type: ignore
     await session.commit()
 
-    return verif_code
+    return None
 
 
-@router.post('/validate-verification-code', tags=['Phone number verification'])
+@router.get('/validate-verification-code', status_code=204, tags=['Phone number verification'])
 async def validate_verification_code(
-        phone_number: str,
         verif_code: int,
+        user: _auth_models.User = Depends(_auth_service.get_current_user),
         session: AsyncSession = Depends(_db.get_session)
     ) -> None:
-    user = await _auth_service.get_user_by_phone_number(phone_number, session)
+    print(user)
 
     if user is None:
         raise HTTPException(status_code=404, detail=f'User with id: {id}, does not exist')
@@ -47,3 +46,5 @@ async def validate_verification_code(
 
     user.phone_number_is_verified = True # type: ignore
     await session.commit()
+
+    return None

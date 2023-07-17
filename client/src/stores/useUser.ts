@@ -1,6 +1,6 @@
 import useAuthStore from "./AuthStore"
 import { IUser } from "@/types/user.interface"
-import { getUser } from "@/service/userService"
+import { getUser } from "@/services/userService"
 import { useEffect, useState } from "react"
 import useStore from "./useStore"
 

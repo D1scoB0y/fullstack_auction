@@ -15,6 +15,7 @@ class UpdateUserSchema(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)
     email: str = Field(..., min_length=2, max_length=320)
     phone_number: str = Field(..., min_length=12, max_length=20)
+    password: str
 
 
 class ReadUserSchema(BaseModel):

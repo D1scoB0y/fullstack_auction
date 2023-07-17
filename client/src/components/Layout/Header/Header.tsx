@@ -1,12 +1,12 @@
 import { useState } from 'react'
 
 import styles from './Header.module.css'
-import useAuthStore from '@/store/AuthStore'
+import useAuthStore from '@/stores/AuthStore'
 import Link from 'next/link'
 import LoginModal from '@/components/Modals/LoginModal'
 import RegistrationModal from '@/components/Modals/RegistrationModal'
-import useUser from '@/store/useUser'
-import useStore from '@/store/useStore'
+import useUser from '@/stores/useUser'
+import useStore from '@/stores/useStore'
 import UserMenu from './UserMenu/UserMenu'
 
 
