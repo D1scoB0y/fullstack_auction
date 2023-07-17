@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import Portal from "./Portal";
 import styles from './Modal.module.css'
-import useAuthStore from "@/store/AuthStore";
+import useAuthStore from "@/stores/AuthStore";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ILoginData } from "@/types/user.interface";
 import Image from "next/image";

@@ -18,7 +18,7 @@ from httpx import AsyncClient
 from src.config import config
 
 
-async def verification_call(phone_number: str, verif_code: int):
+async def verification_call(phone_number: str, verif_code: int) -> int|None:
 
         call_data = {
             'phone': phone_number,

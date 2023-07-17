@@ -3,10 +3,10 @@ import Portal from "./Portal";
 import styles from './Modal.module.css'
 import { SubmitHandler, useForm } from "react-hook-form";
 import Image from "next/image";
-import { checkEmail, checkUsername } from "@/service/userService";
 import { IRegistrationData } from "@/types/user.interface";
-import useAuthStore from "@/store/AuthStore";
-import useStore from "@/store/useStore";
+import useAuthStore from "@/stores/AuthStore";
+import { checkUsernameIsFree, checkEmailIsFree } from "@/validators/registrationForm";
+
 
 type Props = {
     isActive: boolean,
@@ -52,7 +52,7 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                             value: 20,
                                             message: 'Длина - от 3 до 20 символов'
                                         },
-                                        validate: async (username: string) => await checkUsername(username) || 'Имя пользователя уже занято',
+                                        validate: checkUsernameIsFree,
                                     })}
                                     
                                     maxLength={20}
@@ -70,7 +70,7 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                             value: /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
                                             message: 'Введите корректный адрес'
                                         },
-                                        validate: async (email: string) => await checkEmail(email) || 'Эта почта уже занята'
+                                        validate: checkEmailIsFree
                                     })}
                                     className={styles.input}
                                     placeholder={'Электронная почта'}

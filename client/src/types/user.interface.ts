@@ -26,3 +26,7 @@ export interface IUpdateData {
 export interface ISettingsData extends IUpdateData {
     password: string
 }
+
+export interface IPhoneVerificationData {
+    verification_code: string
+}
