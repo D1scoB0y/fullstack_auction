@@ -33,7 +33,7 @@ const Header = () => {
 				<div className={styles.authBox}>
 					{(isAuthenticated && user) ? (
 						<>
-							<div className={styles.userBox} onMouseLeave={() => setMenuActive(false)} onMouseEnter={() => setMenuActive(true)}>
+							<div className={styles.userBox} onMouseLeave={() => setMenuActive(false)} onMouseMove={() => setMenuActive(true)}>
 								<img className={styles.userIcon} src="/user_icon.png" alt="user icon" />
 								<span className={styles.username}>{user.username}</span>
 								<UserMenu isActive={menuActive} user={user} />
@@ -53,13 +53,13 @@ const Header = () => {
 							>
 								Войти
 							</div>
+							<LoginModal isActive={loginFormActive} setIsActive={setLoginFormActive} setRegistrationFormActive={setRegisterFormActive} />
+							<RegistrationModal isActive={registerFormActive} setIsActive={setRegisterFormActive} setLoginFormActive={setLoginFormActive} />
 						</>
 					)}
 				</div>
 
 			</div>
-			<LoginModal isActive={loginFormActive} setIsActive={setLoginFormActive} setRegistrationFormActive={setRegisterFormActive} />
-			<RegistrationModal isActive={registerFormActive} setIsActive={setRegisterFormActive} setLoginFormActive={setLoginFormActive} />
 		</div>
 	)
 }
