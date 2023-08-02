@@ -17,7 +17,7 @@ const SettingsPage: FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [showPasswordError, setShowPasswordError] = useState<boolean>(false)
     const [phoneVerificationModalActive, setPhoneVerificationModalActive] = useState<boolean>(false)
-    const [user, setUser] = useState<IUser|null>(useUser())
+    const [user, setUser] = useState<IUser|null>(null)
 
     const token = useStore(useAuthStore, state => state.token)
     const isAuthenticated = useAuthStore(state => state.isAuthenticated)
@@ -41,13 +41,18 @@ const SettingsPage: FC = () => {
         }
     }
 
+    const fetchedUser = useUser()
+
     useEffect(() => {
+
+        setUser(fetchedUser)
+
         reset({
             username: user?.username,
             email: user?.email,
             phone_number: user?.phone_number || ''
         })
-    }, [user])
+    }, [fetchedUser])
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -108,7 +113,6 @@ const SettingsPage: FC = () => {
                             // @ts-ignore
                             validate: async (email: string) => await checkEmailIsFree(email, user?.email)
                         })}
-                        maxLength={20}
                         className={styles.input}
                         type="text"
                         autoComplete="off"
@@ -132,7 +136,6 @@ const SettingsPage: FC = () => {
                             // @ts-ignore
                             validate: async (phoneNumber: string) => await checkPhoneNumberIsFree(phoneNumber, user?.phone_number)
                         })}
-                        maxLength={20}
                         className={styles.input}
                         type="text"
                         autoComplete="off"

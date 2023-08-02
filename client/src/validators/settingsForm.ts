@@ -50,7 +50,7 @@ const checkPhoneNumberIsFree: TypeCheckPhoneNumberIsFree = async (
 
     if (!userPhoneNumber || phoneNumber.replaceAll(' ', '') !== userPhoneNumber) {
         try {
-            await api.get('/auth/check-email', {params: {phoneNumber}})
+            await api.get('/auth/check-phone', {params: {phone_number: phoneNumber}})
             return null
         } catch(e) {
             return 'Этот номер уже занят'
