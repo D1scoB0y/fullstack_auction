@@ -1,10 +1,9 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import Portal from "./Portal";
 import styles from './Modal.module.css'
-import useAuthStore from "@/stores/AuthStore";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { ILoginData } from "@/types/user.interface";
-import Image from "next/image";
+import { ILoginData } from "../../types/user.interface";
+import useAuthStore from "../../stores/authStore";
 
 
 type Props = {
@@ -15,7 +14,7 @@ type Props = {
 
 const LoginModal: FC<Props> = ({isActive, setIsActive, setRegistrationFormActive}) => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
-    const [wrongCredentials, setWrongCredentials] = useState<string|null>(null)
+    const [showCredentialsError, setShowCredentialsError] = useState<boolean>(false)
 
     const {register, handleSubmit, reset, formState: {isValid, errors}} = useForm<ILoginData>({
         mode: "onChange"
@@ -27,10 +26,10 @@ const LoginModal: FC<Props> = ({isActive, setIsActive, setRegistrationFormActive
         
         const response = await login(loginData)
         if (response === null) {
-            setWrongCredentials('Неверный логин или пароль')
+            setShowCredentialsError(true)
             reset({password: ''})
         } else {
-            setWrongCredentials(null)
+            setShowCredentialsError(false)
             reset()
             setIsActive(false)
         }
@@ -49,8 +48,8 @@ const LoginModal: FC<Props> = ({isActive, setIsActive, setRegistrationFormActive
                                     <span
                                         className={styles.errorMessage}
                                     >
-                                        {wrongCredentials ? (
-                                        <>{wrongCredentials}</>
+                                        {showCredentialsError ? (
+                                        <>{'Неверный логин или пароль'}</>
                                         ) : (errors.email && (
                                             <>{errors.email.message}</>
                                         ))}
@@ -77,12 +76,13 @@ const LoginModal: FC<Props> = ({isActive, setIsActive, setRegistrationFormActive
                                             type={showPassword ? 'text' : 'password'}
                                             autoComplete="off"
                                         />
-                                        <Image
+
+                                        <img
                                             className={styles.showPasswordIcon}
                                             src={showPassword ? '/hide.png' : '/view.png'}
-                                            alt="eye icon"
                                             width={20}
                                             height={20}
+                                            alt="eye icon"
                                             onClick={() => {
                                                 setShowPassword(prev => !prev)
                                             }}

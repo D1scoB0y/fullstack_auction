@@ -1,10 +1,10 @@
-import styles from '.LandingPage.module.css'
+import styles from './LandingPage.module.css'
 
 
 const LandingPage = () => {
-  return (
-    <div>LandingPage</div>
-  )
+    return (
+        <div>LandingPage</div>
+    )
 }
 
 export default LandingPage

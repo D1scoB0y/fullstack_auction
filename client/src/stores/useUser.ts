@@ -1,20 +1,18 @@
-import useAuthStore from "./AuthStore"
-import { IUser } from "@/types/user.interface"
-import { getUser } from "@/services/userService"
 import { useEffect, useState } from "react"
-import useStore from "./useStore"
+import { getUser } from "../services/userService"
+import { IUser } from "../types/user.interface"
+import useAuthStore from "./authStore"
+
 
 type TypeUseUser = () => IUser|null
 const useUser: TypeUseUser = () => {
     const [user, setUser] = useState<IUser|null>(null)
-
-    const token = useStore(useAuthStore, state => state.token)
+    const token = useAuthStore(state => state.token)
 
     useEffect(() => {
         const getUserEffect = async () => {
             if (!token) return
-            const user = await getUser(token)
-            setUser(user)
+            setUser(await getUser(token))
         }
         getUserEffect()
     }, [token])

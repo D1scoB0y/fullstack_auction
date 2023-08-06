@@ -1,5 +1,5 @@
-import api from "@/api";
-import { IUser, IRegistrationData, ILoginData, IUpdateData, ISettingsData } from "@/types/user.interface";
+import api from "../api";
+import { IUser, IRegistrationData, ILoginData, IUpdateData } from "../types/user.interface";
 
 
 type TypeRegisterUser = (registrationData: IRegistrationData) => Promise<string|null>
@@ -28,7 +28,6 @@ const loginUser: TypeLoginUser = async (loginData) => {
     }
 
     try {
-        JSON.stringify
         const response = await api.post('/auth/login', data, requestConfig)
         return response.data
     } catch(e) {
@@ -57,8 +56,8 @@ const getUser: TypeGetUser = async (token) => {
 }
 
 
-type TypeUdateUser = (settingsData: ISettingsData, token: string) => Promise<boolean>
-const updateUser: TypeUdateUser = async (settingsData, token) => {
+type TypeUdateUser = (freshData: IUpdateData, token: string) => Promise<number|null>
+const updateUser: TypeUdateUser = async (freshData, token) => {
 
     const requestConfig = {
         headers: {
@@ -67,7 +66,18 @@ const updateUser: TypeUdateUser = async (settingsData, token) => {
     }
 
     try {
-        const response = await api.put('/auth/update-user', settingsData, requestConfig)
+        const response = await api.put('/auth/update-user', freshData, requestConfig)
+        return response.status
+    } catch(e) {
+        return null
+    }
+}
+
+
+type TypeCheckEmail = (email: string) => Promise<boolean>
+const checkEmail: TypeCheckEmail = async (email) => {
+    try {
+        await api.get('/auth/check-email', {params: {email}})
         return true
     } catch(e) {
         return false
@@ -75,16 +85,10 @@ const updateUser: TypeUdateUser = async (settingsData, token) => {
 }
 
 
-type TypeSendPhoneVerificationCallRequest = (token: string) => Promise<boolean>
-const sendPhoneVerificationCallRequest: TypeSendPhoneVerificationCallRequest = async (token) => {
-    const requestConfig = {
-        headers: {
-            Authorization: 'Bearer ' + token
-        }
-    }
-
+type TypeCheckUsername = (username: string) => Promise<boolean>
+const checkUsername: TypeCheckUsername = async (username) => {
     try {
-        await api.get('/auth/mobile/verification-call-request', requestConfig)
+        await api.get('/auth/check-username', {params: {username}})
         return true
     } catch(e) {
         return false
@@ -92,19 +96,10 @@ const sendPhoneVerificationCallRequest: TypeSendPhoneVerificationCallRequest = a
 }
 
 
-type TypeSendPhoneVerificationCode = (code: string, token: string) => Promise<boolean>
-const sendPhoneVerificationCode: TypeSendPhoneVerificationCode = async (code, token) => {
-    const requestConfig = {
-        headers: {
-            Authorization: 'Bearer ' + token
-        },
-        params: {
-            verif_code: code
-        }
-    }
-
+type TypeCheckPhone = (phone_number: string) => Promise<boolean>
+const checkPhone: TypeCheckPhone = async (phone_number) => {
     try {
-        await api.get('/auth/mobile/validate-verification-code', requestConfig)
+        await api.get('/auth/check-phone', {params: {phone_number}})
         return true
     } catch(e) {
         return false
@@ -117,6 +112,7 @@ export {
     loginUser,
     getUser,
     updateUser,
-    sendPhoneVerificationCallRequest,
-    sendPhoneVerificationCode,
+    checkEmail,
+    checkUsername,
+    checkPhone,
 }

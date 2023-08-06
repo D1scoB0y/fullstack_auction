@@ -1,23 +1,20 @@
-import Header from "./Header/Header"
-import Footer from "./Footer/Footer"
+import { FC, ReactNode } from 'react'
+import Header from './Header/Header'
+import Footer from './Footer/Footer'
+import { Outlet } from 'react-router-dom'
 
-type Props = {
-    children: any
-}
+const Layout: FC = () => {
+  	return (
+		<>
+			<Header />
+			
+			<main>
+				<Outlet />
+			</main>
 
-
-const Layout = ({children}: Props) => {
-  return (
-    <>
-        <Header />
-
-        <main>
-            {children}
-        </main>
-
-        <Footer />
-    </>
-  )
+			<Footer />
+		</>
+)
 }
 
 export default Layout
