@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import styles from './UserMenu.module.css'
-import { IUser } from '@/types/user.interface'
+import { IUser } from '../../../../types/user.interface'
 import { useStore } from 'zustand'
-import useAuthStore from '@/stores/AuthStore'
-import Link from 'next/link'
+import useAuthStore from '../../../../stores/authStore'
+import { Link } from 'react-router-dom'
 
 const UserMenu: FC<{isActive: boolean, user: IUser}> = ({isActive, user}) => {
 
@@ -13,8 +13,8 @@ const UserMenu: FC<{isActive: boolean, user: IUser}> = ({isActive, user}) => {
     <>
         {isActive && (
             <div className={styles.dropDown}>
-                {(user && user.is_seller) && <Link href={'/'} className={styles.dropDownItem}>Лоты</Link>}
-                <Link href={'/settings'} className={styles.dropDownItem}>Настройки</Link>
+                {(user && user.is_seller) && <Link to={'/'} className={styles.dropDownItem}>Лоты</Link>}
+                <Link to={'/settings'} className={styles.dropDownItem}>Настройки</Link>
                 <div className={`${styles.dropDownItem} ${styles.exitItem}`} onClick={() => logout()}>Выйти</div>
             </div>
         )}

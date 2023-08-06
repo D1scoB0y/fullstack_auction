@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 
 import styles from './Footer.module.css'
 
@@ -8,7 +8,7 @@ const Footer = () => {
     <div className={styles.footer}>
         <div className={styles.innerFooter}>
 
-            <Link className={styles.footerSection} href={'/'}>
+            <Link className={styles.footerSection} to={'/'}>
                 Главная
             </Link>
 

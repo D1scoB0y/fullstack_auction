@@ -20,13 +20,10 @@ export interface IRegistrationData extends ILoginData {
 export interface IUpdateData {
     username: string
     email: string
-    phone_number: string
+    phone_number: string|null
+    password: string
 }
 
 export interface ISettingsData extends IUpdateData {
     password: string
-}
-
-export interface IPhoneVerificationData {
-    verification_code: string
 }

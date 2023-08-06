@@ -7,7 +7,7 @@ import src.auth.router as _auth_module
 # Fastapi instance
 app = FastAPI()
 
-# CORS middleware config (configured for localhost:3000 Next.js app)
+# CORS middleware config (configured for http://localhost:5173 React app)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[config.CLIENT_ORIGIN],

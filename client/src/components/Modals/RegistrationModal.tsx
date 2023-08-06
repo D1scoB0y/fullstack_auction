@@ -2,10 +2,9 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 import Portal from "./Portal";
 import styles from './Modal.module.css'
 import { SubmitHandler, useForm } from "react-hook-form";
-import Image from "next/image";
-import { IRegistrationData } from "@/types/user.interface";
-import useAuthStore from "@/stores/AuthStore";
-import { checkUsernameIsFree, checkEmailIsFree } from "@/validators/registrationForm";
+import { checkEmail, checkUsername } from "../../services/userService";
+import { IRegistrationData } from "../../types/user.interface";
+import useAuthStore from "../../stores/authStore";
 
 
 type Props = {
@@ -52,7 +51,7 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                             value: 20,
                                             message: 'Длина - от 3 до 20 символов'
                                         },
-                                        validate: checkUsernameIsFree,
+                                        validate: async (username: string) => await checkUsername(username) || 'Имя пользователя уже занято',
                                     })}
                                     
                                     maxLength={20}
@@ -70,7 +69,7 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                             value: /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
                                             message: 'Введите корректный адрес'
                                         },
-                                        validate: checkEmailIsFree
+                                        validate: async (email: string) => await checkEmail(email) || 'Эта почта уже занята'
                                     })}
                                     className={styles.input}
                                     placeholder={'Электронная почта'}
@@ -98,7 +97,7 @@ const RegistrationModal: FC<Props> = ({isActive, setIsActive, setLoginFormActive
                                         type={showPassword ? 'text' : 'password'}
                                         autoComplete="off"
                                     />
-                                    <Image
+                                    <img
                                         className={styles.showPasswordIcon}
                                         src={showPassword ? '/hide.png' : '/view.png'}
                                         alt="eye icon"

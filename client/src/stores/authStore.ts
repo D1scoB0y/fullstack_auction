@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { persist } from 'zustand/middleware'
-import { IUser, IRegistrationData, ILoginData } from "@/types/user.interface";
-import { registerUser, loginUser } from "@/services/userService";
+import { persist } from "zustand/middleware";
+import { IRegistrationData, ILoginData } from "../types/user.interface";
+import { registerUser, loginUser } from "../services/userService";
 
 
 interface IAuthStore {
@@ -18,8 +18,11 @@ const useAuthStore = create<IAuthStore>()(
         (set) => ({
             token: null,
             isAuthenticated: false,
+
             login: async (loginData) => {
                 const token = await loginUser(loginData)
+
+                console.log(token)
 
                 if (token) {
                     set(state => ({
@@ -31,6 +34,7 @@ const useAuthStore = create<IAuthStore>()(
                     return null
                 }
             },
+
             registration: async (registrationData) => {
                 const token = await registerUser(registrationData)
 
@@ -42,6 +46,7 @@ const useAuthStore = create<IAuthStore>()(
                     }))
                 }
             },
+
             logout: () => {
                 set(state => ({
                     ...state,
@@ -51,10 +56,11 @@ const useAuthStore = create<IAuthStore>()(
             }
         }),
         {
-            name: 'auth'
+            name: 'auth',
         }
     )
 )
 
 
 export default useAuthStore
+
