@@ -24,6 +24,4 @@ export interface IUpdateData {
     password: string
 }
 
-export interface ISettingsData extends IUpdateData {
-    password: string
-}
+export interface ISettingsData extends IUpdateData {}

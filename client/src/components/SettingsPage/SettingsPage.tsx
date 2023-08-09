@@ -1,156 +1,223 @@
 import { FC, useEffect, useState } from 'react'
+import { getUser, updateUser } from '../../services/userService'
 import styles from './SettingsPage.module.css'
-import { SubmitHandler, useForm,  } from 'react-hook-form'
-import { useStore } from 'zustand'
-import { ISettingsData } from '../../types/user.interface'
 import useAuthStore from '../../stores/authStore'
-import useUser from '../../stores/useUser'
-import { updateUser, checkEmail, checkPhone, checkUsername } from '../../services/userService'
 import useIsAuthenticated from '../../hooks/useIsAuthenticated'
-import usePhoneMask from '../../hooks/usePhoneMask'
+import { checkUsername, checkEmail, checkPhone } from '../../services/userService'
+import { IUser } from '../../types/user.interface'
+import useSettingsFormHandlers, { IFormData, IFormErrors } from '../../hooks/useSettingsFormHandlers'
+
 
 
 const SettingsPage: FC = () => {
 
     useIsAuthenticated()
 
+    const [user, setUser] = useState<IUser|null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
-    const [wrongPassword, setWrongPassword] = useState<boolean>(false)
-
-    const user = useUser()
-
-    const {
-        register,
-        handleSubmit,
-        reset,
-        resetField,
-        formState: {isValid, errors}
-    } = useForm<ISettingsData>({
-        mode: "onChange",
+    const [formIsValid, setFormIsValid] = useState<boolean>(true)
+    const [formData, setFormData] = useState<IFormData>({
+        username: '',
+        email: '',
+        phoneNumber: '',
+        password: '',
     })
+    const [errors, setErrors] = useState<IFormErrors>({
+        username: '',
+        email: '',
+        phoneNumber: '',
+        password: '',
+    })
+
+
+    useEffect(() => {
+        updateUserState()
+    }, [])
 
     useEffect(() => {
         if (user) {
-            reset({
+            setFormData(prev => ({
+                ...prev,
                 username: user.username,
-                phone_number: user.phone_number,
                 email: user.email,
-            })
+                phoneNumber: user.phone_number,
+            }))
         }
     }, [user])
 
-    const token = useStore(useAuthStore, state => state.token)
+    useEffect(() => {
 
-    const onSubmit: SubmitHandler<ISettingsData> = async (settingsData) => {
-        const freshData = {
-            username: settingsData.username,
-            email: settingsData.email,
-            phone_number: settingsData.phone_number,
-            password: settingsData.password,
+        const isErrors = errors.username || errors.email || errors.phoneNumber || errors.password 
+
+        if (isErrors || formData.password.length === 0) {
+            setFormIsValid(false)
+        } else {
+            setFormIsValid(true)
         }
+    }, [errors, formData.password])
+
+
+    const {
+        usernameHandler,
+        emailHandler,
+        phoneNumberHandler,
+        passwordHandler
+    } = useSettingsFormHandlers(setFormData, setErrors)
+
+
+    const token = useAuthStore(state => state.token)
+
+    const updateUserState = async () => {
 
         if (token) {
-            const response = await updateUser(freshData, token)
-            if (response !== 204) {
-                setWrongPassword(true)
-                resetField('password')
+
+            const fetchedUser = await getUser(token)
+
+            if (fetchedUser) {
+                setUser(fetchedUser)
             }
-            resetField('password')
         }
     }
 
-    usePhoneMask('phoneInput')
-    
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault()
+
+        setIsLoading(true)
+
+        let isSubmissionСanceled = false
+
+        if (formData.username !== user?.username && !await checkUsername(formData.username)) {
+            setErrors(prev => ({...prev, username: 'Это имя пользователя уже занято'}))
+            isSubmissionСanceled = true
+        }
+
+        if (formData.email !== user?.email && !await checkEmail(formData.email)) {
+            setErrors(prev => ({...prev, email: 'Эта почта уже занята'}))
+            isSubmissionСanceled = true
+        }
+
+        if (formData.phoneNumber) {
+
+            if (formData.phoneNumber !== user?.phone_number && !await checkPhone(formData.phoneNumber)) {
+
+                setErrors(prev => ({...prev, phoneNumber: 'Этот номер телефона уже занят'}))
+                isSubmissionСanceled = true
+            }
+        }
+
+        
+        if (!isSubmissionСanceled) {
+
+            const freshData = {
+                username: formData.username,
+                email: formData.email,
+                phone_number: formData.phoneNumber,
+                password: formData.password,
+            }
+
+            if (token) {
+                const response = await updateUser(freshData, token)
+
+                if (!response) {
+                    setErrors(prev => ({...prev, password: 'Неверный пароль'}))
+                }
+            }
+        }
+
+        setFormData(prev => ({...prev, password: ''}))
+
+        updateUserState()
+
+        setIsLoading(false)
+    }
+
+
     return (
         <>
             <span className={styles.pageTitle}>Настройки аккаунта</span>
 
-            <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form className={styles.form} onSubmit={onSubmit} noValidate>
+
 
                 <span className={styles.inputLabel}>Имя пользователя</span>
-                {errors.username && <span className={styles.errorMessage}>{errors.username.message}</span>}
+
+                {errors.username && <span className={styles.errorMessage}>{errors.username}</span>}
+
                 <input
-                    {...register('username', {
-                        required: 'Заполните это поле',
-                        minLength: {
-                            value: 3,
-                            message: 'Длина - от 3 до 20 символов'
-                        },
-                        maxLength: {
-                            value: 20,
-                            message: 'Длина - от 3 до 20 символов'
-                        },
-                        validate: async (username: string) => username === user?.username || await checkUsername(username) || 'Имя пользователя уже занято',
-                    })}
-                    maxLength={20}
                     className={styles.input}
+                    name='username'
+                    value={formData.username}
+                    onChange={(e) => {e.preventDefault(); usernameHandler(e.target.value)}}
+                    maxLength={20}
                     type="text"
-                    autoComplete="off"
                 />
 
+
                 <span className={styles.inputLabel}>Электронная почта</span>
-                {errors.email && <span className={styles.errorMessage}>{errors.email.message}</span>}
+
+                {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
+
                 <div className={styles.fieldContainer}>
+
                     <input
-                        style={{marginBottom: 0}}
-                        {...register('email', {
-                            required: 'Заполните это поле',
-                            pattern: {
-                                value: /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
-                                message: 'Введите корректный адрес'
-                            },
-                            validate: async (email: string) => email === user?.email || await checkEmail(email) || 'Эта почта уже занята'
-                        })}
-                        maxLength={20}
                         className={styles.input}
+                        name='email'
+                        value={formData.email}
+                        onChange={(e) => {e.preventDefault(); emailHandler(e.target.value)}}
+                        style={{marginBottom: 0}}
                         type="text"
-                        autoComplete="off"
                     />
+
                     {user?.email_is_verified
                         ? <span className={styles.okSymbol}>✓</span>
-                        : <button type='button' className={styles.confirmButton} onClick={() => {}} disabled={!user?.email}>Подтвердить</button>
+                        : <button type='button' className={styles.confirmButton} disabled={!user?.email}>Подтвердить</button>
                     }
+
                 </div>
+
 
                 <span className={styles.inputLabel}>Номер телефона</span>
-                {errors.phone_number && <span className={styles.errorMessage}>{errors.phone_number.message}</span>}
+
+                {errors.phoneNumber && <span className={styles.errorMessage}>{errors.phoneNumber}</span>}
+
                 <div className={styles.fieldContainer}>
+
                     <input
-                        style={{marginBottom: 0}}
-                        id='phoneInput'
-                        {...register('phone_number', {
-                            validate: async (phoneNumber: string) => phoneNumber.replace(' ', '') === user?.phone_number || await checkPhone(phoneNumber) || 'Этот номер уже занят'
-                        })}
-                        maxLength={20}
                         className={styles.input}
-                        type="text"
-                        autoComplete="off"
-                        onClick={() => console.log(errors)}
+                        name='phoneNumber'
+                        value={formData.phoneNumber || ''}
+                        onChange={(e) => {e.preventDefault(); phoneNumberHandler(e.target.value)}}
+                        maxLength={14}
+                        style={{marginBottom: 0}}
+                        placeholder='+79999999999'
+                        type="tel"
                     />
+
                     {user?.phone_number_is_verified
                         ? <span className={styles.okSymbol}>✓</span>
-                        : <button type='button' className={styles.confirmButton} onClick={() => {}} disabled={!user?.phone_number}>Подтвердить</button>
+                        : <button type='button' className={styles.confirmButton} disabled={!user?.phone_number}>Подтвердить</button>
                     }
+
                 </div>
 
+
                 <span className={styles.inputLabel}>Текущий пароль</span>
-                {errors.password && <span className={styles.errorMessage}>
-                    {wrongPassword ? (
-                        <>Неверный пароль</>
-                        ) : (errors.email && (
-                        <>{errors.email.message}</>
-                    ))}
-                </span>}
+
+                {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
+
                 <div className={styles.passwordFieldContainer}>
+
                     <input
-                        {...register('password', {
-                            required: 'Заполните это поле',
-                        })}
-                        maxLength={50}
                         className={`${styles.input} ${styles.passwordField}`}
+                        name='password'
+                        value={formData.password}
+                        onChange={(e) => {e.preventDefault(); passwordHandler(e.target.value)}}
+                        maxLength={50}
                         type={showPassword ? 'text' : 'password'}
-                        autoComplete="off"
                     />
+
                     <img
                         className={styles.showPasswordIcon}
                         src={showPassword ? '/hide.png' : '/view.png'}
@@ -162,8 +229,14 @@ const SettingsPage: FC = () => {
                         }}
                     />
                 </div>
+                
 
-                <button className={styles.submitButton} disabled={!isValid}>Сохранить</button>
+                <div className={styles.submitButtonContainer}>
+                    <button className={styles.submitButton} disabled={!formIsValid}>Сохранить</button>
+                    
+                    {isLoading && <div className={styles.loader}></div>} 
+                </div>
+
             </form>
         </>
     )

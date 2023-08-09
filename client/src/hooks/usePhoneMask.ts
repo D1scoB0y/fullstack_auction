@@ -13,7 +13,7 @@ const usePhoneMask: TypeUsePhoneMask = (elementId) => {
         if (element) {
             IMask(element, maskOptions);
         }
-    })
+    }, [])
 }
 
 
