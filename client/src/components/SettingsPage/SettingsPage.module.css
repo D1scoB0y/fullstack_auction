@@ -117,6 +117,13 @@
     color: var(--green);
 }
 
+.submitButtonContainer{
+    width: max-content;
+
+    display: flex;
+    align-items: center;
+}
+
 .submitButton{
     width: 300px;
     height: 48px;
@@ -145,4 +152,22 @@
     color: var(--muted-text);
 
     cursor: default;
+}
+
+.loader{
+    width: 40px;
+    height: 40px;
+
+    margin: 24px 0 0 24px;
+
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    border-right-color: var(--blue);
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+    100%{
+        transform: rotate(360deg);
+    }
 }
