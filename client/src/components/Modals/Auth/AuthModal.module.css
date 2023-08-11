@@ -1,0 +1,62 @@
+.formTitle{
+    width: max-content;
+
+    padding-bottom: 12px;
+
+    font-family: 'Lora', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--black);
+
+    user-select: none;
+}
+
+.errorMessage{
+    display: block;
+
+    min-height: 16px;
+    margin-bottom: 4px;
+
+
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--red);
+}
+
+.passwordFieldContainer{
+    margin-bottom: 12px;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.passwordField{
+    margin-bottom: 0;
+}
+
+.underFormInfo{
+    display: flex;
+
+    padding-top: 24px;
+}
+
+.underFormText{
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted-text);
+}
+
+.underFormHref{
+    margin-left: 8px;
+
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--blue);
+
+    cursor: pointer;
+}
+
+.underFormHref:hover{
+    color: var(--hovered-blue);
+}

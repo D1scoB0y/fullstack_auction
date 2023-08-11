@@ -1,7 +1,7 @@
 .header{
     width: 100%;
     height: 64px;
-    box-shadow: 0px 2px 16px 2px rgba(0, 0, 0, 0.25); 
+    box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.2); 
 }
 
 .innerHeader{
@@ -14,27 +14,6 @@
     justify-content: space-between;
 
     margin: auto;
-}
-
-.companyNameBox{
-    display: flex;
-    flex-direction: column;
-}
-
-.companyName{
-    font-family: 'Lora', serif;
-    font-size: 28px;
-    font-weight: 400;
-    color: var(--black);
-}
-
-.auctionsWord{
-    margin-top: -9px;
-
-    font-family: 'Lora', serif;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--black);
 }
 
 .authBox{

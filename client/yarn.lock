@@ -1220,11 +1220,6 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-lodash.debounce@^4.0.8:
-  version "4.0.8"
-  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
-  integrity sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==
-
 lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
@@ -1414,11 +1409,6 @@ react-dom@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
-
-react-hook-form@^7.45.2:
-  version "7.45.2"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.45.2.tgz#c757f3d5e633ccb186443d57c10fc511df35721a"
-  integrity sha512-9s45OdTaKN+4NSTbXVqeDITd/nwIg++nxJGL8+OD5uf1DxvhsXQ641kaYHk5K28cpIOTYm71O/fYk7rFaygb3A==
 
 react-refresh@^0.14.0:
   version "0.14.0"
