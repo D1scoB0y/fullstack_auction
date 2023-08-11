@@ -1,33 +1,33 @@
 import { useState } from 'react'
 
 import styles from './Header.module.css'
-import { Link } from 'react-router-dom'
-import LoginModal from '../../Modals/LoginModal'
-import useAuthStore from '../../../stores/authStore'
-import useUser from '../../../stores/useUser'
+
+import useModalsStore from '@/stores/modalsStore'
+import useAuthStore from '@/stores/authStore'
+import useUser from '@/stores/useUser'
+
+import RegistrationModal from '../../Modals/Auth/RegistrationModal'
+import CompanyName from './CompanyName/CompanyName'
+import LoginModal from '@/components/Modals/Auth/LoginModal'
 import UserMenu from './UserMenu/UserMenu'
-import RegistrationModal from '../../Modals/RegistrationModal'
 
 
 const Header = () => {
-	const [loginFormActive, setLoginFormActive] = useState<boolean>(false)
-	const [registerFormActive, setRegisterFormActive] = useState<boolean>(false)
-
 	const [showUserMenu, setShowUserMenu] = useState<boolean>(false)
 
 	const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 	const user = useUser()
-	
+
+	const {
+		setLoginModalActive,
+		setRegistrationModalActive
+	} = useModalsStore()
+
 	return (
 		<div className={styles.header}>
 			<div className={styles.innerHeader}>
 
-				<Link to={'/'}>
-					<div className={styles.companyNameBox}>
-						<h1 className={styles.companyName}>FotoJäger`s</h1>
-						<span className={styles.auctionsWord}>AUCTIONS</span>
-					</div>
-				</Link>
+				<CompanyName />
 
 				<div className={styles.authBox}>
 					{(isAuthenticated && user) ? (
@@ -42,13 +42,13 @@ const Header = () => {
 						<>
 							<span
 								className={styles.registrationHref}
-								onClick={() => {setRegisterFormActive(true); console.log(registerFormActive)}}
+								onClick={() => setRegistrationModalActive(true)}
 							>
 								Регистрация
 							</span>
 							<div
 								className={styles.loginHref}
-								onClick={() => {setLoginFormActive(true); console.log(registerFormActive)}}
+								onClick={() => setLoginModalActive(true)}
 							>
 								Войти
 							</div>
@@ -57,8 +57,10 @@ const Header = () => {
 				</div>
 
 			</div>
-			<LoginModal isActive={loginFormActive} setIsActive={setLoginFormActive} setRegistrationFormActive={setRegisterFormActive} />
-			<RegistrationModal isActive={registerFormActive} setIsActive={setRegisterFormActive} setLoginFormActive={setLoginFormActive} />
+			
+			<LoginModal />
+			<RegistrationModal />
+				
 		</div>
 	)
 }

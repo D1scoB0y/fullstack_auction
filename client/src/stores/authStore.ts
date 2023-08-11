@@ -7,7 +7,7 @@ import { registerUser, loginUser } from "../services/userService";
 interface IAuthStore {
     token: string|null,
     isAuthenticated: boolean;
-    login: (loginData: ILoginData) => Promise<void|null>;
+    login: (loginData: ILoginData) => Promise<boolean>;
     registration: (registrationData: IRegistrationData) => Promise<void>;
     logout: () => void;
 }
@@ -22,16 +22,15 @@ const useAuthStore = create<IAuthStore>()(
             login: async (loginData) => {
                 const token = await loginUser(loginData)
 
-                console.log(token)
-
                 if (token) {
                     set(state => ({
                         ...state,
                         token: token,
                         isAuthenticated: true,
                     }))
+                    return true
                 } else {
-                    return null
+                    return false
                 }
             },
 

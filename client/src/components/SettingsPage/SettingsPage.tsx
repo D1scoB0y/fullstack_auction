@@ -1,39 +1,71 @@
-import { FC, useEffect, useState } from 'react'
-import { getUser, updateUser } from '../../services/userService'
+import {
+    SetStateAction,
+    useEffect,
+    Dispatch,
+    useState,
+} from 'react'
+
 import styles from './SettingsPage.module.css'
-import useAuthStore from '../../stores/authStore'
-import useIsAuthenticated from '../../hooks/useIsAuthenticated'
-import { checkUsername, checkEmail, checkPhone } from '../../services/userService'
-import { IUser } from '../../types/user.interface'
-import useSettingsFormHandlers, { IFormData, IFormErrors } from '../../hooks/useSettingsFormHandlers'
+
+import useAuthStore from '@/stores/authStore'
+import useSettingsFormHandlers, { IFormData, IFormErrors } from '@/hooks/useSettingsFormHandlers'
+import {
+    checkUsername,
+    updateUser,
+    checkEmail,
+    checkPhone,
+    getUser,
+} from '@/services/userService'
+
+import { IUser } from '@/types/user.interface'
+
+import ShowPasswordButton from '../UI/Form/ShowPasswordButton/ShowPasswordButton'
+import SubmitButton from '../UI/Form/SubmitButton/SubmitButton'
+import PageTitle from '../UI/PageTitle/PageTitle'
+import Loader from '../UI/Loader/Loader'
+import Input from '../UI/Form/Input/Input'
 
 
 
-const SettingsPage: FC = () => {
+const updateUserState = async (
+    token: string|null,
+    setUser: Dispatch<SetStateAction<IUser|null>>
+) => {
+    if (token) {
 
-    useIsAuthenticated()
+        const fetchedUser = await getUser(token)
+
+        if (fetchedUser) {
+            setUser(fetchedUser)
+        }
+    }
+}
+
+const initialFormData = {
+    username: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+}
+
+const initialFormErrors = initialFormData
+
+
+const SettingsPage = () => {
 
     const [user, setUser] = useState<IUser|null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false)
-    const [formIsValid, setFormIsValid] = useState<boolean>(true)
-    const [formData, setFormData] = useState<IFormData>({
-        username: '',
-        email: '',
-        phoneNumber: '',
-        password: '',
-    })
-    const [errors, setErrors] = useState<IFormErrors>({
-        username: '',
-        email: '',
-        phoneNumber: '',
-        password: '',
-    })
+    const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
+    const [formData, setFormData] = useState<IFormData>(initialFormData)
+    const [errors, setErrors] = useState<IFormErrors>(initialFormErrors)
+
+    const token = useAuthStore(state => state.token)
 
     useEffect(() => {
-        updateUserState()
-    }, [])
+        updateUserState(token, setUser)
+    }, [token])
 
     useEffect(() => {
         if (user) {
@@ -41,7 +73,7 @@ const SettingsPage: FC = () => {
                 ...prev,
                 username: user.username,
                 email: user.email,
-                phoneNumber: user.phone_number,
+                phoneNumber: user.phone_number || '',
             }))
         }
     }, [user])
@@ -51,9 +83,9 @@ const SettingsPage: FC = () => {
         const isErrors = errors.username || errors.email || errors.phoneNumber || errors.password 
 
         if (isErrors || formData.password.length === 0) {
-            setFormIsValid(false)
+            setIsFormValid(false)
         } else {
-            setFormIsValid(true)
+            setIsFormValid(true)
         }
     }, [errors, formData.password])
 
@@ -65,20 +97,6 @@ const SettingsPage: FC = () => {
         passwordHandler
     } = useSettingsFormHandlers(setFormData, setErrors)
 
-
-    const token = useAuthStore(state => state.token)
-
-    const updateUserState = async () => {
-
-        if (token) {
-
-            const fetchedUser = await getUser(token)
-
-            if (fetchedUser) {
-                setUser(fetchedUser)
-            }
-        }
-    }
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -124,19 +142,18 @@ const SettingsPage: FC = () => {
                     setErrors(prev => ({...prev, password: 'Неверный пароль'}))
                 }
             }
+
+            updateUserState(token, setUser)
         }
 
         setFormData(prev => ({...prev, password: ''}))
 
-        updateUserState()
-
         setIsLoading(false)
     }
 
-
     return (
         <>
-            <span className={styles.pageTitle}>Настройки аккаунта</span>
+            <PageTitle text='Настройки аккаунта' />
 
             <form className={styles.form} onSubmit={onSubmit} noValidate>
 
@@ -145,13 +162,10 @@ const SettingsPage: FC = () => {
 
                 {errors.username && <span className={styles.errorMessage}>{errors.username}</span>}
 
-                <input
-                    className={styles.input}
-                    name='username'
+                <Input
                     value={formData.username}
-                    onChange={(e) => {e.preventDefault(); usernameHandler(e.target.value)}}
+                    onChange={(e) => usernameHandler(e.target.value)}
                     maxLength={20}
-                    type="text"
                 />
 
 
@@ -161,20 +175,16 @@ const SettingsPage: FC = () => {
 
                 <div className={styles.fieldContainer}>
 
-                    <input
-                        className={styles.input}
-                        name='email'
+                    <Input
                         value={formData.email}
-                        onChange={(e) => {e.preventDefault(); emailHandler(e.target.value)}}
+                        onChange={(e) => emailHandler(e.target.value)}
                         style={{marginBottom: 0}}
-                        type="text"
                     />
 
                     {user?.email_is_verified
                         ? <span className={styles.okSymbol}>✓</span>
                         : <button type='button' className={styles.confirmButton} disabled={!user?.email}>Подтвердить</button>
                     }
-
                 </div>
 
 
@@ -184,11 +194,9 @@ const SettingsPage: FC = () => {
 
                 <div className={styles.fieldContainer}>
 
-                    <input
-                        className={styles.input}
-                        name='phoneNumber'
-                        value={formData.phoneNumber || ''}
-                        onChange={(e) => {e.preventDefault(); phoneNumberHandler(e.target.value)}}
+                    <Input
+                        value={formData.phoneNumber}
+                        onChange={(e) => phoneNumberHandler(e.target.value)}
                         maxLength={14}
                         style={{marginBottom: 0}}
                         placeholder='+79999999999'
@@ -199,7 +207,6 @@ const SettingsPage: FC = () => {
                         ? <span className={styles.okSymbol}>✓</span>
                         : <button type='button' className={styles.confirmButton} disabled={!user?.phone_number}>Подтвердить</button>
                     }
-
                 </div>
 
 
@@ -209,32 +216,33 @@ const SettingsPage: FC = () => {
 
                 <div className={styles.passwordFieldContainer}>
 
-                    <input
-                        className={`${styles.input} ${styles.passwordField}`}
-                        name='password'
+                    <Input
                         value={formData.password}
-                        onChange={(e) => {e.preventDefault(); passwordHandler(e.target.value)}}
+                        onChange={(e) => {passwordHandler(e.target.value); console.log(formData.phoneNumber)}}
                         maxLength={50}
+                        style={{marginBottom: 0}}
                         type={showPassword ? 'text' : 'password'}
                     />
 
-                    <img
-                        className={styles.showPasswordIcon}
-                        src={showPassword ? '/hide.png' : '/view.png'}
-                        alt="eye icon"
-                        width={20}
-                        height={20}
-                        onClick={() => {
-                            setShowPassword(prev => !prev)
-                        }}
+                    <ShowPasswordButton
+                        showPassword={showPassword}
+                        setShowPassword={setShowPassword}
                     />
                 </div>
                 
 
                 <div className={styles.submitButtonContainer}>
-                    <button className={styles.submitButton} disabled={!formIsValid}>Сохранить</button>
                     
-                    {isLoading && <div className={styles.loader}></div>} 
+                    <SubmitButton
+                        text='Сохранить'
+                        disabled={!isFormValid}
+                    />
+
+                    {isLoading && <Loader
+                        width={40}
+                        height={40}
+                        style={{marginTop: 24, marginLeft: 24}}
+                    />}
                 </div>
 
             </form>

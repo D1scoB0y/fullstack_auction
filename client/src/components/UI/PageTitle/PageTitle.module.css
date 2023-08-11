@@ -1,0 +1,10 @@
+.pageTitle{
+    display: block;
+
+    padding-top: 36px;
+
+    font-family: 'Lora', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--black);
+}

@@ -8,7 +8,6 @@ const registerUser: TypeRegisterUser = async (registrationData) => {
         const response = await api.post('/auth/registration', registrationData)
         return response.data
     } catch(e) {
-        console.log(e)
         return null
     }
 }
@@ -31,7 +30,6 @@ const loginUser: TypeLoginUser = async (loginData) => {
         const response = await api.post('/auth/login', data, requestConfig)
         return response.data
     } catch(e) {
-        console.log(e)
         return null
     }
 }
@@ -50,7 +48,6 @@ const getUser: TypeGetUser = async (token) => {
         const response = await api.get('/auth/get-user', requestConfig)
         return response.data
     } catch(e) {
-        console.log(e)
         return null
     }
 }
