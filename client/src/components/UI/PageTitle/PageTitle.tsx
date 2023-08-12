@@ -9,18 +9,18 @@ interface IPageTitleProps {
 }
 
 
-const PageTitle: FC<IPageTitleProps> = memo(({
+const PageTitle: FC<IPageTitleProps> = ({
     text,
     className,
 }) => {
-  return (
-    <span
-        className={`${styles.pageTitle} ${className}`}
-    >
-        {text}
-    </span>
-  )
-})
+    return (
+        <span
+            className={`${styles.pageTitle} ${className}`}
+        >
+            {text}
+        </span>
+    )
+}
 
 
-export default PageTitle
+export default memo(PageTitle)

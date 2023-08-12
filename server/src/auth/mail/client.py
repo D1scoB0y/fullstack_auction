@@ -16,8 +16,8 @@ class MailClient:
         return MessageSchema(
             recipients=[recipient_email], # type: ignore
             subject='Подтвердите почту для FotoJager`s Auctions',
-            body=f'''Здравсвуйте, {recipient_username}! Перейдите по ссылке для подтверджения адреса электронной почты:
-            http://localhost:8000/auth/validate-verification-token?token={token}''',
+            body=f'''Здравствуйте, {recipient_username}! Перейдите по ссылке для подтверджения адреса электронной почты:
+            {config.CLIENT_ORIGIN}/email-verification?token={token}''',
             subtype=MessageType.plain,
         )
 
@@ -41,6 +41,4 @@ mail_client_config = ConnectionConfig(
     MAIL_SSL_TLS=False,
 )
 
-
-async def get_mail_client(config: ConnectionConfig = mail_client_config):
-    return MailClient(config)
+mail_client = MailClient(mail_client_config)
