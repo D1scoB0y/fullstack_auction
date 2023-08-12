@@ -4,14 +4,14 @@ import styles from './AuthModal.module.css'
 
 import useRegistrationFormHandlers, { IFormData, IFormErrors } from "@/hooks/useRegistrationFormHandlers";
 import useModalsStore from "@/stores/modalsStore";
-import useAuthStore from "@/stores/authStore";
-import { checkUsername, checkEmail } from "@/services/userService";
+import { checkEmail, checkUsername } from "@/services/userServices/checkUserDataService";
 
 import ModalLoaderOverlay from "@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay";
 import ShowPasswordButton from "@/components/UI/Form/ShowPasswordButton/ShowPasswordButton";
 import SubmitButton from "@/components/UI/Form/SubmitButton/SubmitButton";
 import Input from "@/components/UI/Form/Input/Input";
 import Modal from "../Modal";
+import useUserContext from "@/context/useUserContext";
 
 
 const initialFormData = {
@@ -57,7 +57,7 @@ const RegistrationModal = () => {
     }, [])
 
 
-    const registration = useAuthStore(state => state.registration)
+    const { registration } = useUserContext()
 
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
-import { getUser } from "../services/userService"
+import { getUser } from "@/services/userServices/helperService"
 import { IUser } from "../types/user.interface"
-import useAuthStore from "./authStore"
+import useUserContext from "@/context/useUserContext"
 
 
 type TypeUseUser = () => IUser|null
 const useUser: TypeUseUser = () => {
+    
     const [user, setUser] = useState<IUser|null>(null)
-    const token = useAuthStore(state => state.token)
+    const { token } = useUserContext()
 
     useEffect(() => {
         const getUserEffect = async () => {

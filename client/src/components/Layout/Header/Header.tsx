@@ -3,19 +3,20 @@ import { useState } from 'react'
 import styles from './Header.module.css'
 
 import useModalsStore from '@/stores/modalsStore'
-import useAuthStore from '@/stores/authStore'
+
 import useUser from '@/stores/useUser'
 
 import RegistrationModal from '../../Modals/Auth/RegistrationModal'
 import CompanyName from './CompanyName/CompanyName'
 import LoginModal from '@/components/Modals/Auth/LoginModal'
 import UserMenu from './UserMenu/UserMenu'
+import useUserContext from '@/context/useUserContext'
 
 
 const Header = () => {
 	const [showUserMenu, setShowUserMenu] = useState<boolean>(false)
 
-	const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+	const { token } = useUserContext()
 	const user = useUser()
 
 	const {
@@ -30,7 +31,7 @@ const Header = () => {
 				<CompanyName />
 
 				<div className={styles.authBox}>
-					{(isAuthenticated && user) ? (
+					{(token && user) ? (
 						<>
 							<div className={styles.userBox} onMouseLeave={() => setShowUserMenu(false)} onMouseEnter={() => setShowUserMenu(true)}>
 								<img className={styles.userIcon} src="/user_icon.png" alt="user icon" />

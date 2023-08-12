@@ -1,16 +1,18 @@
 import { FC } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import styles from './UserMenu.module.css'
 
-import useAuthStore from '@/stores/authStore'
 
 import { IUser } from '@/types/user.interface'
+import useUserContext from '@/context/useUserContext'
 
 
 const UserMenu: FC<{isActive: boolean, user: IUser}> = ({isActive, user}) => {
 
-    const logout = useAuthStore(state => state.logout)
+    const { logout } = useUserContext()
+
+    const navigate = useNavigate()
 
     return (
         <>
@@ -20,7 +22,7 @@ const UserMenu: FC<{isActive: boolean, user: IUser}> = ({isActive, user}) => {
 
                     <Link to={'/settings'} className={styles.dropDownItem}>Настройки</Link>
                     
-                    <div className={`${styles.dropDownItem} ${styles.exitItem}`} onClick={() => logout()}>Выйти</div>
+                    <div className={`${styles.dropDownItem} ${styles.exitItem}`} onClick={() => {logout(); navigate('/')}}>Выйти</div>
                 </div>
             )}
         </>

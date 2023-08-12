@@ -7,24 +7,28 @@ import {
 
 import styles from './SettingsPage.module.css'
 
-import useAuthStore from '@/stores/authStore'
+
 import useSettingsFormHandlers, { IFormData, IFormErrors } from '@/hooks/useSettingsFormHandlers'
+import useModalsStore from '@/stores/modalsStore'
+import { emailVerificationRequest } from '@/services/userServices/userDataVerificationService'
+import { getUser } from '@/services/userServices/helperService'
+import { updateUser } from '@/services/userServices/userDataManiulationsService'
 import {
-    checkUsername,
-    updateUser,
     checkEmail,
     checkPhone,
-    getUser,
-} from '@/services/userService'
+    checkUsername,
+} from '@/services/userServices/checkUserDataService'
 
 import { IUser } from '@/types/user.interface'
 
-import ShowPasswordButton from '../UI/Form/ShowPasswordButton/ShowPasswordButton'
-import SubmitButton from '../UI/Form/SubmitButton/SubmitButton'
-import PageTitle from '../UI/PageTitle/PageTitle'
-import Loader from '../UI/Loader/Loader'
-import Input from '../UI/Form/Input/Input'
-
+import ShowPasswordButton from '@/components/UI/Form/ShowPasswordButton/ShowPasswordButton'
+import SubmitButton from '@/components/UI/Form/SubmitButton/SubmitButton'
+import PageTitle from '@/components/UI/PageTitle/PageTitle'
+import Loader from '@/components/UI/Loader/Loader'
+import Input from '@/components/UI/Form/Input/Input'
+import Button from '@/components/UI/Button/Button'
+import EmailModal from '@/components/Modals/Warnings/EmailModal'
+import useUserContext from '@/context/useUserContext'
 
 
 const updateUserState = async (
@@ -61,7 +65,7 @@ const SettingsPage = () => {
     const [formData, setFormData] = useState<IFormData>(initialFormData)
     const [errors, setErrors] = useState<IFormErrors>(initialFormErrors)
 
-    const token = useAuthStore(state => state.token)
+    const { token } = useUserContext()
 
     useEffect(() => {
         updateUserState(token, setUser)
@@ -89,7 +93,6 @@ const SettingsPage = () => {
         }
     }, [errors, formData.password])
 
-
     const {
         usernameHandler,
         emailHandler,
@@ -97,6 +100,17 @@ const SettingsPage = () => {
         passwordHandler
     } = useSettingsFormHandlers(setFormData, setErrors)
 
+    const {
+        setEmailWarningModalActive,
+    } = useModalsStore()
+
+    const startEmailConfirmation = (e: React.MouseEvent<HTMLElement>) => {
+
+        e.preventDefault()
+
+        setEmailWarningModalActive(true)
+        emailVerificationRequest(token)
+    }
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -183,7 +197,14 @@ const SettingsPage = () => {
 
                     {user?.email_is_verified
                         ? <span className={styles.okSymbol}>✓</span>
-                        : <button type='button' className={styles.confirmButton} disabled={!user?.email}>Подтвердить</button>
+                        : (
+                            <Button
+                                text='Подтвердить'
+                                disabled={!user?.email}
+                                onClick={startEmailConfirmation}
+                                style={{marginLeft: 24}}
+                            />
+                        )
                     }
                 </div>
 
@@ -218,7 +239,7 @@ const SettingsPage = () => {
 
                     <Input
                         value={formData.password}
-                        onChange={(e) => {passwordHandler(e.target.value); console.log(formData.phoneNumber)}}
+                        onChange={(e) => passwordHandler(e.target.value)}
                         maxLength={50}
                         style={{marginBottom: 0}}
                         type={showPassword ? 'text' : 'password'}
@@ -246,6 +267,8 @@ const SettingsPage = () => {
                 </div>
 
             </form>
+
+            <EmailModal />
         </>
     )
 }

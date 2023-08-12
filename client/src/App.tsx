@@ -1,16 +1,24 @@
 import { FC } from 'react';
-import LandingPage from './components/LandingPage/LandingPage'
+
 import { Routes, Route, Navigate } from "react-router-dom";
+
 import './styles/globals.css'
-import SettingsPage from './components/SettingsPage/SettingsPage';
+
+import { UserProvider } from './context/UserContext';
+
+import useUserContext from './context/useUserContext';
+
 import Layout from './components/Layout/Layout';
-import useAuthStore from './stores/authStore';
+import LandingPage from './pages/LandingPage/LandingPage'
+import SettingsPage from './pages/SettingsPage/SettingsPage';
+import EmailVerificationPage from './pages/EmailVerificationPage/EmailVerificationPage';
 
 
 const Protected: FC<{children: React.ReactNode}> = ({children}) => {
-	const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
-	if (!isAuthenticated) {
+	const { token } = useUserContext()
+
+	if (!token) {
 		return <Navigate to='/404'/>
 	}
 
@@ -20,14 +28,17 @@ const Protected: FC<{children: React.ReactNode}> = ({children}) => {
 
 const App = () => {
   return (
-    <Routes>
-		<Route path='/' element={<Layout />}>
-			<Route path='/' element={<LandingPage />} />
-			<Route path='/settings' element={<Protected children={<SettingsPage />} />} />
-			<Route path='/404' element={<>404 not found</>} />
-			<Route path='*' element={<Navigate to='/404' />}/>
-		</Route>
-	</Routes>
+	<UserProvider>
+		<Routes>
+			<Route path='/' element={<Layout />}>
+				<Route path='/' element={<LandingPage />} />
+				<Route path='/settings' element={<Protected children={<SettingsPage />} />} />
+				<Route path='/email-verification' element={<EmailVerificationPage />} />
+				<Route path='/404' element={<>404 not found</>} />
+				<Route path='*' element={<Navigate to='/404' />}/>
+			</Route>
+		</Routes>
+	</UserProvider>
   )
 }
 

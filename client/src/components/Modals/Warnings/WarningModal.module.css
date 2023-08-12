@@ -1,0 +1,28 @@
+.warningTitle{
+    width: max-content;
+
+    padding-bottom: 24px;
+
+    font-family: 'Lora', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--black);
+
+    user-select: none;
+}
+
+.warningText{
+    max-width: 300px;
+
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--black);
+
+    text-align: justify;
+
+    padding-bottom: 24px;
+}
+
+
+
+

@@ -4,13 +4,13 @@ import styles from './AuthModal.module.css'
 
 import useLoginFormHandlers, { IFormData, IFormErrors } from "@/hooks/useLoginFormHadlers";
 import useModalsStore from "@/stores/modalsStore";
-import useAuthStore from "@/stores/authStore";
 
 import ShowPasswordButton from "@/components/UI/Form/ShowPasswordButton/ShowPasswordButton";
 import ModalLoaderOverlay from "@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay";
 import SubmitButton from "@/components/UI/Form/SubmitButton/SubmitButton";
 import Input from "@/components/UI/Form/Input/Input";
 import Modal from "../Modal";
+import useUserContext from "@/context/useUserContext";
 
 
 const initialFormData = {
@@ -55,7 +55,7 @@ const LoginForm = () => {
     }, [])
 
 
-    const login = useAuthStore(state => state.login)
+    const { login } = useUserContext()
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
