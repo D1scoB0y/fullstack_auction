@@ -22,6 +22,31 @@ const updateUser: TypeUdateUser = async (freshData, token) => {
 }
 
 
+type TypeChangePassword = (newPassword: string, currentPassword: string, token: string) => Promise<boolean>
+const changePassword: TypeChangePassword = async (newPassword, currentPassword, token) => {
+
+    const data = {
+        new_password: newPassword,
+        current_password: currentPassword
+    }
+
+    const requestConfig = {
+        headers: {
+            Authorization: 'Bearer ' + token
+        }
+    }
+
+    try {
+        await api.put('/auth/change-password', data, requestConfig)
+        return true
+    } catch (e) {
+        return false
+    }
+}
+
+
+
 export {
-    updateUser
+    updateUser,
+    changePassword,
 }

@@ -10,7 +10,7 @@ interface ILoaderProps {
 }
 
 
-const Loader: FC<ILoaderProps> = memo(({
+const Loader: FC<ILoaderProps> = ({
     width,
     height,
     style,
@@ -25,7 +25,7 @@ const Loader: FC<ILoaderProps> = memo(({
         }}
     ></div>
   )
-})
+}
 
 
-export default Loader
+export default memo(Loader)

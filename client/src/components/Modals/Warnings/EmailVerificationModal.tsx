@@ -1,5 +1,3 @@
-
-
 import styles from './WarningModal.module.css'
 
 import useModalsStore from '@/stores/modalsStore'
@@ -8,7 +6,7 @@ import Modal from '../Modal'
 import Button from '@/components/UI/Button/Button'
 
 
-const EmailModal = () => {
+const EmailVerificatoinModal = () => {
 
     const {
         emailWarningModalActive,
@@ -26,7 +24,7 @@ const EmailModal = () => {
             <Button
                 text='Хорошо'
                 onClick={() => setEmailWarningModalActive(false)}
-                style={{width: 300, height: 48}}
+                style={{width: 300, marginTop: 24}}
             />
 
         </Modal>
@@ -34,4 +32,4 @@ const EmailModal = () => {
 }
 
 
-export default EmailModal
+export default EmailVerificatoinModal

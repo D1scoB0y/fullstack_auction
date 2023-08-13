@@ -47,12 +47,35 @@ async def update_user_path(
     if not await _auth_security.check_password(user_data.password, user.password): # type: ignore
         raise HTTPException(status_code=401, detail='Wrong password')
     
+    if user_data.email != user.email:
+        user.email_is_verified = False # type: ignore
+
+    if user_data.phone_number != user.phone_number:
+        user.phone_number_is_verified = False # type: ignore
+
     user.username = user_data.username # type: ignore
     user.email = user_data.email # type: ignore
-    user.phone_number = user_data.phone_number.replace(' ', '') # type: ignore
+    user.phone_number = user_data.phone_number # type: ignore
     await session.commit()
  
-    return None
+    return
+
+
+@router.put('/change-password', status_code=204, tags=['Update user'])
+async def change_password_path(
+        data: _auth_schemas.ChangePasswordSchema,
+        user: _auth_models.User = Depends(_auth_service.get_current_user),
+        session: AsyncSession = Depends(_db.get_session),
+    ):
+
+    if not await _auth_security.check_password(data.current_password, user.password): # type: ignore
+        raise HTTPException(status_code=401, detail='Wrong password')
+    
+    user.password = await _auth_security.hash_password(data.new_password) # type: ignore
+
+    await session.commit()
+
+    return
 
 
 @router.get('/get-user', response_model=_auth_schemas.ReadUserSchema, tags=['Authentication'])

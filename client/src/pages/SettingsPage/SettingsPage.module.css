@@ -31,41 +31,11 @@
 .passwordFieldContainer{
     width: max-content;
 
-    margin-bottom: 12px;
+    margin-bottom: 0;
 
     position: relative;
     display: flex;
     align-items: center;
-}
-
-.confirmButton{
-    width: 200px;
-    height: 50px;
-
-    margin-left: 24px;
-
-    border-radius: 8px;
-    border: 0;
-
-    background: var(--blue);
-
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--white);
-
-    cursor: pointer;
-}
-
-.confirmButton:hover, .confirmButton:focus{
-    background: var(--hovered-blue);
-}
-
-.confirmButton:disabled{
-    border: 1px solid var(--border-color);
-    background: var(--white);
-    color: var(--muted-text);
-
-    cursor: default;
 }
 
 .okSymbol{
@@ -83,10 +53,18 @@
     align-items: center;
 }
 
-.savedText{
-    padding: 24px 0 0 24px;
+.changePasswordHref{
+    width: max-content;
+    
+    display: block;
+
+    margin-top: 24px;
 
     font-size: 14px;
-    font-weight: 500;
-    color: var(--green);
+    font-weight: 400;
+    color: var(--blue);
+
+    border-bottom: 1px solid var(--blue);
+
+    cursor: pointer;
 }

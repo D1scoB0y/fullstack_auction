@@ -1,5 +1,6 @@
 import api from "@/api"
 
+
 type TypeEmailVerificationRequest = (token: string|null) => Promise<void>
 const emailVerificationRequest: TypeEmailVerificationRequest = async (token) => {
 
@@ -35,7 +36,51 @@ const isEmailTokenValid: TypeIsEmailTokenValid = async (emailToken) => {
 }
 
 
+type TypeRequestPhoneCall = (token: string|null) => Promise<void>
+const requestPhoneCall: TypeRequestPhoneCall = async (token) => {
+
+    if (token) {
+        
+        const requestConfig = {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        }
+
+        try {
+            await api.get('/auth/mobile/verification-call-request', requestConfig)
+        } catch (e) {}
+    }
+}
+
+
+type TypeIsPhoneCodeValid = (token: string|null, code: string) => Promise<boolean>
+const isPhoneCodeValid: TypeIsPhoneCodeValid = async (token, code) => {
+
+    if (token) {
+        const requestConfig = {
+            headers: {
+                Authorization: 'Bearer ' + token
+            },
+            params: {
+                verif_code: code
+            }
+        }
+
+        try {
+            await api.get('/auth/mobile/validate-verification-code', requestConfig)
+            return true
+        } catch (e) {
+            return false
+        }
+    }
+    return false
+}
+
+
 export {
     emailVerificationRequest,
     isEmailTokenValid,
+    requestPhoneCall,
+    isPhoneCodeValid,
 }

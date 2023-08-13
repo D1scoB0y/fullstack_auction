@@ -4,8 +4,6 @@ import styles from './Header.module.css'
 
 import useModalsStore from '@/stores/modalsStore'
 
-import useUser from '@/stores/useUser'
-
 import RegistrationModal from '../../Modals/Auth/RegistrationModal'
 import CompanyName from './CompanyName/CompanyName'
 import LoginModal from '@/components/Modals/Auth/LoginModal'
@@ -16,8 +14,7 @@ import useUserContext from '@/context/useUserContext'
 const Header = () => {
 	const [showUserMenu, setShowUserMenu] = useState<boolean>(false)
 
-	const { token } = useUserContext()
-	const user = useUser()
+	const { token, user } = useUserContext()
 
 	const {
 		setLoginModalActive,
@@ -61,7 +58,7 @@ const Header = () => {
 			
 			<LoginModal />
 			<RegistrationModal />
-				
+
 		</div>
 	)
 }
