@@ -1,11 +1,15 @@
-import { FC, createContext, useEffect, useState } from "react";
+import { FC, createContext, useCallback, useEffect, useState } from "react";
 import { getUser } from "@/services/userServices/helperService";
 import { ILoginData, IRegistrationData } from "@/types/user.interface";
 import { loginUser, registerUser } from "@/services/userServices/authService";
 
+import { IUser } from "@/types/user.interface";
+
 
 export interface IUserContext {
+    user: IUser|null
     token: string|null
+    updateUserState: () => Promise<void>
     registration: (registrationData: IRegistrationData) => Promise<boolean>
     login: (loginData: ILoginData) => Promise<boolean>
     logout: () => void
@@ -16,17 +20,38 @@ const UserContext = createContext<IUserContext|null>(null)
 const UserProvider: FC<{children: React.ReactNode}> = ({ 
     children,
 }) => {
+
     const [token, setToken] = useState<string|null>(localStorage.getItem('token'))
+    const [user, setUser] = useState<IUser|null>(null)
+
+
+    const updateUserState = useCallback(async () => {
+        if (token) {
+
+            const user = await getUser(token)
+
+            if (user) {
+                setUser(user)
+            }
+        }
+    }, [token])
+
+
+    useEffect(() => {
+        updateUserState()
+    }, [])
 
     useEffect(() => {
 
-        const getUserEffect = async () => {
+        const checkToken = async () => {
 
             if (token) {
 
                 const user = await getUser(token)
 
-                if (!user) {
+                if (user) {
+                    setUser(user)
+                } else {
                     setToken(null)
                 }
             }
@@ -34,7 +59,7 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
             localStorage.setItem('token', token || '')
         }
 
-        getUserEffect()
+        checkToken()
     }, [token])
 
 
@@ -67,7 +92,9 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
     return (
         <UserContext.Provider
             value={{
+                user,
                 token,
+                updateUserState,
                 registration,
                 login,
                 logout,
@@ -83,4 +110,3 @@ export {
     UserContext,
     UserProvider,
 }
-

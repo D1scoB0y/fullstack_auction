@@ -7,10 +7,10 @@ import useModalsStore from "@/stores/modalsStore";
 
 import ShowPasswordButton from "@/components/UI/Form/ShowPasswordButton/ShowPasswordButton";
 import ModalLoaderOverlay from "@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay";
-import SubmitButton from "@/components/UI/Form/SubmitButton/SubmitButton";
 import Input from "@/components/UI/Form/Input/Input";
 import Modal from "../Modal";
 import useUserContext from "@/context/useUserContext";
+import Button from "@/components/UI/Button/Button";
 
 
 const initialFormData = {
@@ -110,9 +110,10 @@ const LoginForm = () => {
                         />
                     </div>
 
-                    <SubmitButton
+                    <Button
                         text='Войти'
                         disabled={!isFormValid}
+                        style={{width: 300, marginTop: 24}}
                     />
                 </form>
                 

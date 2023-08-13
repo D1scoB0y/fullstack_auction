@@ -8,10 +8,10 @@ import { checkEmail, checkUsername } from "@/services/userServices/checkUserData
 
 import ModalLoaderOverlay from "@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay";
 import ShowPasswordButton from "@/components/UI/Form/ShowPasswordButton/ShowPasswordButton";
-import SubmitButton from "@/components/UI/Form/SubmitButton/SubmitButton";
 import Input from "@/components/UI/Form/Input/Input";
 import Modal from "../Modal";
 import useUserContext from "@/context/useUserContext";
+import Button from "@/components/UI/Button/Button";
 
 
 const initialFormData = {
@@ -96,7 +96,7 @@ const RegistrationModal = () => {
 
                 <form onSubmit={onSubmit} noValidate>
 
-                    <span className={styles.errorMessage}>{errors.username && <>{errors.username}</>}</span>
+                    <span className={styles.errorMessage}>{errors.username}</span>
 
                     <Input
                         value={formData.username}
@@ -105,7 +105,7 @@ const RegistrationModal = () => {
                         placeholder={'Имя пользователя'}
                     />
 
-                    <span className={styles.errorMessage}>{errors.email && <>{errors.email}</>}</span>
+                    <span className={styles.errorMessage}>{errors.email}</span>
 
                     <Input
                         value={formData.email}
@@ -113,7 +113,7 @@ const RegistrationModal = () => {
                         placeholder={'Электронная почта'}
                     />
 
-                    <span className={styles.errorMessage}>{errors.password && <>{errors.password}</>}</span> 
+                    <span className={styles.errorMessage}>{errors.password}</span> 
 
                     <div className={styles.passwordFieldContainer}>
                         <Input
@@ -123,6 +123,7 @@ const RegistrationModal = () => {
                             className={styles.passwordField}
                             placeholder={'Пароль'}
                             type={showPassword ? 'text' : 'password'}
+                            style={{marginBottom: 0}}
                         />
 
                         <ShowPasswordButton
@@ -131,9 +132,10 @@ const RegistrationModal = () => {
                         />
                     </div>
                     
-                    <SubmitButton
+                    <Button
                         text='Создать аккаунт'
                         disabled={!isFormValid}
+                        style={{width: 300, marginTop: 24}}
                     />
                 </form>
 

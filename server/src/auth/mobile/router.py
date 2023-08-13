@@ -36,7 +36,6 @@ async def validate_verification_code(
         user: _auth_models.User = Depends(_auth_service.get_current_user),
         session: AsyncSession = Depends(_db.get_session)
     ) -> None:
-    print(user)
 
     if user is None:
         raise HTTPException(status_code=404, detail=f'User with id: {id}, does not exist')

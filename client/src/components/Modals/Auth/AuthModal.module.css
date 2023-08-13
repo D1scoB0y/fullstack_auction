@@ -31,10 +31,6 @@
     align-items: center;
 }
 
-.passwordField{
-    margin-bottom: 0;
-}
-
 .underFormInfo{
     display: flex;
 

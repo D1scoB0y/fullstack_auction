@@ -17,6 +17,10 @@ class UpdateUserSchema(BaseModel):
     phone_number: str
     password: str
 
+class ChangePasswordSchema(BaseModel):
+    new_password: str
+    current_password: str
+
 
 class ReadUserSchema(BaseModel):
     id: int

@@ -9,7 +9,7 @@ interface IShowPasswordButtonProps {
 }
 
 
-const ShowPasswordButton: FC<IShowPasswordButtonProps> = memo(({
+const ShowPasswordButton: FC<IShowPasswordButtonProps> = ({
     showPassword,
     setShowPassword,
 }) => {
@@ -23,7 +23,7 @@ const ShowPasswordButton: FC<IShowPasswordButtonProps> = memo(({
         }}
     />
   )
-})
+}
 
 
-export default ShowPasswordButton
+export default memo(ShowPasswordButton)

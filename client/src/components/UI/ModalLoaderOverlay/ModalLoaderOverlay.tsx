@@ -4,7 +4,7 @@ import Loader from "@/components/UI/Loader/Loader"
 import styles from './ModalLoaderOverlay.module.css'
 
 
-const ModalLoaderOverlay = memo(() => {
+const ModalLoaderOverlay = () => {
   return (
     <div className={styles.loaderOverlay}>
       <Loader
@@ -14,7 +14,7 @@ const ModalLoaderOverlay = memo(() => {
       />
     </div>
   )
-})
+}
 
 
-export default ModalLoaderOverlay
+export default memo(ModalLoaderOverlay)

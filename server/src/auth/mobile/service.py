@@ -27,8 +27,6 @@ async def verification_call(phone_number: str, verif_code: int) -> int|None:
             'campaign_id': config.PHONE_SERVICE_COMPAIGN_ID,
         }
 
-        print(f'\n{call_data}\n')
-
         async with AsyncClient() as http:
 
             response = await http.post('https://zvonok.com/manager/cabapi_external/api/v1/phones/flashcall/', data=call_data)
