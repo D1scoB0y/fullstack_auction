@@ -1,4 +1,4 @@
-import api from "@/api"
+import api from "@/utils/api";
 
 
 type TypeEmailVerificationRequest = (token: string|null) => Promise<void>

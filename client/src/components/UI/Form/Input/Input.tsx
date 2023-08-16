@@ -5,7 +5,7 @@ import styles from './Input.module.css'
 
 interface IInputProps {
     value: string|null
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onChange: (inputValue: string) => void
     type?: string
     className?: string
     placeholder?: string
@@ -27,7 +27,7 @@ const Input: FC<IInputProps> = ({
         <input
             type={type}
             value={value || ''}
-            onChange={onChange}
+            onChange={(e) => onChange(e.target.value)}
             className={`${styles.input} ${className}`}
             placeholder={placeholder}
             maxLength={maxLength}

@@ -1,4 +1,4 @@
-import api from "@/api";
+import api from "@/utils/api";
 import { IRegistrationData, ILoginData } from "@/types/user.interface";
 
 

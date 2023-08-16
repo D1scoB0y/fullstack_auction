@@ -44,6 +44,7 @@ async def validate_verification_code(
         raise HTTPException(status_code=400, detail='Phone number verification code is wrong')
 
     user.phone_number_is_verified = True # type: ignore
+    user.phone_number_verif_code = None # type: ignore
     await session.commit()
 
     return None

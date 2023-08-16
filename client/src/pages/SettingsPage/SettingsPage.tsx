@@ -3,10 +3,11 @@ import {
     useState,
 } from 'react'
 
+import { Helmet } from 'react-helmet-async'
+
 import styles from './SettingsPage.module.css'
 
 import useUserContext from '@/context/useUserContext'
-import useSettingsFormHandlers, { IFormData, IFormErrors } from '@/hooks/useSettingsFormHandlers'
 import useModalsStore from '@/stores/modalsStore'
 import { emailVerificationRequest, requestPhoneCall } from '@/services/userServices/userDataVerificationService'
 import { updateUser } from '@/services/userServices/userDataManiulationsService'
@@ -16,74 +17,89 @@ import {
     checkUsername,
 } from '@/services/userServices/checkUserDataService'
 
-import ShowPasswordButton from '@/components/UI/Form/ShowPasswordButton/ShowPasswordButton'
 import PageTitle from '@/components/UI/PageTitle/PageTitle'
 import Loader from '@/components/UI/Loader/Loader'
 import Input from '@/components/UI/Form/Input/Input'
 import Button from '@/components/UI/Button/Button'
+import HiddenErrorMessage from '@/components/UI/Form/ErrorMessage/HiddenErrorMessage'
+import PasswordField from '@/components/UI/Form/PasswordField/PasswordField'
 
 import EmailVerificatoinModal from '@/components/Modals/Warnings/EmailVerificationModal'
 import PhoneVerificationModal from '@/components/Modals/PhoneVerification/PhoneVerificationModal'
 import ChangePasswordModal from '@/components/Modals/ChangePassword/ChangePasswordModal'
 
 
-const initialFormData = {
+import useInput from '@/hooks/useInput'
+
+
+
+interface IAfterSubmitErrors {
+    username: string
+    email: string
+    phoneNumber: string
+    password: string
+}
+
+const initialAfterSubmitErrors = {
     username: '',
     email: '',
     phoneNumber: '',
     password: '',
 }
 
-const initialFormErrors = initialFormData
-
 
 const SettingsPage = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [showPassword, setShowPassword] = useState<boolean>(false)
     const [isFormValid, setIsFormValid] = useState<boolean>(false)
+    const [afterSubmitErrors, setAfterSubmitErrors] = useState<IAfterSubmitErrors>(initialAfterSubmitErrors)
 
-    const [formData, setFormData] = useState<IFormData>(initialFormData)
-    const [errors, setErrors] = useState<IFormErrors>(initialFormErrors)
 
     const { token, user, updateUserState } = useUserContext()
 
-
-    useEffect(() => {
-        if (user) {
-            setFormData(prev => ({
-                ...prev,
-                username: user.username,
-                email: user.email,
-                phoneNumber: user.phone_number || '',
-            }))
-        }
-    }, [user])
-
-    useEffect(() => {
-
-        const isError = errors.username || errors.email || errors.phoneNumber || errors.password 
-
-        if (isError || formData.password.length === 0) {
-            setIsFormValid(false)
-        } else {
-            setIsFormValid(true)
-        }
-    }, [errors, formData.password])
-
-
-    const {
-        usernameHandler,
-        emailHandler,
-        phoneNumberHandler,
-        passwordHandler
-    } = useSettingsFormHandlers(setFormData, setErrors)
 
     const {
         setEmailWarningModalActive,
         setPhoneVerificationModalActive,
         setChangePasswordModalActive,
     } = useModalsStore()
+
+
+    const username = useInput('', {required: true, minLength: 3})
+    const email = useInput('', {required: true, isEmail: true})
+    const phoneNumber = useInput('', {isPhoneNumber: true})
+    const password = useInput('', {required: true})
+
+
+    useEffect(() => {
+        if (user) {
+            username.setValue(user.username)
+            email.setValue(user.email)
+            phoneNumber.setValue(user.phone_number || '')
+        }
+    }, [user])
+
+    useEffect(() => {
+
+        const isFieldsValid = username.isValid &&
+                                email.isValid &&
+                                phoneNumber.isValid &&
+                                password.isValid
+
+        const isAfterSubmitErrors = afterSubmitErrors.email ||
+                                    afterSubmitErrors.username ||
+                                    afterSubmitErrors.phoneNumber ||
+                                    afterSubmitErrors.password
+
+        setIsFormValid(isFieldsValid && !isAfterSubmitErrors)
+        
+    }, [
+        username.isValid,
+        email.isValid,
+        phoneNumber.isValid,
+        password.isValid,
+        afterSubmitErrors,
+    ])
 
 
     const startEmailConfirmation = () => {
@@ -104,21 +120,21 @@ const SettingsPage = () => {
 
         let isSubmissionСanceled = false
 
-        if (formData.username !== user?.username && !await checkUsername(formData.username)) {
-            setErrors(prev => ({...prev, username: 'Это имя пользователя уже занято'}))
+        if (username.value !== user?.username && !await checkUsername(username.value)) {
+            setAfterSubmitErrors(prev => ({...prev, username: 'Это имя пользователя уже занято'}))
             isSubmissionСanceled = true
         }
 
-        if (formData.email !== user?.email && !await checkEmail(formData.email)) {
-            setErrors(prev => ({...prev, email: 'Эта почта уже занята'}))
+        if (email.value !== user?.email && !await checkEmail(email.value)) {
+            setAfterSubmitErrors(prev => ({...prev, email: 'Эта почта уже занята'}))
             isSubmissionСanceled = true
         }
 
-        if (formData.phoneNumber) {
+        if (phoneNumber.value) {
 
-            if (formData.phoneNumber !== user?.phone_number && !await checkPhone(formData.phoneNumber)) {
+            if (phoneNumber.value !== user?.phone_number && !await checkPhone(phoneNumber.value)) {
 
-                setErrors(prev => ({...prev, phoneNumber: 'Этот номер телефона уже занят'}))
+                setAfterSubmitErrors(prev => ({...prev, phoneNumber: 'Этот номер телефона уже занят'}))
                 isSubmissionСanceled = true
             }
         }
@@ -127,30 +143,35 @@ const SettingsPage = () => {
         if (!isSubmissionСanceled) {
 
             const freshData = {
-                username: formData.username,
-                email: formData.email,
-                phone_number: formData.phoneNumber,
-                password: formData.password,
+                username: username.value,
+                email: email.value,
+                phone_number: phoneNumber.value,
+                password: password.value,
             }
 
             if (token) {
                 const response = await updateUser(freshData, token)
 
                 if (!response) {
-                    setErrors(prev => ({...prev, password: 'Неверный пароль'}))
+                    setAfterSubmitErrors(prev => ({...prev, password: 'Неверный пароль'}))
                 }
             }
 
             updateUserState()
         }
 
-        setFormData(prev => ({...prev, password: ''}))
+        password.clearField()
 
         setIsLoading(false)
     }
 
     return (
         <>
+
+            <Helmet>
+                <title>Настройки аккаунта | FotoJäger`s Auctions</title>
+            </Helmet>
+
             <PageTitle text='Настройки аккаунта' />
 
             <form className={styles.form} onSubmit={onSubmit} noValidate>
@@ -158,24 +179,34 @@ const SettingsPage = () => {
 
                 <span className={styles.inputLabel}>Имя пользователя</span>
 
-                {errors.username && <span className={styles.errorMessage}>{errors.username}</span>}
+                <HiddenErrorMessage errorText={username.error || afterSubmitErrors.username} />
 
                 <Input
-                    value={formData.username}
-                    onChange={(e) => usernameHandler(e.target.value)}
+                    value={username.value}
+                    onChange={
+                        (value: string) => {
+                            setAfterSubmitErrors(prev => ({...prev, username: ''}))
+                            username.onChange(value)
+                        }
+                    }
                     maxLength={20}
                 />
 
 
                 <span className={styles.inputLabel}>Электронная почта</span>
 
-                {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
+                <HiddenErrorMessage errorText={email.error || afterSubmitErrors.email} />
 
                 <div className={styles.fieldContainer}>
 
                     <Input
-                        value={formData.email}
-                        onChange={(e) => emailHandler(e.target.value)}
+                        value={email.value}
+                        onChange={
+                            (value: string) => {
+                                setAfterSubmitErrors(prev => ({...prev, email: ''}))
+                                email.onChange(value)
+                            }
+                        }
                         style={{marginBottom: 0}}
                     />
 
@@ -196,13 +227,18 @@ const SettingsPage = () => {
 
                 <span className={styles.inputLabel}>Номер телефона</span>
 
-                {errors.phoneNumber && <span className={styles.errorMessage}>{errors.phoneNumber}</span>}
+                <HiddenErrorMessage errorText={phoneNumber.error || afterSubmitErrors.phoneNumber} />
 
                 <div className={styles.fieldContainer}>
 
                     <Input
-                        value={formData.phoneNumber}
-                        onChange={(e) => phoneNumberHandler(e.target.value)}
+                        value={phoneNumber.value}
+                        onChange={
+                            (value: string) => {
+                                setAfterSubmitErrors(prev => ({...prev, phoneNumber: ''}))
+                                phoneNumber.onChange(value)
+                            }
+                        }
                         maxLength={14}
                         style={{marginBottom: 0}}
                         placeholder='+79999999999'
@@ -226,25 +262,20 @@ const SettingsPage = () => {
 
                 <span className={styles.inputLabel}>Текущий пароль</span>
 
-                {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
-
-                <div className={styles.passwordFieldContainer}>
-
-                    <Input
-                        value={formData.password}
-                        onChange={(e) => passwordHandler(e.target.value)}
-                        maxLength={50}
-                        style={{marginBottom: 0}}
-                        type={showPassword ? 'text' : 'password'}
-                    />
-
-                    <ShowPasswordButton
-                        showPassword={showPassword}
-                        setShowPassword={setShowPassword}
-                    />
-                </div>
+                <HiddenErrorMessage errorText={password.error || afterSubmitErrors.password} />
+                    
+                <PasswordField
+                    value={password.value}
+                    onChange={
+                        (value: string) => {
+                            setAfterSubmitErrors(prev => ({...prev, password: ''}))
+                            password.onChange(value)
+                        }
+                    }
+                    placeholder=''
+                />
                 
-                
+
                 <span
                     className={styles.changePasswordHref}
                     onClick={() => setChangePasswordModalActive(true)}

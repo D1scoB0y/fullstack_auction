@@ -15,10 +15,11 @@ const EmailVerificatoinModal = () => {
 
 
     return (
-        <Modal isActive={emailWarningModalActive} setIsActive={setEmailWarningModalActive}>
-
-            <span className={styles.warningTitle}>Подтверждение почты</span>
-
+        <Modal
+            title='Подтверждение почты'
+            isActive={emailWarningModalActive}
+            setIsActive={setEmailWarningModalActive}
+        >
             <span className={styles.warningText}>Мы отправили вам на почту ссылку. Пройдите по ней чтобы подтвердить свою электронную почту.</span>
 
             <Button

@@ -1,4 +1,4 @@
-import api from "@/api"
+import api from "@/utils/api";
 import { IUpdateData } from "@/types/user.interface"
 
 
@@ -37,7 +37,7 @@ const changePassword: TypeChangePassword = async (newPassword, currentPassword, 
     }
 
     try {
-        await api.put('/auth/change-password', data, requestConfig)
+        await api.patch('/auth/change-password', data, requestConfig)
         return true
     } catch (e) {
         return false
@@ -45,8 +45,44 @@ const changePassword: TypeChangePassword = async (newPassword, currentPassword, 
 }
 
 
+type TypeRequestPasswordReset = (email: string) => Promise<boolean>
+const requestPasswordReset: TypeRequestPasswordReset = async (email) => {
+
+    const requestConfig = {
+        params: {
+            email
+        }
+    }
+
+    try {
+        await api.get('/auth/reset-password/request-password-reset', requestConfig)
+        return true
+    } catch (e) {
+        return false
+    }
+}
+
+
+type TypeResetPassword = (token: string, newPassword: string) => Promise<boolean>
+const resetPassword: TypeResetPassword = async (token, newPassword) => {
+
+    const data = {
+        token: token,
+        new_password: newPassword,
+    }
+
+    try {
+        await api.patch('/auth/reset-password/reset-password', data)
+        return true
+    } catch (e) {
+        return false
+    }
+}
+
 
 export {
     updateUser,
     changePassword,
+    requestPasswordReset,
+    resetPassword
 }

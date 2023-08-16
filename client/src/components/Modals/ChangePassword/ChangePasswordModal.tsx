@@ -1,39 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
-import styles from './ChangePasswordModal.module.css'
-
+import useUserContext from '@/context/useUserContext'
 import useModalsStore from '@/stores/modalsStore'
 
 import { changePassword } from '@/services/userServices/userDataManiulationsService'
 
 import Modal from '../Modal'
 import ModalLoaderOverlay from '@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay'
-import Input from '@/components/UI/Form/Input/Input'
-import ShowPasswordButton from '@/components/UI/Form/ShowPasswordButton/ShowPasswordButton'
 import Button from '@/components/UI/Button/Button'
-import useUserContext from '@/context/useUserContext'
+import ErrorMessage from '@/components/UI/Form/ErrorMessage/ErrorMessage'
+import PasswordField from '@/components/UI/Form/PasswordField/PasswordField'
+import useInput from '@/hooks/useInput'
 
-
-interface IFormData {
-    newPassword: string
-    currentPassword: string
-}
-
-const initialFormData = {
-    newPassword: '',
-    currentPassword: '',
-}
-
-const initialFormErrors = initialFormData
 
 const ChangePasswordModal = () => {
 
-    const [showNewPassword, setShowNewPassword] = useState<boolean>(false)
-    const [showCurrentPassword, setShowCurrentPassword] = useState<boolean>(false)
     const [isValid, setIsValid] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [formData, setFormData] = useState<IFormData>(initialFormData)
-    const [errors, setErrors] = useState<IFormData>(initialFormErrors)
+    const [afterSubmitError, setAfterSubmitError] = useState<string>('')
 
     const { token } = useUserContext()
 
@@ -42,65 +26,46 @@ const ChangePasswordModal = () => {
         setChangePasswordModalActive,
     } = useModalsStore()
 
+    const newPassword = useInput('', {required: true, minLength: 8})
+    const currentPassword = useInput('', {required: true})
+
+
     useEffect(() => {
-        const isError = errors.newPassword || errors.currentPassword
+        const isFieldsValid = newPassword.isValid && currentPassword.isValid
 
-        const isFiledsFilled = formData.currentPassword && formData.newPassword
-
-        if (isError || !isFiledsFilled) {
-            setIsValid(false)
-        } else {
-            setIsValid(true)
-        }
-
-    }, [errors, formData])
+        setIsValid(isFieldsValid && !afterSubmitError)        
+    }, [
+        newPassword.isValid,
+        currentPassword.isValid,
+        afterSubmitError,
+    ])
 
 
-    const handleNewPassword = async (newPassword: string) => {
-
-        setFormData(prev => ({...prev, newPassword: newPassword}))
-
-        if (newPassword.length === 0) {
-            setErrors(prev => ({...prev, newPassword: 'Заполните это поле'}))
-            return
-        }
-
-        if (newPassword.length < 8) {
-            setErrors(prev => ({...prev, newPassword: 'Минимальная длина 8 символов'}))
-            return
-        }
-
-        setErrors(prev => ({...prev, newPassword: ''}))
-    }
-
-    const handleCurrentPassword = async (currentPassword: string) => {
-
-        setFormData(prev => ({...prev, currentPassword: currentPassword}))
-
-        if (currentPassword.length === 0) {
-            setErrors(prev => ({...prev, currentPassword: 'Заполните это поле'}))
-            return
-        }
-
-        setErrors(prev => ({...prev, currentPassword: ''}))
-    }
-
+    const clearForm = useCallback(() => {
+        newPassword.clearField()
+        currentPassword.clearField()
+    }, [])
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault()
 
         setIsLoading(true)
-        
+
         if (token) {
-            const isPasswordChanged = await changePassword(formData.newPassword, formData.currentPassword, token)
+
+            const isPasswordChanged = await changePassword(
+                newPassword.value,
+                currentPassword.value,
+                token
+            )
 
             if (isPasswordChanged) {
+                clearForm()
                 setChangePasswordModalActive(false)
-                setFormData(initialFormData)
             } else {
-                setErrors(prev => ({...prev, currentPassword: 'Неверный пароль'}))
-                setFormData(prev => ({...prev, currentPassword: ''}))
+                setAfterSubmitError('Неверный пароль')
+                currentPassword.clearField()
             }
         }
 
@@ -108,48 +73,35 @@ const ChangePasswordModal = () => {
     }
 
     return (
-        <Modal isActive={changePasswordModalActive} setIsActive={setChangePasswordModalActive}>
-            
-            <span className={styles.modalTitle}>Изменение пароля</span>
-
+        <Modal
+            title='Изменение пароля'
+            isActive={changePasswordModalActive}
+            setIsActive={setChangePasswordModalActive}
+        >
             <form onSubmit={onSubmit} noValidate>
 
-                <span className={styles.errorMessage}>{errors.newPassword}</span>
+                <ErrorMessage errorText={newPassword.error} />
 
-                <div className={styles.passwordFieldContainer}>
-
-                    <Input
-                        value={formData.newPassword}
-                        onChange={(e) => handleNewPassword(e.target.value)}
-                        type={showNewPassword ? 'text' : 'password'}
-                        placeholder='Новый пароль'
-                        style={{marginBottom: 0}}
-                    />
-
-                    <ShowPasswordButton
-                        showPassword={showNewPassword}
-                        setShowPassword={() => setShowNewPassword(prev => !prev)}
-                    />
-                </div>
+                <PasswordField
+                    value={newPassword.value}
+                    onChange={newPassword.onChange}
+                    placeholder='Новый пароль'
+                />
 
 
-                <span className={styles.errorMessage}>{errors.currentPassword}</span>
+                <ErrorMessage errorText={currentPassword.error || afterSubmitError} />
 
-                <div className={styles.passwordFieldContainer}>
+                <PasswordField
+                    value={currentPassword.value}
+                    onChange={
+                        (value: string) => {
+                            setAfterSubmitError('')
+                            currentPassword.onChange(value)
+                        }
+                    }
+                    placeholder='Текущий пароль'
+                />
 
-                    <Input
-                        value={formData.currentPassword}
-                        onChange={(e) => handleCurrentPassword(e.target.value)}
-                        type={showCurrentPassword ? 'text' : 'password'}
-                        placeholder='Текущий пароль'
-                        style={{marginBottom: 0}}
-                    />
-
-                    <ShowPasswordButton
-                        showPassword={showCurrentPassword}
-                        setShowPassword={() => setShowCurrentPassword(prev => !prev)}
-                    />
-                </div>
 
                 <Button
                     text='Сохранить'
