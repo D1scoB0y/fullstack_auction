@@ -7,8 +7,10 @@ import src.auth.schemas as _auth_schemas
 import src.auth.service as _auth_service
 import src.auth.models as _auth_models
 import src.auth.security as _auth_security
+
 import src.auth.mail.router as _mail_module
 import src.auth.mobile.router as _mobile_module
+import src.auth.reset_password.router as _reset_password_module
 
 
 # Router
@@ -17,6 +19,7 @@ router = APIRouter(prefix='/auth')
 # Nested routers
 router.include_router(_mail_module.router)
 router.include_router(_mobile_module.router)
+router.include_router(_reset_password_module.router)
 
 
 @router.post('/login', response_model=str, tags=['Authentication'])
@@ -56,12 +59,11 @@ async def update_user_path(
     user.username = user_data.username # type: ignore
     user.email = user_data.email # type: ignore
     user.phone_number = user_data.phone_number # type: ignore
+
     await session.commit()
- 
-    return
 
 
-@router.put('/change-password', status_code=204, tags=['Update user'])
+@router.patch('/change-password', status_code=204, tags=['Update user'])
 async def change_password_path(
         data: _auth_schemas.ChangePasswordSchema,
         user: _auth_models.User = Depends(_auth_service.get_current_user),
@@ -74,8 +76,6 @@ async def change_password_path(
     user.password = await _auth_security.hash_password(data.new_password) # type: ignore
 
     await session.commit()
-
-    return
 
 
 @router.get('/get-user', response_model=_auth_schemas.ReadUserSchema, tags=['Authentication'])
@@ -94,9 +94,7 @@ async def check_username_path(
 
     user = await _auth_service.get_user_by_username(username, session)
 
-    if user is None:
-        return None
-    else:
+    if user:
         raise HTTPException(status_code=409, detail='Username is already taken')
 
 
@@ -109,9 +107,7 @@ async def check_email_path(
 
     user = await _auth_service.get_user_by_email(email, session)
 
-    if user is None:
-        return None
-    else:
+    if user:
         raise HTTPException(status_code=409, detail='Email is already taken')
 
 
@@ -126,7 +122,5 @@ async def check_phone_path(
 
     user = await _auth_service.get_user_by_phone_number(phone_number, session)
 
-    if user is None:
-        return None
-    else:
+    if user:
         raise HTTPException(status_code=409, detail='Phone number is already taken')

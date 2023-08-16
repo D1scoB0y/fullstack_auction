@@ -1,18 +1,22 @@
 import { create } from "zustand";
 
 
+type TypeChangeState = (value: boolean) => void
+
 interface IModalsStore {
     loginModalActive: boolean
     registrationModalActive: boolean
     emailWarningModalActive: boolean
     phoneVerificationModalActive: boolean
     changePasswordModalActive: boolean
+    resetPasswordModalActive: boolean
 
-    setLoginModalActive: (value: boolean) => void
-    setRegistrationModalActive: (value: boolean) => void
-    setEmailWarningModalActive: (value: boolean) => void
-    setPhoneVerificationModalActive: (value: boolean) => void
-    setChangePasswordModalActive: (value: boolean) => void
+    setLoginModalActive: TypeChangeState
+    setRegistrationModalActive: TypeChangeState
+    setEmailWarningModalActive: TypeChangeState
+    setPhoneVerificationModalActive: TypeChangeState
+    setChangePasswordModalActive: TypeChangeState
+    setResetPasswordModalActive: TypeChangeState
 }
 
 
@@ -24,6 +28,7 @@ const useModalsStore = create<IModalsStore>(
             emailWarningModalActive: false,
             phoneVerificationModalActive: false,
             changePasswordModalActive: false,
+            resetPasswordModalActive: false,
 
 
             setLoginModalActive: (value: boolean) => {
@@ -59,7 +64,14 @@ const useModalsStore = create<IModalsStore>(
                     ...state,
                     changePasswordModalActive: value
                 }))
-            }
+            },
+
+            setResetPasswordModalActive: (value) => {
+                set(state => ({
+                    ...state,
+                    resetPasswordModalActive: value
+                }))
+            },
         }
     )
 )

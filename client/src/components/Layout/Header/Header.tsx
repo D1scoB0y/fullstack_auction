@@ -9,7 +9,7 @@ import CompanyName from './CompanyName/CompanyName'
 import LoginModal from '@/components/Modals/Auth/LoginModal'
 import UserMenu from './UserMenu/UserMenu'
 import useUserContext from '@/context/useUserContext'
-
+import ResetPasswordModal from '@/components/Modals/Warnings/ResetPasswordModal'
 
 const Header = () => {
 	const [showUserMenu, setShowUserMenu] = useState<boolean>(false)
@@ -58,6 +58,7 @@ const Header = () => {
 			
 			<LoginModal />
 			<RegistrationModal />
+			<ResetPasswordModal />
 
 		</div>
 	)

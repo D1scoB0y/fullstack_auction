@@ -1,0 +1,10 @@
+.errorMessage{
+    display: block;
+
+    min-height: 16px;
+    margin-bottom: 4px;
+
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--red);
+}

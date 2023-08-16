@@ -4,60 +4,40 @@ import styles from './PhoneVerificationModal.module.css'
 
 import useModalsStore from "@/stores/modalsStore"
 
+import { isPhoneCodeValid } from "@/services/userServices/userDataVerificationService"
+
 import Modal from "../Modal"
 import Input from "@/components/UI/Form/Input/Input"
 import ModalLoaderOverlay from "@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay"
-import { isPhoneCodeValid } from "@/services/userServices/userDataVerificationService"
 import useUserContext from "@/context/useUserContext"
 import Button from "@/components/UI/Button/Button"
+import ErrorMessage from "@/components/UI/Form/ErrorMessage/ErrorMessage"
+import useInput from "@/hooks/useInput"
 
 
 const PhoneVerificationModal = () => {
 
-    const [code, setCode] = useState<string>('')
-    const [codeError, setCodeError] = useState<string>('')
-
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [codeError, setCodeError] = useState<string>('')
+    const [afterSubmitError, setAfterSubmitError] = useState<string>('')
 
     const { token, updateUserState } = useUserContext()
+
 
     const {
         phoneVerificationModalActive,
         setPhoneVerificationModalActive,
     } = useModalsStore()
 
-    const codeHandler = (code: string) => {
+    const code = useInput('', {required: true, minLength: 4, onlyNumbers: true})
 
-        setCode(code)
-
-        if (code.length === 0) {
-            setCodeError('Заполните это поле')
-            return
-        }
-
-        const avalibleSymbols = '1234567890'
-
-        for (const symbol of code) {
-            if (avalibleSymbols.indexOf(symbol) === -1) {
-                setCodeError('Только цифры')
-                return
-            }
-        }
-
-        if (code.length < 4) {
-            setCodeError('Длина кода - 4 цифры')
-            return
-        }
-
-        setCodeError('')
-    }
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         setIsLoading(true)
 
-        const isCodeValid = await isPhoneCodeValid(token, code)
+        const isCodeValid = await isPhoneCodeValid(token, code.value)
 
         if (isCodeValid) {
             setPhoneVerificationModalActive(false)
@@ -71,10 +51,11 @@ const PhoneVerificationModal = () => {
 
 
     return (
-        <Modal isActive={phoneVerificationModalActive} setIsActive={setPhoneVerificationModalActive}>
-
-            <span className={styles.modalTitle}>Подтверждение номера</span>
-            
+        <Modal
+            title="Подтверждение номера"
+            isActive={phoneVerificationModalActive}
+            setIsActive={setPhoneVerificationModalActive}
+        >   
             <span className={styles.modalText}>
                 Скоро вам позвонят. Введите 4 последние
                 цифры номера с которого поступит звонок.
@@ -82,11 +63,16 @@ const PhoneVerificationModal = () => {
 
             <form onSubmit={onSubmit} noValidate>
 
-                <span className={styles.errorMessage}>{codeError}</span>
+                <ErrorMessage errorText={code.value || afterSubmitError} />
 
                 <Input
-                    value={code}
-                    onChange={(e) => codeHandler(e.target.value)}
+                    value={code.value}
+                    onChange={
+                        (value: string) => {
+                            setAfterSubmitError('')
+                            code.onChange(value)
+                        }
+                    }
                     placeholder='Код'
                     maxLength={4}
                     style={{marginBottom: 0}}

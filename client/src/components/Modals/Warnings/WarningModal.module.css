@@ -1,16 +1,3 @@
-.warningTitle{
-    width: max-content;
-
-    padding-bottom: 24px;
-
-    font-family: 'Lora', serif;
-    font-size: 24px;
-    font-weight: 400;
-    color: var(--black);
-
-    user-select: none;
-}
-
 .warningText{
     max-width: 300px;
 
@@ -22,7 +9,3 @@
 
     padding-bottom: 24px;
 }
-
-
-
-

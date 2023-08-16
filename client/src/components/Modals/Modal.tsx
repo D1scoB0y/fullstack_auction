@@ -6,6 +6,7 @@ import Portal from "./Portal";
 
 
 interface IModalProps {
+    title: string
     isActive: boolean
     setIsActive: (value: boolean) => void
     children: React.ReactNode
@@ -13,6 +14,7 @@ interface IModalProps {
 
 
 const Modal: FC<IModalProps> = ({
+    title,
     isActive,
     setIsActive,
     children,
@@ -23,6 +25,8 @@ const Modal: FC<IModalProps> = ({
                 <Portal>
                     <div className={styles.overlay} onClick={() => setIsActive(false)}>
                         <div className={styles.modalBody} onClick={e => e.stopPropagation()}>
+
+                            <span className={styles.modalTitle}>{title}</span>
 
                             {children}
 

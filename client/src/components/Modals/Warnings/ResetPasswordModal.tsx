@@ -1,0 +1,93 @@
+import React, { useEffect, useState } from 'react'
+
+import styles from './WarningModal.module.css'
+
+import useInput from '@/hooks/useInput'
+import useModalsStore from '@/stores/modalsStore'
+
+import { requestPasswordReset } from '@/services/userServices/userDataManiulationsService'
+
+import Modal from '../Modal'
+import Button from '@/components/UI/Button/Button'
+import Input from '@/components/UI/Form/Input/Input'
+import ModalLoaderOverlay from '@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay'
+import HiddenErrorMessage from '@/components/UI/Form/ErrorMessage/HiddenErrorMessage'
+
+
+const ResetPasswordModal = () => {
+
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [afterSubmitError, setAfterSubmitError] = useState<string>('')
+    const [isValid, setIsValid] = useState<boolean>(false)
+
+
+    const {
+        resetPasswordModalActive,
+        setResetPasswordModalActive
+    } = useModalsStore()
+
+
+    const email = useInput('', {required: true, isEmail: true})
+
+
+    useEffect(() => {
+        setIsValid(email.isValid && !afterSubmitError)
+    }, [email.isValid, afterSubmitError])
+
+
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault()
+
+        setIsLoading(true)
+
+        const isPasswordResetRequested = await requestPasswordReset(email.value) 
+
+        if (isPasswordResetRequested) {
+            email.clearField()
+            setResetPasswordModalActive(false)
+        } else {
+            setAfterSubmitError('Почта не найдена')
+        }
+
+        setIsLoading(false)
+    }
+
+    
+    return (
+        <Modal
+            title='Сброс пароля'
+            isActive={resetPasswordModalActive}
+            setIsActive={setResetPasswordModalActive}
+        >       
+            <span className={styles.warningText}>Укажите свою почту и мы отправим посьмо для сброса пароля.</span>
+
+            <form onSubmit={onSubmit} noValidate>
+
+                <HiddenErrorMessage errorText={email.error || afterSubmitError} />
+
+                <Input
+                    value={email.value}
+                    onChange={
+                        (value: string) => {
+                            setAfterSubmitError('')
+                            email.onChange(value)
+                        }
+                    }
+                    placeholder='Электронная почта'
+                />
+
+                <Button
+                    text='Отправить'
+                    style={{width: 300, marginTop: 24}}
+                    disabled={!isValid}
+                />
+            </form>
+
+            {isLoading && <ModalLoaderOverlay />}
+        </Modal>
+    )
+}
+
+
+export default ResetPasswordModal

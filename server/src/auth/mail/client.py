@@ -15,9 +15,17 @@ class MailClient:
     async def generate_verification_message(self, recipient_username: str, recipient_email: str, token: str) -> MessageSchema:
         return MessageSchema(
             recipients=[recipient_email], # type: ignore
-            subject='Подтвердите почту для FotoJager`s Auctions',
+            subject='Подтвердите почту для FotoJäger`s Auctions',
             body=f'''Здравствуйте, {recipient_username}! Перейдите по ссылке для подтверджения адреса электронной почты:
             {config.CLIENT_ORIGIN}/email-verification?token={token}''',
+            subtype=MessageType.plain,
+        )
+    
+    async def generate_password_reset_message(self, recipient_username: str, recipient_email: str, token: str) -> MessageSchema:
+        return MessageSchema(
+            recipients=[recipient_email], # type: ignore
+            subject='Сброс пароля для FotoJäger`s Auctions',
+            body=f'''Здравствуйте, {recipient_username}! Вы запросили сброс пароля указав эту почту. Пройдите по ссылке и действуйте по инструкции:\n{config.CLIENT_ORIGIN}/reset-password?token={token}\nЕсли вы не запрашивали сброс пароля проигнорируйте это сообщение.''',
             subtype=MessageType.plain,
         )
 

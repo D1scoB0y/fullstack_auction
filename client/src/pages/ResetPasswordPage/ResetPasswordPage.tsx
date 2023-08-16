@@ -1,0 +1,104 @@
+import { useEffect, useState } from 'react'
+
+import { useNavigate, useSearchParams } from 'react-router-dom'
+
+import styles from './ResetPasswordPage.module.css'
+
+import useInput from "@/hooks/useInput"
+import { resetPassword } from "@/services/userServices/userDataManiulationsService"
+import useModalsStore from '@/stores/modalsStore'
+
+import PageTitle from "@/components/UI/PageTitle/PageTitle"
+import Loader from '@/components/UI/Loader/Loader'
+import HiddenErrorMessage from '@/components/UI/Form/ErrorMessage/HiddenErrorMessage'
+import Button from '@/components/UI/Button/Button'
+import PasswordField from '@/components/UI/Form/PasswordField/PasswordField'
+
+
+const ResetPasswordPage = () => {
+
+    const newPassword = useInput('', {required: true, minLength: 8})
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [afterSubmitError, setAfterSubmitError] = useState<string>('')
+    const [isValid, setIsValid] = useState<boolean>(false)
+
+
+    const [params] = useSearchParams()
+
+    const token = params.get('token')
+
+    const {
+        setLoginModalActive,
+    } = useModalsStore()
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        setIsValid(newPassword.isValid && !afterSubmitError)
+    }, [newPassword.isValid, afterSubmitError])
+
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault()
+
+        setIsLoading(true)
+
+        if (token) {
+            const isPasswordReseted = await resetPassword(token, newPassword.value)
+
+            if (isPasswordReseted) {
+                navigate('/')
+                setLoginModalActive(true)
+            } else {
+                setAfterSubmitError('Ошибка. Попробуйте позже')
+            }
+
+        }
+
+        setIsLoading(false)
+    }
+
+    return (
+        <>
+            <PageTitle text='Сброс пароля'/>
+
+            <form className={styles.form} onSubmit={onSubmit} noValidate>
+
+                <span className={styles.inputLabel}>Новый пароль</span>
+
+                <HiddenErrorMessage errorText={newPassword.error || afterSubmitError}/>
+
+                <PasswordField
+                    value={newPassword.value}
+                    onChange={
+                        (value: string) => {
+                            setAfterSubmitError('')
+                            newPassword.onChange(value)
+                        }
+                    }
+                    placeholder=''
+                />
+
+                <div className={styles.submitButtonContainer}>
+
+                    <Button
+                        text='Сохранить'
+                        disabled={!isValid}
+                        style={{width: 300, marginTop: 12}}
+                    />
+                    
+                    {isLoading && <Loader
+                                    width={40}
+                                    height={40}
+                                    style={{marginTop: 24, marginLeft: 24}}
+                                />
+                    }
+
+                </div>
+
+            </form>
+        </>
+    )
+}
+
+export default ResetPasswordPage
