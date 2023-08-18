@@ -1,6 +1,7 @@
-import { FC } from 'react';
-
+import { FC, useEffect, useState } from 'react';
 import { Routes, Route } from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
+
 
 import './styles/globals.css'
 
@@ -11,6 +12,7 @@ import LandingPage from './pages/LandingPage/LandingPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import EmailVerificationPage from './pages/EmailVerificationPage/EmailVerificationPage';
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
+import useModalsStore from './stores/modalsStore';
 
 
 const Protected: FC<{children: JSX.Element}> = ({children}) => {
@@ -22,21 +24,53 @@ const Protected: FC<{children: JSX.Element}> = ({children}) => {
 
 
 const App = () => {
+
+	const [isAnyModalActive, setIsAnyModalActive] = useState<boolean>(false)
+
+	const modalsData = useModalsStore()
+
+	useEffect(() => {
+
+		setIsAnyModalActive(
+			modalsData.changePasswordModalActive ||
+			modalsData.emailWarningModalActive ||
+			modalsData.loginModalActive ||
+			modalsData.phoneVerificationModalActive ||
+			modalsData.registrationModalActive ||
+			modalsData.resetPasswordModalActive
+		)
+
+	}, [modalsData])
+
 	return (
-		<Routes>
+		<>
+			{isAnyModalActive && (
+				<Helmet>
+					<style type="text/css">{`
+						html {
+							overflow: hidden;
+						}
+					`}</style>
+				</Helmet>
+			)}
+			
+	
+	
+			<Routes>
 
-			<Route path='/' element={<Layout />}>
+				<Route path='/' element={<Layout />}>
 
-				<Route path='/' element={<LandingPage />} />
-				<Route path='/settings' element={<Protected children={<SettingsPage />} />} />
-				<Route path='/email-verification' element={<Protected children={<EmailVerificationPage />} />} /> 
-				<Route path='/reset-password' element={<ResetPasswordPage />} /> 
-				<Route path='/404' element={<>404 not found</>} />
-				<Route path='*' element={<>404 not found</>}/>
+					<Route path='/' element={<LandingPage />} />
+					<Route path='/settings' element={<Protected children={<SettingsPage />} />} />
+					<Route path='/email-verification' element={<Protected children={<EmailVerificationPage />} />} /> 
+					<Route path='/reset-password' element={<ResetPasswordPage />} /> 
+					<Route path='/404' element={<>404 not found</>} />
+					<Route path='*' element={<>404 not found</>}/>
 
-			</Route>
+				</Route>
 
-		</Routes>
+			</Routes>
+		</>
 	)
 }
 

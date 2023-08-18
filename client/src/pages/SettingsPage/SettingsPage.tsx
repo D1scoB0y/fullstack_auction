@@ -18,7 +18,6 @@ import {
 } from '@/services/userServices/checkUserDataService'
 
 import PageTitle from '@/components/UI/PageTitle/PageTitle'
-import Loader from '@/components/UI/Loader/Loader'
 import Input from '@/components/UI/Form/Input/Input'
 import Button from '@/components/UI/Button/Button'
 import HiddenErrorMessage from '@/components/UI/Form/ErrorMessage/HiddenErrorMessage'
@@ -215,9 +214,9 @@ const SettingsPage = () => {
                         : (
                             <Button
                                 text='Подтвердить'
+                                className={styles.requestVerificationButton}
                                 disabled={!user?.email}
                                 onClick={startEmailConfirmation}
-                                style={{marginLeft: 24}}
                                 preventDefault
                             />
                         )
@@ -250,9 +249,9 @@ const SettingsPage = () => {
                         : (
                             <Button
                                 text='Подтвердить'
+                                className={styles.requestVerificationButton}
                                 onClick={startPhoneConfirmation}
                                 disabled={!user?.phone_number}
-                                style={{marginLeft: 24}}
                                 preventDefault
                             />
                         )
@@ -283,21 +282,13 @@ const SettingsPage = () => {
                     Изменить пароль
                 </span>
 
+                <Button
+                    text='Сохранить'
+                    isLoading={isLoading}
+                    disabled={!isFormValid}
+                    style={{marginTop: 24}}
+                />
 
-                <div className={styles.submitButtonContainer}>
-                    
-                    <Button
-                        text='Сохранить'
-                        disabled={!isFormValid}
-                        style={{width: 300, marginTop: 24}}
-                    />
-
-                    {isLoading && <Loader
-                        width={40}
-                        height={40}
-                        style={{marginTop: 24, marginLeft: 24}}
-                    />}
-                </div>
 
             </form>
 

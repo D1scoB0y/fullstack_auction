@@ -1,10 +1,13 @@
 import { FC, memo } from "react"
 
 import styles from './Button.module.css'
+import ButtonLoadingOverlay from "../ModalLoaderOverlay/ButtonLoadingOverlay"
 
 
 interface IButtonProps {
     text: string
+    className?: string
+    isLoading?: boolean
     onClick?: () => void
     style?: React.CSSProperties
     disabled?: boolean
@@ -14,6 +17,8 @@ interface IButtonProps {
 
 const Button: FC<IButtonProps> = ({
     text,
+    className,
+    isLoading,
     onClick,
     style,
     disabled=false,
@@ -33,12 +38,15 @@ const Button: FC<IButtonProps> = ({
 
     return (
         <button
-            className={styles.button}
+            className={`${styles.button} ${className}`}
             style={{...style}}
             onClick={onClickHandler}
-            disabled={disabled}
+            disabled={disabled || isLoading}
         >
             {text}
+
+            {isLoading && <ButtonLoadingOverlay />}
+
         </button>
     )
 }

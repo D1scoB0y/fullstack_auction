@@ -6,7 +6,6 @@ import useModalsStore from '@/stores/modalsStore'
 import { changePassword } from '@/services/userServices/userDataManiulationsService'
 
 import Modal from '../Modal'
-import ModalLoaderOverlay from '@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay'
 import Button from '@/components/UI/Button/Button'
 import ErrorMessage from '@/components/UI/Form/ErrorMessage/ErrorMessage'
 import PasswordField from '@/components/UI/Form/PasswordField/PasswordField'
@@ -46,6 +45,7 @@ const ChangePasswordModal = () => {
         currentPassword.clearField()
     }, [])
 
+
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault()
@@ -61,11 +61,9 @@ const ChangePasswordModal = () => {
             )
 
             if (isPasswordChanged) {
-                clearForm()
                 setChangePasswordModalActive(false)
             } else {
                 setAfterSubmitError('Неверный пароль')
-                currentPassword.clearField()
             }
         }
 
@@ -77,6 +75,7 @@ const ChangePasswordModal = () => {
             title='Изменение пароля'
             isActive={changePasswordModalActive}
             setIsActive={setChangePasswordModalActive}
+            onClose={clearForm}
         >
             <form onSubmit={onSubmit} noValidate>
 
@@ -105,13 +104,12 @@ const ChangePasswordModal = () => {
 
                 <Button
                     text='Сохранить'
+                    isLoading={isLoading}
                     disabled={!isValid}
                     style={{width: 300, marginTop: 24}}
                 />
 
             </form>
-
-            {isLoading && <ModalLoaderOverlay />}
 
         </Modal>
     )

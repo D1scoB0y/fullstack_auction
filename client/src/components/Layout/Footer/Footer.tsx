@@ -5,7 +5,7 @@ import styles from './Footer.module.css'
 
 const Footer = () => {
   return (
-    <div className={styles.footer}>
+    <footer className={styles.footer}>
         <div className={styles.innerFooter}>
 
             <Link className={styles.footerSection} to={'/'}>
@@ -15,7 +15,7 @@ const Footer = () => {
             <span className={styles.copyright}>© 2023</span>
 
         </div>
-    </div>
+    </footer>
   )
 }
 

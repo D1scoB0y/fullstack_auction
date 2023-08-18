@@ -10,7 +10,7 @@ app = FastAPI()
 # CORS middleware config (configured for http://localhost:5173 React app)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[config.CLIENT_ORIGIN],
+    allow_origins=[config.CLIENT_ORIGIN, 'http://192.168.0.15:5173'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -22,12 +22,10 @@ async def verification_call_request(
     # Verification code (it will be last 4 digits of bot's phone number)
     verif_code = await _auth_security.generate_4_digit_code()
 
-    await _mobile_service.verification_call(user.phone_number, verif_code) # type: ignore
+    await _mobile_service.verification_call(user.phone_number, verif_code)
 
-    user.phone_number_verif_code = verif_code # type: ignore
+    user.phone_number_verif_code = verif_code
     await session.commit()
-
-    return None
 
 
 @router.get('/validate-verification-code', status_code=204, tags=['Phone number verification'])
@@ -38,13 +36,11 @@ async def validate_verification_code(
     ) -> None:
 
     if user is None:
-        raise HTTPException(status_code=404, detail=f'User with id: {id}, does not exist')
+        raise HTTPException(status_code=404, detail='Invalid token')
 
     if verif_code != user.phone_number_verif_code:
         raise HTTPException(status_code=400, detail='Phone number verification code is wrong')
 
-    user.phone_number_is_verified = True # type: ignore
-    user.phone_number_verif_code = None # type: ignore
+    user.phone_number_is_verified = True
+    user.phone_number_verif_code = None
     await session.commit()
-
-    return None

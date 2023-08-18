@@ -6,7 +6,6 @@ import useInput from "@/hooks/useInput";
 import useModalsStore from "@/stores/modalsStore";
 import useUserContext from "@/context/useUserContext";
 
-import ModalLoaderOverlay from "@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay";
 import Input from "@/components/UI/Form/Input/Input";
 import Modal from "../Modal";
 import Button from "@/components/UI/Button/Button";
@@ -44,6 +43,7 @@ const LoginForm = () => {
     const clearForm = useCallback(() => {
         email.clearField()
         password.clearField()
+        setAfterSubmitError('')
     }, [])
 
 
@@ -59,11 +59,9 @@ const LoginForm = () => {
         })
 
         if (isLogined) {
-            clearForm()
             setLoginModalActive(false)
         } else {
             setAfterSubmitError('Неверный логин или пароль')
-            password.clearField()
         }
 
         setIsLoading(false)
@@ -75,10 +73,11 @@ const LoginForm = () => {
             title="Вход в аккаунт"
             isActive={loginModalActive}
             setIsActive={setLoginModalActive}
+            onClose={clearForm}
         >
             <>
 
-                <form onSubmit={onSubmit} noValidate>
+                <form className={styles.form} onSubmit={onSubmit} noValidate>
 
                     <ErrorMessage errorText={email.error || afterSubmitError} />
 
@@ -91,6 +90,7 @@ const LoginForm = () => {
                             }
                         }
                         placeholder={'Электронная почта'}
+                        type="email"
                     />
 
 
@@ -109,8 +109,9 @@ const LoginForm = () => {
 
                     <Button
                         text='Войти'
+                        isLoading={isLoading}
                         disabled={!isFormValid}
-                        style={{width: 300, marginTop: 24}}
+                        style={{marginTop: 24}}
                     />
                 </form>
                     
@@ -130,16 +131,15 @@ const LoginForm = () => {
                     <span 
                         className={styles.underFormHref}
                         onClick={() => {
-                            clearForm()
                             setLoginModalActive(false)
                             setRegistrationModalActive(true)
                         }}
                     >
-                        Зарегистрироваться
+                        Создать
                     </span>
                 </div>
 
-                {isLoading && <ModalLoaderOverlay />}
+                
             </>
         </Modal>
     )   

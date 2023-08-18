@@ -25,7 +25,7 @@ const EmailVerificatoinModal = () => {
             <Button
                 text='Хорошо'
                 onClick={() => setEmailWarningModalActive(false)}
-                style={{width: 300, marginTop: 24}}
+                style={{width: 300, marginTop: 12}}
             />
 
         </Modal>

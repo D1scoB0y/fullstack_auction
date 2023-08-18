@@ -29,3 +29,12 @@
     margin: 0;
 }
 
+
+@media screen and (max-width: 768px) {
+    .input{
+        width: 100%;
+        max-width: 408px;
+    }
+}
+
+

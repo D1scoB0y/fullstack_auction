@@ -11,12 +11,16 @@ interface IModalsStore {
     changePasswordModalActive: boolean
     resetPasswordModalActive: boolean
 
+    mobileUserMenuActive: boolean
+
     setLoginModalActive: TypeChangeState
     setRegistrationModalActive: TypeChangeState
     setEmailWarningModalActive: TypeChangeState
     setPhoneVerificationModalActive: TypeChangeState
     setChangePasswordModalActive: TypeChangeState
     setResetPasswordModalActive: TypeChangeState
+    
+    setMobileUserMenuActive: TypeChangeState
 }
 
 
@@ -30,6 +34,7 @@ const useModalsStore = create<IModalsStore>(
             changePasswordModalActive: false,
             resetPasswordModalActive: false,
 
+            mobileUserMenuActive: false,
 
             setLoginModalActive: (value: boolean) => {
                 set(state => ({
@@ -70,6 +75,13 @@ const useModalsStore = create<IModalsStore>(
                 set(state => ({
                     ...state,
                     resetPasswordModalActive: value
+                }))
+            },
+
+            setMobileUserMenuActive: (value) => {
+                set(state => ({
+                    ...state,
+                    mobileUserMenuActive: value
                 }))
             },
         }

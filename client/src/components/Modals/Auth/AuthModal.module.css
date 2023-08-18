@@ -41,3 +41,10 @@
 .underFormHref:hover{
     color: var(--hovered-blue);
 }
+
+@media screen and (max-width: 480px) {
+    .form{
+        width: 100%;
+    }
+}
+

@@ -33,9 +33,9 @@ async def request_password_reset_path(
 
     await _mail_client.mail_client.send_message(
         await _mail_client.mail_client.generate_password_reset_message(
-            user.username, # type: ignore
-            user.email, # type: ignore
-            token, # type: ignore
+            user.username,
+            user.email,
+            token,
         ),
         bg_tasks,
     )
@@ -57,6 +57,6 @@ async def reset_password_path(
     if user is None:
         raise HTTPException(status_code=401, detail='Token is invalid')
     
-    user.password = await _auth_security.hash_password(reset_password_data.new_password) # type: ignore
+    user.password = await _auth_security.hash_password(reset_password_data.new_password)
 
     await session.commit()

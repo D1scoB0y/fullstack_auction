@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import styles from './PhoneVerificationModal.module.css'
 
@@ -8,7 +8,6 @@ import { isPhoneCodeValid } from "@/services/userServices/userDataVerificationSe
 
 import Modal from "../Modal"
 import Input from "@/components/UI/Form/Input/Input"
-import ModalLoaderOverlay from "@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay"
 import useUserContext from "@/context/useUserContext"
 import Button from "@/components/UI/Button/Button"
 import ErrorMessage from "@/components/UI/Form/ErrorMessage/ErrorMessage"
@@ -19,10 +18,9 @@ const PhoneVerificationModal = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [codeError, setCodeError] = useState<string>('')
-    const [afterSubmitError, setAfterSubmitError] = useState<string>('')
+    const [isValid, setIsValid] = useState<boolean>(false)
 
     const { token, updateUserState } = useUserContext()
-
 
     const {
         phoneVerificationModalActive,
@@ -31,6 +29,9 @@ const PhoneVerificationModal = () => {
 
     const code = useInput('', {required: true, minLength: 4, onlyNumbers: true})
 
+    useEffect(() => {
+        setIsValid(code.isValid && !codeError)
+    }, [code.isValid, codeError])
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -55,6 +56,7 @@ const PhoneVerificationModal = () => {
             title="Подтверждение номера"
             isActive={phoneVerificationModalActive}
             setIsActive={setPhoneVerificationModalActive}
+            onClose={code.clearField}
         >   
             <span className={styles.modalText}>
                 Скоро вам позвонят. Введите 4 последние
@@ -63,13 +65,13 @@ const PhoneVerificationModal = () => {
 
             <form onSubmit={onSubmit} noValidate>
 
-                <ErrorMessage errorText={code.value || afterSubmitError} />
+                <ErrorMessage errorText={code.error || codeError} />
 
                 <Input
                     value={code.value}
                     onChange={
                         (value: string) => {
-                            setAfterSubmitError('')
+                            setCodeError('')
                             code.onChange(value)
                         }
                     }
@@ -80,14 +82,12 @@ const PhoneVerificationModal = () => {
                 
                 <Button
                     text='Подтвердить'
-                    disabled={!!codeError}
+                    isLoading={isLoading}
+                    disabled={!isValid}
                     style={{width: 300, marginTop: 24}}
                 />
 
             </form>
-
-            {isLoading && <ModalLoaderOverlay />}
-
         </Modal>
     )
 }

@@ -46,3 +46,17 @@
 
     user-select: none;
 }
+
+@media screen and (max-width: 768px) {
+    .overlay{
+        height: 100lvh;
+    }
+
+    .modalBody{
+        width: 100%;
+
+        padding: 24px 36px;
+
+        border-radius: 0;
+    }
+}
