@@ -40,7 +40,21 @@ const loginUser: TypeLoginUser = async (loginData) => {
 }
 
 
+type TypeLoginUserWithGoogle = (googleToken: string) => Promise<string|null>
+const loginUserWithGoogle: TypeLoginUserWithGoogle = async (googleToken) => {
+
+    try {
+        const response = await api.post('/auth/google-auth', {token: googleToken})
+        return response.data
+    } catch (e) {
+        return null
+    }
+}
+
+
+
 export {
     registerUser,
     loginUser,
+    loginUserWithGoogle,
 }

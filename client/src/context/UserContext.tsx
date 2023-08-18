@@ -1,7 +1,7 @@
 import { FC, createContext, useCallback, useEffect, useState } from "react";
 import { getUser } from "@/services/userServices/helperService";
 import { ILoginData, IRegistrationData } from "@/types/user.interface";
-import { loginUser, registerUser } from "@/services/userServices/authService";
+import { loginUser, registerUser, loginUserWithGoogle } from "@/services/userServices/authService";
 
 import { IUser } from "@/types/user.interface";
 
@@ -12,6 +12,7 @@ export interface IUserContext {
     updateUserState: () => Promise<void>
     registration: (registrationData: IRegistrationData) => Promise<boolean>
     login: (loginData: ILoginData) => Promise<boolean>
+    loginWithGoogle: (googleToken: string) => Promise<boolean>
     logout: () => void
 }
 
@@ -75,7 +76,20 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
     }
 
     const login = async (loginData: ILoginData) => {
+
         const token = await loginUser(loginData)
+
+        if (token) {
+            setToken(token)
+            return true
+        }
+
+        return false
+    }
+
+    const loginWithGoogle = async (googleToken: string) => {
+        
+        const token = await loginUserWithGoogle(googleToken)
 
         if (token) {
             setToken(token)
@@ -97,6 +111,7 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
                 updateUserState,
                 registration,
                 login,
+                loginWithGoogle,
                 logout,
             }}
         >

@@ -24,6 +24,10 @@ class ChangePasswordSchema(BaseModel):
     current_password: str
 
 
+class LoginWithGoogleSchema(BaseModel):
+    token: str
+
+
 class ReadUserSchema(BaseModel):
     id: int
     username: str

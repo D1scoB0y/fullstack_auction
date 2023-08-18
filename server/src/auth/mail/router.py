@@ -3,10 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database as _db
 import src.auth.schemas as _auth_schemas
-import src.auth.service as _auth_service
 import src.auth.security as _auth_security
 import src.auth.models as _auth_models
 import src.auth.mail.client as _mail_client
+import src.auth.user_getters as _auth_user_getters
 
 
 router = APIRouter(prefix='/mail')
@@ -15,7 +15,7 @@ router = APIRouter(prefix='/mail')
 @router.get('/verification-message-request', status_code=204, tags=['Email verification'])
 async def verification_message_request_path(
         bg_tasks: BackgroundTasks,
-        user: _auth_models.User = Depends(_auth_service.get_current_user),
+        user: _auth_models.User = Depends(_auth_user_getters.get_current_user),
     ):
     '''Request to send an email with an email verification link'''
 
@@ -48,7 +48,7 @@ async def validate_verification_token_path(
     if email is None:
         raise HTTPException(status_code=400, detail='Invalid token')
 
-    user = await _auth_service.get_user_by_email(email, session)
+    user = await _auth_user_getters.get_user_by_email(email, session)
 
     if user is None:
         raise HTTPException(status_code=404, detail='User with this email does not exist')
