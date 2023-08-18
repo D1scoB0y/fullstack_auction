@@ -56,12 +56,8 @@ async def get_current_user(
         token = Depends(_auth_schemas.oauth2schema),
         session: AsyncSession = Depends(_db.get_session),
     ) -> _auth_models.User:
-    user = await get_user_by_token(token, session)
-
-    if user is None:
-        raise HTTPException(status_code=401, detail='Invalid token')
     
-    return user
+    return await get_user_by_token(token, session)
 
 
 async def auth_user(
@@ -69,7 +65,7 @@ async def auth_user(
         session: AsyncSession,
     ) -> str:
 
-    email = credentials.username # 'OAuth2PasswordRequestForm' object has no attribute 'email'
+    email = credentials.username    # 'OAuth2PasswordRequestForm' object has no attribute 'email'
 
     user = await get_user_by_email(email, session)
 
@@ -78,39 +74,26 @@ async def auth_user(
         raise HTTPException(status_code=401, detail='Invalid credentials')
 
     # If password is wrong
-    if not await _auth_security.check_password(credentials.password, str(user.password)):
+    if not await _auth_security.check_password(credentials.password, user.password):
         raise HTTPException(status_code=401, detail='Invalid credentials')
 
-    return await _auth_security.generate_jwt({'email': user.email})
-
-
-async def valid_registration_credentials(
-        credentials: _auth_schemas.RegistrationUserSchema,
-        session: AsyncSession
-    ) -> None:
-
-    if await get_user_by_email(credentials.email, session) is not None:
-        raise HTTPException(status_code=409, detail='Email is already taken')
-    
-    elif await get_user_by_username(credentials.username, session) is not None:
-        raise HTTPException(status_code=409, detail='Username is already taken')
+    return await _auth_security.generate_jwt({'id': user.id})
 
 
 async def create_user(
         credentials: _auth_schemas.RegistrationUserSchema,
         session: AsyncSession
     ) -> str:
-
-    await valid_registration_credentials(credentials, session)
-
     new_user = _auth_models.User(**credentials.dict())
 
-    new_user.password = await _auth_security.hash_password(credentials.password) # type: ignore
+    new_user.password = await _auth_security.hash_password(credentials.password)
 
     session.add(new_user)
-    await session.commit()
 
-    return await _auth_security.generate_jwt({'email': credentials.email})
+    await session.commit()
+    await session.refresh(new_user)
+
+    return await _auth_security.generate_jwt({'id': new_user.id})
 
 
 async def get_user_by_token(
@@ -119,10 +102,11 @@ async def get_user_by_token(
     ) -> _auth_models.User:
 
     payload = await _auth_security.parse_jwt(token)
-    email = payload['email']
+    id = payload['id']
 
-    user = await get_user_by_email(email, session)
+    user = await get_user_by_id(id, session)
+
     if user is None:
-        raise HTTPException(status_code=400, detail='Invalid token')
+        raise HTTPException(status_code=401, detail='Invalid token')
 
     return user

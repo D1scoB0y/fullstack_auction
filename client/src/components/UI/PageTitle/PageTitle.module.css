@@ -8,3 +8,12 @@
     font-weight: 400;
     color: var(--black);
 }
+
+
+@media screen and (max-width: 768px) {
+    .pageTitle{
+        padding-top: 32px;
+
+        text-align: center;
+    }
+}

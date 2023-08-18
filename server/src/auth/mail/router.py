@@ -12,28 +12,26 @@ import src.auth.mail.client as _mail_client
 router = APIRouter(prefix='/mail')
 
 
-@router.get('/verification-message-request', tags=['Email verification'])
+@router.get('/verification-message-request', status_code=204, tags=['Email verification'])
 async def verification_message_request_path(
         bg_tasks: BackgroundTasks,
         user: _auth_models.User = Depends(_auth_service.get_current_user),
     ):
     '''Request to send an email with an email verification link'''
 
-    if user.email_is_verified: # type: ignore
+    if user.email_is_verified:
         raise HTTPException(status_code=409, detail='User\'s email is already verified')
 
     token = await _auth_security.generate_jwt({'email': user.email})
 
     await _mail_client.mail_client.send_message(
         await _mail_client.mail_client.generate_verification_message(
-            user.username, # type: ignore
-            user.email, # type: ignore
-            token, # type: ignore
+            user.username,
+            user.email,
+            token,
         ),
         bg_tasks,
     )
-
-    return token
 
 
 @router.get('/validate-verification-token', tags=['Email verification'])
@@ -55,7 +53,8 @@ async def validate_verification_token_path(
     if user is None:
         raise HTTPException(status_code=404, detail='User with this email does not exist')
 
-    user.email_is_verified = True # type: ignore
+    user.email_is_verified = True
     await session.commit()
     await session.refresh(user)
+    
     return _auth_schemas.ReadUserSchema.from_orm(user)

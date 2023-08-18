@@ -1,12 +1,11 @@
 import asyncio
 from typing import AsyncGenerator
-from httpx import AsyncClient
 
 import pytest
+import src.database as _db
+import src.main as _app
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
-import src.main as _app
-import src.database as _db
 from src.config import config
 
 
@@ -23,41 +22,31 @@ _app.app.dependency_overrides[_db.get_session] = overriden_get_session
 
 
 @pytest.fixture(scope='session', autouse=True)
-async def create_test_records():
+async def create_tables():
 
-    # Before tests
     async with test_async_engine.begin() as conn:
         await conn.run_sync(_db.Base.metadata.create_all)
 
     yield
 
-    # After tests
     async with test_async_engine.begin() as conn:
         await conn.run_sync(_db.Base.metadata.drop_all)
 
 
 @pytest.fixture(scope='session', autouse=True)
-def event_loop(request):
-    """Create an instance of the default event loop for each test case."""
+def event_loop():
+    
     loop = asyncio.get_event_loop_policy().new_event_loop()
+
     yield loop
+
     loop.close()
 
 
-@pytest.fixture(scope="session", autouse=True)
-async def ac() -> AsyncGenerator[AsyncClient, None]:
+def pytest_addoption(parser):
 
-    async with AsyncClient(app=_app.app, base_url="http://test") as ac:
-        yield ac
-
-
-test_user_data = {
-    'username': 'DiscoBoy',
-    'email': 'fake38536267129419364@gmail.com',
-    'phone_number': '+79274662618',
-    'password': 'test_password'
-    }
-
-@pytest.fixture(scope="session", autouse=True)
-async def test_user() -> dict[str, str]:
-    return test_user_data
+    parser.addoption(
+        '--runslow',
+        action="store_true",
+        default=False,
+    )

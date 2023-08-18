@@ -5,7 +5,6 @@ import styles from './AuthModal.module.css'
 import useModalsStore from "@/stores/modalsStore";
 import { checkEmail, checkUsername } from "@/services/userServices/checkUserDataService";
 
-import ModalLoaderOverlay from "@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay";
 import Input from "@/components/UI/Form/Input/Input";
 import Modal from "../Modal";
 import useUserContext from "@/context/useUserContext";
@@ -18,11 +17,13 @@ import useInput from "@/hooks/useInput";
 interface IAfterSubmitErrors {
     username: string
     email: string 
+    server: string
 }
 
 const initialAfterSubmitErrors = {
     username: '',
     email: '',
+    server: '',
 }
 
 const RegistrationModal = () => {
@@ -63,6 +64,7 @@ const RegistrationModal = () => {
         username.clearField()
         email.clearField()
         password.clearField()
+        setAfterSubmitErrors(initialAfterSubmitErrors)
     }, [])
 
 
@@ -88,16 +90,18 @@ const RegistrationModal = () => {
         }
 
         if (!isSubmissionСanceled) {
-            await registration({
+
+            const isRegistered = await registration({
                 username: username.value,
                 email: email.value,
                 password: password.value,
             })
 
-            clearForm()
-            setRegistrationModalActive(false)
-        } else {
-            password.clearField()
+            if (isRegistered) {
+                setRegistrationModalActive(false)
+            } else {
+                setAfterSubmitErrors(prev => ({...prev, server: 'Ошибка. Попробуйте еще'}))
+            }
         }
 
         setIsLoading(false)
@@ -108,16 +112,17 @@ const RegistrationModal = () => {
             title="Регистрация"
             isActive={registrationModalActive}
             setIsActive={setRegistrationModalActive}
+            onClose={clearForm}
         >
-            <form onSubmit={onSubmit} noValidate>
+            <form className={styles.form} onSubmit={onSubmit} noValidate>
 
-                <ErrorMessage errorText={username.error || afterSubmitErrors.username} />
+                <ErrorMessage errorText={username.error || afterSubmitErrors.username || afterSubmitErrors.server} />
 
                 <Input
                     value={username.value}
                     onChange={
                         (value: string) => {
-                            setAfterSubmitErrors(prev => ({...prev, username: ''}))
+                            setAfterSubmitErrors(prev => ({...prev, username: '', server: ''}))
                             username.onChange(value)
                         }
                     }
@@ -131,7 +136,7 @@ const RegistrationModal = () => {
                     value={email.value}
                     onChange={
                         (value: string) => {
-                            setAfterSubmitErrors(prev => ({...prev, email: ''}))
+                            setAfterSubmitErrors(prev => ({...prev, email: '', server: ''}))
                             email.onChange(value)
                         }
                     }
@@ -148,8 +153,9 @@ const RegistrationModal = () => {
 
                 <Button
                     text='Создать аккаунт'
+                    isLoading={isLoading}
                     disabled={!isFormValid}
-                    style={{width: 300, marginTop: 24}}
+                    style={{marginTop: 24}}
                 />
             </form>
 
@@ -158,7 +164,6 @@ const RegistrationModal = () => {
                 <span 
                     className={styles.underFormHref}
                     onClick={() => {
-                        clearForm()
                         setRegistrationModalActive(false)
                         setLoginModalActive(true)
                     }}
@@ -167,7 +172,6 @@ const RegistrationModal = () => {
                 </span>
             </div>
 
-            {isLoading && <ModalLoaderOverlay />} 
         </Modal>                  
     )
 }

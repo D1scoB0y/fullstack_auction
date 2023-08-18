@@ -1,15 +1,15 @@
 import { memo } from "react"
 
 import Loader from "@/components/UI/Loader/Loader"
-import styles from './ModalLoaderOverlay.module.css'
+import styles from './ButtonLoadingOverlay.module.css'
 
 
-const ModalLoaderOverlay = () => {
+const ButtonLoadingOverlay = () => {
   return (
     <div className={styles.loaderOverlay}>
       <Loader
-        width={56}
-        height={56}
+        width={32}
+        height={32}
         style={{position: 'absolute'}}
       />
     </div>
@@ -17,4 +17,4 @@ const ModalLoaderOverlay = () => {
 }
 
 
-export default memo(ModalLoaderOverlay)
+export default memo(ButtonLoadingOverlay)

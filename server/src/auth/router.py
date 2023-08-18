@@ -47,18 +47,18 @@ async def update_user_path(
         session: AsyncSession = Depends(_db.get_session),
     ):
 
-    if not await _auth_security.check_password(user_data.password, user.password): # type: ignore
+    if not await _auth_security.check_password(user_data.password, user.password):
         raise HTTPException(status_code=401, detail='Wrong password')
     
     if user_data.email != user.email:
-        user.email_is_verified = False # type: ignore
+        user.email_is_verified = False
 
     if user_data.phone_number != user.phone_number:
-        user.phone_number_is_verified = False # type: ignore
+        user.phone_number_is_verified = False
 
-    user.username = user_data.username # type: ignore
-    user.email = user_data.email # type: ignore
-    user.phone_number = user_data.phone_number # type: ignore
+    user.username = user_data.username
+    user.email = user_data.email
+    user.phone_number = user_data.phone_number
 
     await session.commit()
 
@@ -70,10 +70,10 @@ async def change_password_path(
         session: AsyncSession = Depends(_db.get_session),
     ):
 
-    if not await _auth_security.check_password(data.current_password, user.password): # type: ignore
+    if not await _auth_security.check_password(data.current_password, user.password):
         raise HTTPException(status_code=401, detail='Wrong password')
     
-    user.password = await _auth_security.hash_password(data.new_password) # type: ignore
+    user.password = await _auth_security.hash_password(data.new_password)
 
     await session.commit()
 

@@ -10,6 +10,8 @@ import LoginModal from '@/components/Modals/Auth/LoginModal'
 import UserMenu from './UserMenu/UserMenu'
 import useUserContext from '@/context/useUserContext'
 import ResetPasswordModal from '@/components/Modals/Warnings/ResetPasswordModal'
+import MobileUserMenu from './MobileUserMenu/MobileUserMenu'
+
 
 const Header = () => {
 	const [showUserMenu, setShowUserMenu] = useState<boolean>(false)
@@ -17,17 +19,20 @@ const Header = () => {
 	const { token, user } = useUserContext()
 
 	const {
+		mobileUserMenuActive,
+		setMobileUserMenuActive,
 		setLoginModalActive,
-		setRegistrationModalActive
+		setRegistrationModalActive,
 	} = useModalsStore()
 
 	return (
-		<div className={styles.header}>
+		<header className={styles.header}>
 			<div className={styles.innerHeader}>
 
 				<CompanyName />
 
 				<div className={styles.authBox}>
+
 					{(token && user) ? (
 						<>
 							<div className={styles.userBox} onMouseLeave={() => setShowUserMenu(false)} onMouseEnter={() => setShowUserMenu(true)}>
@@ -53,14 +58,23 @@ const Header = () => {
 						</>
 					)}
 				</div>
+				
+				<img
+					className={styles.burgerMenu}
+					src={mobileUserMenuActive ? '/cancel.png' : '/burger_menu.png'}
+					onClick={() => setMobileUserMenuActive(!mobileUserMenuActive)}
+					alt="burger menu"
+				/>
 
 			</div>
 			
+			{mobileUserMenuActive && <MobileUserMenu token={token} user={user} />}
+
 			<LoginModal />
 			<RegistrationModal />
 			<ResetPasswordModal />
 
-		</div>
+		</header>
 	)
 }
 

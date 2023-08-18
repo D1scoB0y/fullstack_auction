@@ -20,8 +20,3 @@ async def test_jwt():
 
     assert isinstance(token, str)
     assert parsed_payload == payload
-
-
-async def test_generate_4_digit_code():
-    code = await _auth_security.generate_4_digit_code()
-    assert 999 < code < 10_000

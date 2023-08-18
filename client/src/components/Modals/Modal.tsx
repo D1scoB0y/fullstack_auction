@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 import styles from './Modal.module.css'
 
@@ -9,6 +9,7 @@ interface IModalProps {
     title: string
     isActive: boolean
     setIsActive: (value: boolean) => void
+    onClose?: () => void
     children: React.ReactNode
 }
 
@@ -17,8 +18,16 @@ const Modal: FC<IModalProps> = ({
     title,
     isActive,
     setIsActive,
+    onClose,
     children,
 }) => {
+
+    useEffect(() => {
+        if (!isActive && onClose) {
+            onClose()
+        }
+    }, [isActive])
+
     return (
         <>
             {isActive && (

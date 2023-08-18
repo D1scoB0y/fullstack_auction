@@ -10,7 +10,6 @@ import { requestPasswordReset } from '@/services/userServices/userDataManiulatio
 import Modal from '../Modal'
 import Button from '@/components/UI/Button/Button'
 import Input from '@/components/UI/Form/Input/Input'
-import ModalLoaderOverlay from '@/components/UI/ModalLoaderOverlay/ModalLoaderOverlay'
 import HiddenErrorMessage from '@/components/UI/Form/ErrorMessage/HiddenErrorMessage'
 
 
@@ -44,7 +43,6 @@ const ResetPasswordModal = () => {
         const isPasswordResetRequested = await requestPasswordReset(email.value) 
 
         if (isPasswordResetRequested) {
-            email.clearField()
             setResetPasswordModalActive(false)
         } else {
             setAfterSubmitError('Почта не найдена')
@@ -59,6 +57,7 @@ const ResetPasswordModal = () => {
             title='Сброс пароля'
             isActive={resetPasswordModalActive}
             setIsActive={setResetPasswordModalActive}
+            onClose={email.clearField}
         >       
             <span className={styles.warningText}>Укажите свою почту и мы отправим посьмо для сброса пароля.</span>
 
@@ -79,12 +78,12 @@ const ResetPasswordModal = () => {
 
                 <Button
                     text='Отправить'
+                    isLoading={isLoading}
                     style={{width: 300, marginTop: 24}}
                     disabled={!isValid}
                 />
             </form>
 
-            {isLoading && <ModalLoaderOverlay />}
         </Modal>
     )
 }

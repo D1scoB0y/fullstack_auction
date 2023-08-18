@@ -21,11 +21,12 @@ class MailClient:
             subtype=MessageType.plain,
         )
     
+    
     async def generate_password_reset_message(self, recipient_username: str, recipient_email: str, token: str) -> MessageSchema:
         return MessageSchema(
             recipients=[recipient_email], # type: ignore
             subject='Сброс пароля для FotoJäger`s Auctions',
-            body=f'''Здравствуйте, {recipient_username}! Вы запросили сброс пароля указав эту почту. Пройдите по ссылке и действуйте по инструкции:\n{config.CLIENT_ORIGIN}/reset-password?token={token}\nЕсли вы не запрашивали сброс пароля проигнорируйте это сообщение.''',
+            body=f'Здравствуйте, {recipient_username}! Вы запросили сброс пароля указав эту почту. Пройдите по ссылке и действуйте по инструкции:\n{config.CLIENT_ORIGIN}/reset-password?token={token}\nЕсли вы не запрашивали сброс пароля проигнорируйте это сообщение.',
             subtype=MessageType.plain,
         )
 
@@ -39,14 +40,15 @@ class MailClient:
         bg_tasks.add_task(self.__client.send_message, message)
 
 
-mail_client_config = ConnectionConfig(
-    MAIL_USERNAME=config.MAIL_SENDER,
-    MAIL_PASSWORD=config.MAIL_PASSWORD,
-    MAIL_FROM=config.MAIL_SENDER, # type: ignore
-    MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT=587,
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
-)
+mail_client = MailClient(
 
-mail_client = MailClient(mail_client_config)
+    ConnectionConfig(
+        MAIL_USERNAME=config.MAIL_SENDER,
+        MAIL_PASSWORD=config.MAIL_PASSWORD,
+        MAIL_FROM=config.MAIL_SENDER, # type: ignore
+        MAIL_SERVER='smtp.gmail.com',
+        MAIL_PORT=587,
+        MAIL_STARTTLS=True,
+        MAIL_SSL_TLS=False,
+    )
+)
