@@ -42,9 +42,13 @@
     color: var(--hovered-blue);
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 768px) {
     .form{
         width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }
 

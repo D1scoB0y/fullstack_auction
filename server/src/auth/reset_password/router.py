@@ -4,11 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database as _db
-import src.auth.service as _auth_service
 import src.auth.security as _auth_security
-import src.auth.models as _auth_models
 import src.auth.reset_password.schemas as _reset_password_schemas
 import src.auth.mail.client as _mail_client
+import src.auth.user_getters as _auth_user_getters
 
 
 router = APIRouter(prefix='/reset-password')
@@ -21,7 +20,7 @@ async def request_password_reset_path(
         session: AsyncSession = Depends(_db.get_session),
     ):
 
-    user = await _auth_service.get_user_by_email(email, session)
+    user = await _auth_user_getters.get_user_by_email(email, session)
 
     if user is None:
         raise HTTPException(status_code=401, detail='Email does not exist')
@@ -52,7 +51,7 @@ async def reset_password_path(
     if payload['exp'] <= time.time():
         raise HTTPException(status_code=401, detail='Reset password token was expired')
     
-    user = await _auth_service.get_user_by_email(payload['email'], session)
+    user = await _auth_user_getters.get_user_by_email(payload['email'], session)
 
     if user is None:
         raise HTTPException(status_code=401, detail='Token is invalid')

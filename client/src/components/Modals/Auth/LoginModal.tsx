@@ -11,6 +11,7 @@ import Modal from "../Modal";
 import Button from "@/components/UI/Button/Button";
 import ErrorMessage from "@/components/UI/Form/ErrorMessage/ErrorMessage";
 import PasswordField from "@/components/UI/Form/PasswordField/PasswordField";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 
 const LoginForm = () => {
@@ -37,15 +38,36 @@ const LoginForm = () => {
     }, [email.isValid, password.isValid, afterSubmitError])
 
 
-    const { login } = useUserContext()
+    const {
+        login,
+        loginWithGoogle
+    } = useUserContext()
 
-
+    
     const clearForm = useCallback(() => {
         email.clearField()
         password.clearField()
         setAfterSubmitError('')
     }, [])
 
+
+    const onGoogleSubmit = async (credentialResponse: CredentialResponse) => {
+
+        setIsLoading(true)
+
+        if (credentialResponse.credential) {
+
+            const isLogined = await loginWithGoogle(credentialResponse.credential)
+
+            if (isLogined) {
+                setLoginModalActive(false)
+            } else {
+                setAfterSubmitError('Неверный логин или пароль')
+            }
+        }
+
+        setIsLoading(false)
+    }
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -76,6 +98,14 @@ const LoginForm = () => {
             onClose={clearForm}
         >
             <>
+
+                <GoogleLogin
+                    onSuccess={onGoogleSubmit}
+                    onError={() => setAfterSubmitError('Ошибка. Попробуйте позже')}
+                    shape="square"
+                    size="large"
+                    
+                />
 
                 <form className={styles.form} onSubmit={onSubmit} noValidate>
 

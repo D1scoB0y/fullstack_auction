@@ -2,17 +2,18 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database as _db
-import src.auth.service as _auth_service
 import src.auth.mobile.service as _mobile_service
 import src.auth.security as _auth_security
 import src.auth.models as _auth_models
+import src.auth.user_getters as _auth_user_getters
+
 
 router = APIRouter(prefix='/mobile')
 
 
 @router.get('/verification-call-request', status_code=204, tags=['Phone number verification'])
 async def verification_call_request(
-        user: _auth_models.User = Depends(_auth_service.get_current_user),
+        user: _auth_models.User = Depends(_auth_user_getters.get_current_user),
         session: AsyncSession = Depends(_db.get_session)
     ):
 
@@ -31,7 +32,7 @@ async def verification_call_request(
 @router.get('/validate-verification-code', status_code=204, tags=['Phone number verification'])
 async def validate_verification_code(
         verif_code: int,
-        user: _auth_models.User = Depends(_auth_service.get_current_user),
+        user: _auth_models.User = Depends(_auth_user_getters.get_current_user),
         session: AsyncSession = Depends(_db.get_session)
     ) -> None:
 

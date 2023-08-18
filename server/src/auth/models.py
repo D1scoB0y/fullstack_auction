@@ -19,6 +19,6 @@ class User(Base):
     phone_number_verif_code = mapped_column(sa.Integer)
     phone_number_is_verified = mapped_column(sa.Boolean, nullable=False, default=False)
 
-    password = mapped_column(sa.String, nullable=False)
+    password = mapped_column(sa.String)
 
     is_seller = mapped_column(sa.Boolean, nullable=False, default=False)

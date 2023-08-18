@@ -5,20 +5,24 @@ import { BrowserRouter } from "react-router-dom"
 
 import { HelmetProvider } from 'react-helmet-async';
 import { UserProvider } from './context/UserContext';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<HelmetProvider>
 
-			<UserProvider>
+		<BrowserRouter>
 
-				<BrowserRouter>
-					<App />
-				</BrowserRouter>
+			<HelmetProvider>
+				<UserProvider>
+					<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
 
-			</UserProvider>
+						<App />
 
-		</HelmetProvider>
+					</GoogleOAuthProvider>
+				</UserProvider>
+			</HelmetProvider>
+
+		</BrowserRouter>
 	</React.StrictMode>
 )
