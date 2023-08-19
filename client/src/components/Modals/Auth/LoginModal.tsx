@@ -11,7 +11,10 @@ import Modal from "../Modal";
 import Button from "@/components/UI/Button/Button";
 import ErrorMessage from "@/components/UI/Form/ErrorMessage/ErrorMessage";
 import PasswordField from "@/components/UI/Form/PasswordField/PasswordField";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import GoogleButton from "@/components/UI/GoogleButton/GoogleButton";
+import Line from "@/components/UI/Line/Line";
+import HiddenErrorMessage from "@/components/UI/Form/ErrorMessage/HiddenErrorMessage";
+
 
 
 const LoginForm = () => {
@@ -40,7 +43,6 @@ const LoginForm = () => {
 
     const {
         login,
-        loginWithGoogle
     } = useUserContext()
 
     
@@ -50,24 +52,6 @@ const LoginForm = () => {
         setAfterSubmitError('')
     }, [])
 
-
-    const onGoogleSubmit = async (credentialResponse: CredentialResponse) => {
-
-        setIsLoading(true)
-
-        if (credentialResponse.credential) {
-
-            const isLogined = await loginWithGoogle(credentialResponse.credential)
-
-            if (isLogined) {
-                setLoginModalActive(false)
-            } else {
-                setAfterSubmitError('Неверный логин или пароль')
-            }
-        }
-
-        setIsLoading(false)
-    }
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -99,17 +83,16 @@ const LoginForm = () => {
         >
             <>
 
-                <GoogleLogin
-                    onSuccess={onGoogleSubmit}
-                    onError={() => setAfterSubmitError('Ошибка. Попробуйте позже')}
-                    shape="square"
-                    size="large"
-                    
-                />
-
                 <form className={styles.form} onSubmit={onSubmit} noValidate>
+                    
+                    <GoogleButton
+                        setAfterSubmitError={setAfterSubmitError}
+                        setIsLoading={setIsLoading}
+                    />
 
-                    <ErrorMessage errorText={email.error || afterSubmitError} />
+                    <Line style={{marginTop: 24, marginBottom: 24}} />
+
+                    <HiddenErrorMessage errorText={email.error || afterSubmitError} />
 
                     <Input
                         value={email.value}

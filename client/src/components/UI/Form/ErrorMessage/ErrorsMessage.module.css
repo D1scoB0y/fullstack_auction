@@ -1,4 +1,6 @@
 .errorMessage{
+    width: 100%;
+
     display: block;
 
     min-height: 16px;

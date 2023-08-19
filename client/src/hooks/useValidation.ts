@@ -68,6 +68,7 @@ const useValidation: TypeUseValidation = (value, validations) => {
                     break
 
                 case 'isPhoneNumber':
+                    
                     if (value.length > 0 && value.indexOf('+') !== 0) {
                         setError('Номер должен ничинаться с "+"')
                         return

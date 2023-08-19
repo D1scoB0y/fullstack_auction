@@ -12,6 +12,9 @@ import Button from "@/components/UI/Button/Button";
 import ErrorMessage from "@/components/UI/Form/ErrorMessage/ErrorMessage";
 import PasswordField from "@/components/UI/Form/PasswordField/PasswordField";
 import useInput from "@/hooks/useInput";
+import GoogleButton from "@/components/UI/GoogleButton/GoogleButton";
+import HiddenErrorMessage from "@/components/UI/Form/ErrorMessage/HiddenErrorMessage";
+import Line from "@/components/UI/Line/Line";
 
 
 interface IAfterSubmitErrors {
@@ -116,7 +119,16 @@ const RegistrationModal = () => {
         >
             <form className={styles.form} onSubmit={onSubmit} noValidate>
 
-                <ErrorMessage errorText={username.error || afterSubmitErrors.username || afterSubmitErrors.server} />
+                <GoogleButton
+                    setIsLoading={setIsLoading}
+                    setAfterSubmitError={
+                        (error: string) => setAfterSubmitErrors(prev => ({...prev, server: error}))
+                    }
+                />
+
+                <Line style={{marginTop: 24, marginBottom: 24}} />
+
+                <HiddenErrorMessage errorText={username.error || afterSubmitErrors.username || afterSubmitErrors.server} />
 
                 <Input
                     value={username.value}

@@ -6,6 +6,7 @@ export interface IUser {
     phone_number: string|null,
     phone_number_is_verified: boolean,
     is_seller: boolean
+    created_via_google: boolean
 }
 
 export interface ILoginData {
@@ -21,7 +22,6 @@ export interface IUpdateData {
     username: string
     email: string
     phone_number: string|null
-    password: string
 }
 
 export interface ISettingsData extends IUpdateData {}
