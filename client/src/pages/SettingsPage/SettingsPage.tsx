@@ -21,7 +21,7 @@ import PageTitle from '@/components/UI/PageTitle/PageTitle'
 import Input from '@/components/UI/Form/Input/Input'
 import Button from '@/components/UI/Button/Button'
 import HiddenErrorMessage from '@/components/UI/Form/ErrorMessage/HiddenErrorMessage'
-import PasswordField from '@/components/UI/Form/PasswordField/PasswordField'
+
 
 import EmailVerificatoinModal from '@/components/Modals/Warnings/EmailVerificationModal'
 import PhoneVerificationModal from '@/components/Modals/PhoneVerification/PhoneVerificationModal'
@@ -29,6 +29,7 @@ import ChangePasswordModal from '@/components/Modals/ChangePassword/ChangePasswo
 
 
 import useInput from '@/hooks/useInput'
+import Line from '@/components/UI/Line/Line'
 
 
 
@@ -36,14 +37,12 @@ interface IAfterSubmitErrors {
     username: string
     email: string
     phoneNumber: string
-    password: string
 }
 
 const initialAfterSubmitErrors = {
     username: '',
     email: '',
     phoneNumber: '',
-    password: '',
 }
 
 
@@ -67,7 +66,6 @@ const SettingsPage = () => {
     const username = useInput('', {required: true, minLength: 3})
     const email = useInput('', {required: true, isEmail: true})
     const phoneNumber = useInput('', {isPhoneNumber: true})
-    const password = useInput('', {required: true})
 
 
     useEffect(() => {
@@ -78,25 +76,33 @@ const SettingsPage = () => {
         }
     }, [user])
 
+
     useEffect(() => {
 
-        const isFieldsValid = username.isValid &&
-                                email.isValid &&
-                                phoneNumber.isValid &&
-                                password.isValid
+        const areValuesOld = (username.value === user?.username) &&
+                            (email.value === user?.email) &&
+                            (phoneNumber.value === (user?.phone_number || ''))
 
-        const isAfterSubmitErrors = afterSubmitErrors.email ||
-                                    afterSubmitErrors.username ||
-                                    afterSubmitErrors.phoneNumber ||
-                                    afterSubmitErrors.password
 
-        setIsFormValid(isFieldsValid && !isAfterSubmitErrors)
+        const areFieldsValid = [
+            username.isValid,
+            email.isValid,
+            phoneNumber.isValid,
+        ].every((el) => el)
+
+
+        const areAfterSubmitErrors = [
+            afterSubmitErrors.email,
+            afterSubmitErrors.username,
+            afterSubmitErrors.phoneNumber,
+        ].some((el) => el)
+
+        setIsFormValid(!areValuesOld && areFieldsValid && !areAfterSubmitErrors)
         
     }, [
-        username.isValid,
-        email.isValid,
-        phoneNumber.isValid,
-        password.isValid,
+        username,
+        email,
+        phoneNumber,
         afterSubmitErrors,
     ])
 
@@ -145,7 +151,6 @@ const SettingsPage = () => {
                 username: username.value,
                 email: email.value,
                 phone_number: phoneNumber.value,
-                password: password.value,
             }
 
             if (token) {
@@ -158,8 +163,6 @@ const SettingsPage = () => {
 
             updateUserState()
         }
-
-        password.clearField()
 
         setIsLoading(false)
     }
@@ -257,33 +260,24 @@ const SettingsPage = () => {
                         )
                     }
                 </div>
-
-
-                <span className={styles.inputLabel}>Текущий пароль</span>
-
-                <HiddenErrorMessage errorText={password.error || afterSubmitErrors.password} />
-                    
-                <PasswordField
-                    value={password.value}
-                    onChange={
-                        (value: string) => {
-                            setAfterSubmitErrors(prev => ({...prev, password: ''}))
-                            password.onChange(value)
-                        }
-                    }
-                    placeholder=''
-                />
                 
+                {!user?.created_via_google && (
 
-                <span
-                    className={styles.changePasswordHref}
-                    onClick={() => setChangePasswordModalActive(true)}
-                >
-                    Изменить пароль
-                </span>
+                    <span
+                        className={styles.changePasswordHref}
+                        onClick={() => setChangePasswordModalActive(true)}
+                    >
+                        Изменить пароль
+                    </span>
+
+                )}
+
+                
+                <Line style={{marginTop: 24, marginBottom: 24}} />
 
                 <Button
                     text='Сохранить'
+                    className={styles.saveChangesButton}
                     isLoading={isLoading}
                     disabled={!isFormValid}
                     style={{marginTop: 24}}

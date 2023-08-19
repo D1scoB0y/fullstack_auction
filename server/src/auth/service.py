@@ -1,18 +1,12 @@
-import json
-
+import httpx
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from google.oauth2 import id_token
-from google.auth.transport import requests
 
 import src.auth.models as _auth_models
 import src.auth.schemas as _auth_schemas
 import src.auth.security as _auth_security
 import src.auth.user_getters as _auth_user_getters
-
-from src.config import config
 
 
 async def auth_user(
@@ -50,29 +44,39 @@ async def create_user(
     return await _auth_security.generate_jwt({'id': new_user.id})
 
 
+async def get_user_data_from_google(
+        access_token: str
+    ):
+
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Accept': 'application/json'
+    }
+
+    res = httpx.get(
+
+        f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={access_token}',
+
+        headers=headers,
+    )
+
+    return res.json()
+
+
 async def manage_google_auth(
-        google_token: str,
+        google_access_token: str,
         session: AsyncSession,
     ) -> str:
 
-    try:
-        google_user = id_token.verify_oauth2_token(
+    google_user_data = await get_user_data_from_google(google_access_token)
 
-            google_token,
-            requests.Request(),
-            config.GOOGLE_OAUTH_CLIENT_ID
-        )
-
-    except:
-        raise HTTPException(status_code=400, detail='Invalid google token')
-
-    email = google_user.get('email')
+    email = google_user_data.get('email')
 
     user = await _auth_user_getters.get_user_by_email(email, session) # type: ignore
 
     if user is None:
 
-        username = google_user.get('given_name')
+        username = google_user_data.get('given_name')
 
         return await create_user_with_google(username, email, session)
 
@@ -101,6 +105,7 @@ async def create_user_with_google(
     new_user = _auth_models.User(
         username=username,
         email=email,
+        created_via_google=True,
     )
 
     session.add(new_user)

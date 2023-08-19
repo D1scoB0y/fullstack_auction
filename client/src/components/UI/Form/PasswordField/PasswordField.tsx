@@ -1,4 +1,4 @@
-import { FC, useState, memo } from 'react'
+import { FC, useState } from 'react'
 
 import styles from './PasswordField.module.css'
 
@@ -41,4 +41,4 @@ const PasswordField: FC<IPasswordFieldProps> = ({
 }
 
 
-export default memo(PasswordField)
+export default PasswordField

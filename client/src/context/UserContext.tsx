@@ -12,7 +12,7 @@ export interface IUserContext {
     updateUserState: () => Promise<void>
     registration: (registrationData: IRegistrationData) => Promise<boolean>
     login: (loginData: ILoginData) => Promise<boolean>
-    loginWithGoogle: (googleToken: string) => Promise<boolean>
+    loginWithGoogle: (accessToken: string) => Promise<boolean>
     logout: () => void
 }
 
@@ -27,6 +27,7 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
 
 
     const updateUserState = useCallback(async () => {
+
         if (token) {
 
             const user = await getUser(token)
@@ -87,9 +88,9 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
         return false
     }
 
-    const loginWithGoogle = async (googleToken: string) => {
+    const loginWithGoogle = async (accessToken: string) => {
         
-        const token = await loginUserWithGoogle(googleToken)
+        const token = await loginUserWithGoogle(accessToken)
 
         if (token) {
             setToken(token)

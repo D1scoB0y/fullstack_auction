@@ -16,7 +16,6 @@ class UpdateUserSchema(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)
     email: str = Field(..., min_length=2, max_length=320)
     phone_number: str
-    password: str
 
 
 class ChangePasswordSchema(BaseModel):
@@ -36,6 +35,7 @@ class ReadUserSchema(BaseModel):
     phone_number: str|None
     phone_number_is_verified: bool
     is_seller: bool
+    created_via_google: bool
 
     class Config:
         orm_mode=True

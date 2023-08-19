@@ -57,9 +57,6 @@ async def update_user_path(
         user: _auth_models.User = Depends(_auth_user_getters.get_current_user),
         session: AsyncSession = Depends(_db.get_session),
     ):
-
-    if not await _auth_security.check_password(user_data.password, user.password):
-        raise HTTPException(status_code=401, detail='Wrong password')
     
     if user_data.email != user.email:
         user.email_is_verified = False

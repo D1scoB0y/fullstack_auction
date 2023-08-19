@@ -11,6 +11,10 @@
     color: var(--muted-text);
 }
 
+.saveChangesButton{
+    width: 300px;
+}
+
 .fieldContainer{
     display: flex;
     align-items: center;
@@ -55,6 +59,10 @@
         max-width: 408px;
 
         margin: auto;
+    }
+
+    .saveChangesButton{
+        width: 100%;
     }
 
     .fieldContainer{

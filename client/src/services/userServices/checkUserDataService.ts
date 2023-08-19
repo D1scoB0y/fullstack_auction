@@ -1,10 +1,12 @@
 import api from "@/utils/api";
 
 
-type TypeCheckEmail = (email: string) => Promise<boolean>
-const checkEmail: TypeCheckEmail = async (email) => {
+type TypeCheckValue = (value: string) => Promise<boolean>
+
+
+const checkEmail: TypeCheckValue = async (email) => {
     try {
-        await api.get('/auth/check-email', {params: {email}})
+        await api.get('/auth/is-unique/email', {params: {email}})
         return true
     } catch(e) {
         return false
@@ -12,10 +14,9 @@ const checkEmail: TypeCheckEmail = async (email) => {
 }
 
 
-type TypeCheckUsername = (username: string) => Promise<boolean>
-const checkUsername: TypeCheckUsername = async (username) => {
+const checkUsername: TypeCheckValue = async (username) => {
     try {
-        await api.get('/auth/check-username', {params: {username}})
+        await api.get('/auth/is-unique/username', {params: {username}})
         return true
     } catch(e) {
         return false
@@ -23,10 +24,9 @@ const checkUsername: TypeCheckUsername = async (username) => {
 }
 
 
-type TypeCheckPhone = (phone_number: string) => Promise<boolean>
-const checkPhone: TypeCheckPhone = async (phone_number) => {
+const checkPhone: TypeCheckValue = async (phone_number) => {
     try {
-        await api.get('/auth/check-phone', {params: {phone_number}})
+        await api.get('/auth/is-unique/phone', {params: {phone_number}})
         return true
     } catch(e) {
         return false

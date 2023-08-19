@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+.googleButton{
+    width: 100%;
+    max-width: 408px;
+    height: 44px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+
+    transition: all 0.125s;
+
+    background: var(--white);
+
+    cursor: pointer;
+}
+
+.googleText{
+
+    width: max-content;
+
+    padding-left: 20px;
+
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.googleButton:hover{
+    background: var(--hovered-bg-color);
+}

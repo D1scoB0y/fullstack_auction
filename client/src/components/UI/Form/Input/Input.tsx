@@ -1,4 +1,4 @@
-import { FC, memo } from "react"
+import { FC } from "react"
 
 import styles from './Input.module.css'
 
@@ -39,4 +39,4 @@ const Input: FC<IInputProps> = ({
 }
 
 
-export default memo(Input)
+export default Input
