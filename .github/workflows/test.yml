@@ -5,10 +5,10 @@ jobs:
 		runs-on: ubuntu-latest
 		steps:
 			- name: test_step
-			run: echo "job1"
+			  run: echo "job1"
 	job2:
 		runs-on: ubuntu-latest
 		needs: [job1]
 		steps:
 			- name: test_step
-			run: echo "job2"
+			  run: echo "job2"
