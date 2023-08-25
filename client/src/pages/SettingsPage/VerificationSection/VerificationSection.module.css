@@ -1,0 +1,76 @@
+.verificationsSection{
+    width: 100%;
+    max-width: 432px;
+
+    margin: auto;
+}
+
+.optionTitle{
+    display: block;
+
+    padding-top: 24px;
+
+
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+.optionStatus{
+    margin-top: 24px;
+
+    display: flex;
+    align-items: center;
+}
+
+.statusIcon{
+    width: 24px;
+    height: 24px;
+}
+
+.greenStatusDescription{
+    margin-left: 12px;
+
+    text-align: justify;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--green);
+}
+
+.redStatusDescription{
+    margin-left: 12px;
+
+    text-align: justify;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--red);
+}
+
+
+.optionHint{
+    display: block;
+
+    padding-top: 24px;
+
+    text-align: justify;
+
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+
+@media screen and (min-width: 768px) {
+    .statusIcon{
+        width: 32px;
+        height: 32px;
+    }
+    
+    .statusDescription{
+        margin-left: 16px;
+    }
+}
+
+

@@ -16,7 +16,8 @@ async def test_jwt():
 
     token = await _auth_security.generate_jwt(payload)
 
-    parsed_payload = await _auth_security.parse_jwt(token)
-
     assert isinstance(token, str)
-    assert parsed_payload == payload
+
+    parsed_token = await _auth_security.parse_jwt(token)
+
+    assert parsed_token == payload

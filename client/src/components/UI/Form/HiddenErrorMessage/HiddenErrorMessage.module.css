@@ -1,0 +1,12 @@
+.hiddenErrorMessage{
+    width: 100%;
+
+    display: block;
+
+    margin-top: 8px;
+    margin-bottom: 4px;
+
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--red);
+}

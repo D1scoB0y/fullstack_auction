@@ -1,0 +1,34 @@
+.form{
+    max-width: 432px;
+
+    margin: auto;
+}
+
+.inputLabel{
+
+    display: block;
+
+    padding: 24px 0 4px 0;
+
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.changePasswordHref{
+    width: max-content;
+    
+    display: block;
+
+    padding-top: 24px;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--blue);
+
+    cursor: pointer;
+}
+
+.changePasswordHref:hover{
+    border-bottom: 1px solid var(--blue);
+}

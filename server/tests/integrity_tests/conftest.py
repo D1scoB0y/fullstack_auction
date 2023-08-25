@@ -1,26 +1,19 @@
 from typing import AsyncGenerator
 
 import pytest
+import src.auth.schemas as _auth_schemas
 import src.auth.service as _auth_service
 import src.database as _db
 import src.main as _app
 from fastapi.security import OAuth2PasswordRequestForm
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
-                                    create_async_engine)
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from src.config import config
+import src.auth.user_getters as _user_getters
 
 
 test_async_engine = create_async_engine(config.TEST_DB_URL, echo=False)
 test_async_session_maker = async_sessionmaker(test_async_engine, expire_on_commit=False)
-
-
-async def overriden_get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with test_async_session_maker() as session:
-        yield session
-
-
-_app.app.dependency_overrides[_db.get_session] = overriden_get_session
 
 
 @pytest.fixture(scope="session")
@@ -30,34 +23,90 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
 
-@pytest.fixture(scope="session")
-def test_user() -> dict:
+@pytest.fixture(scope='class')
+async def create_tables():
+
+    async with test_async_engine.begin() as conn:
+        await conn.run_sync(_db.Base.metadata.create_all)
+
+    yield
+
+    async with test_async_engine.begin() as conn:
+        await conn.run_sync(_db.Base.metadata.drop_all)
+
+
+@pytest.fixture(scope='session')
+async def test_user_for_fixtures() -> dict:
     return {
         'username': 'DiscoBoy',
         'email': 'fake@example.com',
-        'password': 'test_password'
+        'phoneNumber': '+79999999999',
+        'password': 'strong_password'
     }
 
 
+@pytest.fixture
+async def test_user(test_user_for_fixtures: dict) -> dict:
+    return test_user_for_fixtures.copy()
+
+
 @pytest.fixture(scope='class')
-async def token(test_user: dict) -> str:
+async def create_user(test_user_for_fixtures: dict) -> None:
+
+    test_user = test_user_for_fixtures.copy()
+
+    test_user.pop('phoneNumber')
+
+    credentials = _auth_schemas.RegistrationUserSchema(**test_user)
 
     async with test_async_session_maker() as session:
 
-        credentials = OAuth2PasswordRequestForm(
-            grant_type='',
-            username=test_user["email"],
-            password=test_user["password"],
-            client_id='',
-            scope='',
-            client_secret='',
+        await _auth_service.create_user(
+            credentials,
+            session,
         )
+
+
+@pytest.fixture(scope='class')
+async def token(test_user_for_fixtures: dict) -> str:
+
+    credentials = OAuth2PasswordRequestForm(
+        username=test_user_for_fixtures['email'],
+        password=test_user_for_fixtures['password'],
+        client_id='',
+        client_secret='',
+        scope='',
+        grant_type='',
+    )
+
+    async with test_async_session_maker() as session:
 
         token = await _auth_service.auth_user(
             credentials,
             session,
         )
 
-        return token
+    return token
 
 
+@pytest.fixture(scope='class')
+async def add_phone(test_user_for_fixtures: dict) -> None:
+
+    user_data = test_user_for_fixtures.copy()
+
+    del user_data['password']
+
+    async with test_async_session_maker() as session:
+
+        user = await _user_getters.get_user_by_email(test_user_for_fixtures['email'], session)
+
+        if user is None:
+            raise ValueError('Username is not found')
+
+        user_data = _auth_schemas.UpdateUserSchema(**user_data)
+
+        await _auth_service.update_user(
+            user_data,
+            user,
+            session,
+        )

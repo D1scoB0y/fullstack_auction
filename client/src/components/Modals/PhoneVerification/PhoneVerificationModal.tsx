@@ -77,14 +77,12 @@ const PhoneVerificationModal = () => {
                     }
                     placeholder='Код'
                     maxLength={4}
-                    style={{marginBottom: 0}}
                 />
                 
                 <Button
                     text='Подтвердить'
                     isLoading={isLoading}
                     disabled={!isValid}
-                    style={{width: 300, marginTop: 24}}
                 />
 
             </form>

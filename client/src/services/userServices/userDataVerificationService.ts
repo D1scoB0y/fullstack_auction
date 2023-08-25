@@ -1,7 +1,7 @@
 import api from "@/utils/api";
 
 
-type TypeEmailVerificationRequest = (token: string|null) => Promise<void>
+type TypeEmailVerificationRequest = (token: string|null) => Promise<boolean>
 const emailVerificationRequest: TypeEmailVerificationRequest = async (token) => {
 
     if (token) {
@@ -13,8 +13,12 @@ const emailVerificationRequest: TypeEmailVerificationRequest = async (token) => 
 
         try {
             await api.get('/auth/mail/verification-message-request', requestConfig)
-        } catch (e) {}
+            return true
+        } catch (e) {
+            return false
+        }
     }
+    return false
 }
 
 
@@ -36,7 +40,7 @@ const isEmailTokenValid: TypeIsEmailTokenValid = async (emailToken) => {
 }
 
 
-type TypeRequestPhoneCall = (token: string|null) => Promise<void>
+type TypeRequestPhoneCall = (token: string|null) => Promise<boolean>
 const requestPhoneCall: TypeRequestPhoneCall = async (token) => {
 
     if (token) {
@@ -49,8 +53,12 @@ const requestPhoneCall: TypeRequestPhoneCall = async (token) => {
 
         try {
             await api.get('/auth/mobile/verification-call-request', requestConfig)
-        } catch (e) {}
+            return true
+        } catch (e) {
+            return false
+        }
     }
+    return false
 }
 
 

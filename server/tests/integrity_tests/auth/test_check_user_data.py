@@ -1,6 +1,8 @@
+import pytest
 from httpx import AsyncClient
 
 
+@pytest.mark.usefixtures('create_tables', 'create_user')
 class TestIsUserDataUnique:
 
     async def test_check_username(

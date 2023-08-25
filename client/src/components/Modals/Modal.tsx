@@ -34,11 +34,11 @@ const Modal: FC<IModalProps> = ({
                 <Portal>
                     <div className={styles.overlay} onClick={() => setIsActive(false)}>
                         <div className={styles.modalBody} onClick={e => e.stopPropagation()}>
-
+                            
                             <span className={styles.modalTitle}>{title}</span>
 
                             {children}
-
+                            
                         </div>
                     </div>
                 </Portal>

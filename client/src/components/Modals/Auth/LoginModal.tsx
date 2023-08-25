@@ -9,11 +9,10 @@ import useUserContext from "@/context/useUserContext";
 import Input from "@/components/UI/Form/Input/Input";
 import Modal from "../Modal";
 import Button from "@/components/UI/Button/Button";
-import ErrorMessage from "@/components/UI/Form/ErrorMessage/ErrorMessage";
 import PasswordField from "@/components/UI/Form/PasswordField/PasswordField";
 import GoogleButton from "@/components/UI/GoogleButton/GoogleButton";
 import Line from "@/components/UI/Line/Line";
-import HiddenErrorMessage from "@/components/UI/Form/ErrorMessage/HiddenErrorMessage";
+import ErrorMessage from "@/components/UI/Form/ErrorMessage/ErrorMessage";
 
 
 
@@ -81,8 +80,6 @@ const LoginForm = () => {
             setIsActive={setLoginModalActive}
             onClose={clearForm}
         >
-            <>
-
                 <form className={styles.form} onSubmit={onSubmit} noValidate>
                     
                     <GoogleButton
@@ -92,7 +89,7 @@ const LoginForm = () => {
 
                     <Line style={{marginTop: 24, marginBottom: 24}} />
 
-                    <HiddenErrorMessage errorText={email.error || afterSubmitError} />
+                    <ErrorMessage errorText={email.error || afterSubmitError} />
 
                     <Input
                         value={email.value}
@@ -152,8 +149,6 @@ const LoginForm = () => {
                     </span>
                 </div>
 
-                
-            </>
         </Modal>
     )   
 }
