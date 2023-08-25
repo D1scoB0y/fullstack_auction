@@ -1,20 +1,14 @@
 name: test
 on: [push]
 jobs:
-	make-setup:
+	job1:
 		runs-on: ubuntu-latest
 		steps:
-			- name: checkout
-			uses: actions/checkout@v3
-			- name: intall npm packages
-			run: cd client && npm install && cd ..
-			- name: install server requirements
-			run: cd server && sudo apt-get install python3-venv -y && python3 -m venv venv && source venv/bin/activate && pip install r.txt
-	run-server-tests:
+			- name: test_step
+			run: echo "job1"
+	job2:
 		runs-on: ubuntu-latest
-		needs: [setup]
+		needs: [job1]
 		steps:
-			- name: go to server dir
-			run: cd server
-			- name: run tests
-			run: pytest --runslow
+			- name: test_step
+			run: echo "job2"
