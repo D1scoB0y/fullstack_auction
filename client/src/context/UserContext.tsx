@@ -102,6 +102,7 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
 
     const logout = () => {
         setToken(null)
+        setUser(null)
     }
 
     return (

@@ -2,11 +2,11 @@ export interface IUser {
     id: number,
     username: string,
     email: string,
-    email_is_verified: boolean
-    phone_number: string|null,
-    phone_number_is_verified: boolean,
-    is_seller: boolean
-    created_via_google: boolean
+    emailIsVerified: boolean
+    phoneNumber: string|null,
+    phoneNumberIsVerified: boolean,
+    isSeller: boolean
+    createdViaGoogle: boolean
 }
 
 export interface ILoginData {
@@ -21,7 +21,7 @@ export interface IRegistrationData extends ILoginData {
 export interface IUpdateData {
     username: string
     email: string
-    phone_number: string|null
+    phoneNumber: string|null
 }
 
 export interface ISettingsData extends IUpdateData {}

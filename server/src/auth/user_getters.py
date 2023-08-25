@@ -6,7 +6,6 @@ import src.database as _db
 import src.auth.models as _auth_models
 import src.auth.schemas as _auth_schemas
 import src.auth.security as _auth_security
-import src.auth.user_getters as _auth_user_getters
 
 
 async def get_user_by_id(
@@ -74,4 +73,4 @@ async def get_current_user(
         session: AsyncSession = Depends(_db.get_session),
     ) -> _auth_models.User:
     
-    return await _auth_user_getters.get_user_by_token(token, session)
+    return await get_user_by_token(token, session)

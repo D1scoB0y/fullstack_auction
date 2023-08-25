@@ -1,3 +1,5 @@
+import json
+
 from fastapi import Depends, APIRouter, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -58,17 +60,7 @@ async def update_user_path(
         session: AsyncSession = Depends(_db.get_session),
     ):
     
-    if user_data.email != user.email:
-        user.email_is_verified = False
-
-    if user_data.phone_number != user.phone_number:
-        user.phone_number_is_verified = False
-
-    user.username = user_data.username
-    user.email = user_data.email
-    user.phone_number = user_data.phone_number
-
-    await session.commit()
+    await _auth_service.update_user(user_data, user, session)
 
 
 @router.patch('/change-password', status_code=204, tags=['Update user'])
@@ -86,8 +78,12 @@ async def change_password_path(
     await session.commit()
 
 
-@router.get('/get-user', response_model=_auth_schemas.ReadUserSchema, tags=['Authentication'])
+@router.get('/get-user', tags=['Authentication'])
 async def get_user_path(
         user: _auth_models.User = Depends(_auth_user_getters.get_current_user),
     ):
-    return _auth_schemas.ReadUserSchema.from_orm(user)
+    return json.loads(
+            _auth_schemas.ReadUserSchema
+                .from_orm(user)
+                .json(by_alias=True)
+        )

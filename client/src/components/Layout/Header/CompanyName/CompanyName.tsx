@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import styles from './CompanyName.module.css'
 
 
-const CompanyName = memo(() => {
+const CompanyName = () => {
   return (
     <Link to={'/'}>
         <div className={styles.companyNameBox}>
@@ -13,7 +13,7 @@ const CompanyName = memo(() => {
         </div>
     </Link>
   )
-})
+}
 
 
-export default CompanyName
+export default memo(CompanyName)

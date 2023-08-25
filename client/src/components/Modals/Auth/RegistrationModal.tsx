@@ -13,7 +13,6 @@ import ErrorMessage from "@/components/UI/Form/ErrorMessage/ErrorMessage";
 import PasswordField from "@/components/UI/Form/PasswordField/PasswordField";
 import useInput from "@/hooks/useInput";
 import GoogleButton from "@/components/UI/GoogleButton/GoogleButton";
-import HiddenErrorMessage from "@/components/UI/Form/ErrorMessage/HiddenErrorMessage";
 import Line from "@/components/UI/Line/Line";
 
 
@@ -128,7 +127,7 @@ const RegistrationModal = () => {
 
                 <Line style={{marginTop: 24, marginBottom: 24}} />
 
-                <HiddenErrorMessage errorText={username.error || afterSubmitErrors.username || afterSubmitErrors.server} />
+                <ErrorMessage errorText={username.error || afterSubmitErrors.username || afterSubmitErrors.server} />
 
                 <Input
                     value={username.value}
@@ -153,6 +152,7 @@ const RegistrationModal = () => {
                         }
                     }
                     placeholder='Электронная почта'
+                    type="email"
                 />
 
                 <ErrorMessage errorText={password.error} />

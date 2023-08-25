@@ -43,8 +43,6 @@ async def check_phone_path(
     ):
     '''Checks that given phone number is unique'''
 
-    phone_number = phone_number.replace(' ', '')
-
     user = await _auth_user_getters.get_user_by_phone_number(phone_number, session)
 
     if user:

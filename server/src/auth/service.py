@@ -21,16 +21,40 @@ async def auth_user(
     if user is None:
         raise HTTPException(status_code=401, detail='Invalid credentials')
 
+    if user.password is None:
+        raise HTTPException(status_code=401, detail='User was created with google and doesnt have password')
+                                                                                            
     if not await _auth_security.check_password(credentials.password, user.password):
         raise HTTPException(status_code=401, detail='Invalid credentials')
 
     return await _auth_security.generate_jwt({'id': user.id})
 
 
+async def is_credentials_unique(
+        credentials: _auth_schemas.RegistrationUserSchema,
+        session: AsyncSession,
+    ) -> bool:
+
+    user = await _auth_user_getters.get_user_by_username(credentials.username, session)
+
+    if user is not None:
+        return False
+    
+    user = await _auth_user_getters.get_user_by_email(credentials.email, session)
+
+    if user is not None:
+        return False
+    
+    return True
+
+
 async def create_user(
         credentials: _auth_schemas.RegistrationUserSchema,
-        session: AsyncSession
+        session: AsyncSession,
     ) -> str:
+
+    if not await is_credentials_unique(credentials, session):
+        raise HTTPException(status_code=409, detail='Some user data is not unique')
 
     new_user = _auth_models.User(**credentials.dict())
 
@@ -42,6 +66,25 @@ async def create_user(
     await session.refresh(new_user)
 
     return await _auth_security.generate_jwt({'id': new_user.id})
+
+
+async def update_user(
+        user_data: _auth_schemas.UpdateUserSchema,
+        user: _auth_models.User,
+        session: AsyncSession,
+    ) -> None:
+
+    if user_data.email != user.email:
+        user.email_is_verified = False
+
+    if user_data.phone_number != user.phone_number:
+        user.phone_number_is_verified = False
+
+    user.username = user_data.username
+    user.email = user_data.email
+    user.phone_number = user_data.phone_number
+
+    await session.commit()
 
 
 async def get_user_data_from_google(

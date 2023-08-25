@@ -9,10 +9,9 @@ import { resetPassword } from "@/services/userServices/userDataManiulationsServi
 import useModalsStore from '@/stores/modalsStore'
 
 import PageTitle from "@/components/UI/PageTitle/PageTitle"
-import Loader from '@/components/UI/Loader/Loader'
-import HiddenErrorMessage from '@/components/UI/Form/ErrorMessage/HiddenErrorMessage'
 import Button from '@/components/UI/Button/Button'
 import PasswordField from '@/components/UI/Form/PasswordField/PasswordField'
+import HiddenErrorMessage from '@/components/UI/Form/HiddenErrorMessage/HiddenErrorMessage'
 
 
 const ResetPasswordPage = () => {
@@ -27,6 +26,7 @@ const ResetPasswordPage = () => {
 
     const token = params.get('token')
 
+    
     const {
         setLoginModalActive,
     } = useModalsStore()
@@ -84,15 +84,9 @@ const ResetPasswordPage = () => {
                     <Button
                         text='Сохранить'
                         disabled={!isValid}
+                        isLoading={isLoading}
                         style={{width: 300, marginTop: 12}}
                     />
-                    
-                    {isLoading && <Loader
-                                    width={40}
-                                    height={40}
-                                    style={{marginTop: 24, marginLeft: 24}}
-                                />
-                    }
 
                 </div>
 

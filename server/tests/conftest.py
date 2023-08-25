@@ -1,4 +1,5 @@
 import asyncio
+import time
 from typing import AsyncGenerator
 
 import pytest
@@ -22,15 +23,13 @@ _app.app.dependency_overrides[_db.get_session] = overriden_get_session
 
 
 @pytest.fixture(scope='session', autouse=True)
-async def create_tables():
+async def testing_time():
 
-    async with test_async_engine.begin() as conn:
-        await conn.run_sync(_db.Base.metadata.create_all)
+    start_time = time.time()
 
     yield
 
-    async with test_async_engine.begin() as conn:
-        await conn.run_sync(_db.Base.metadata.drop_all)
+    print(f'\n\nTesting time: {time.time() - start_time}')
 
 
 @pytest.fixture(scope='session', autouse=True)

@@ -1,25 +1,41 @@
+.form{
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
 .resetPasswordHref{
+    width: max-content;
+
     margin-left: auto;
 
+    display: block;
+
+    text-align: right;
+    
     padding-top: 20px;
 
     font-size: 14px;
     font-weight: 400;
     color: var(--muted-text);
 
-    text-decoration: underline;
-
     cursor: pointer;
 }
 
 .resetPasswordHref:hover{
     color: var(--blue);
+    text-decoration: underline;
 }
 
 .underFormInfo{
     display: flex;
 
+    width: max-content;
+
     padding-top: 20px;
+
+    margin: auto;
 }
 
 .underFormText{
@@ -41,14 +57,3 @@
 .underFormHref:hover{
     color: var(--hovered-blue);
 }
-
-@media screen and (max-width: 768px) {
-    .form{
-        width: 100%;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-}
-

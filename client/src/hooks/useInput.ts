@@ -3,7 +3,7 @@ import { useState, useEffect, Dispatch, SetStateAction } from "react"
 import useValidation, { IValidations } from "./useValidation"
 
 
-type TypeUseInput = (initialValue: string, validations: IValidations) => {
+export interface IUseInputReturns {
     value: string,
     isChanged: boolean,
     isValid: boolean,
@@ -12,6 +12,9 @@ type TypeUseInput = (initialValue: string, validations: IValidations) => {
     clearField: () => void,
     error: string,
 }
+
+type TypeUseInput = (initialValue: string, validations: IValidations) => IUseInputReturns
+
 
 const useInput: TypeUseInput = (initialValue, validations) => {
     

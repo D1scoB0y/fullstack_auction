@@ -10,6 +10,7 @@ import Loader from '@/components/UI/Loader/Loader'
 import { isEmailTokenValid } from '@/services/userServices/userDataVerificationService'
 import Button from '@/components/UI/Button/Button'
 
+
 const EmailVerificationPage = () => {
 
     const [validationInProcess, setValidationInProcess] = useState<boolean>(true)

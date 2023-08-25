@@ -1,7 +1,7 @@
 .pageTitle{
     display: block;
 
-    padding-top: 36px;
+    padding-top: 20px;
 
     font-family: 'Lora', serif;
     font-size: 24px;
@@ -10,10 +10,17 @@
 }
 
 
-@media screen and (max-width: 768px) {
-    .pageTitle{
-        padding-top: 32px;
+@media screen and (min-width: 768px) {
 
-        text-align: center;
+    .pageTitle{
+        padding-top: 24px; 
+    }
+}
+
+
+@media screen and (min-width: 1024px) {
+
+    .pageTitle{
+        font-size: 24px;
     }
 }

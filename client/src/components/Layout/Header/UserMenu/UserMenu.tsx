@@ -1,31 +1,86 @@
 import { FC } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+
+import clsx from 'clsx'
+import { useNavigate } from 'react-router-dom'
 
 import styles from './UserMenu.module.css'
+import useUserContext from "@/context/useUserContext"
 
 
-import { IUser } from '@/types/user.interface'
-import useUserContext from '@/context/useUserContext'
+interface IUserMenuProps {
+    isActive: boolean
+    close: () => void
+}
 
+const UserMenu: FC<IUserMenuProps> = ({
+    isActive,
+    close,
+}) => {
 
-const UserMenu: FC<{isActive: boolean, user: IUser}> = ({isActive, user}) => {
-
-    const { logout } = useUserContext()
-
+    const { user, logout } = useUserContext()
+    
     const navigate = useNavigate()
 
     return (
-        <>
-            {isActive && (
-                <div className={styles.dropDown}>
-                    {(user && user.is_seller) && <Link to={'/'} className={styles.dropDownItem}>Лоты</Link>}
 
-                    <Link to={'/settings'} className={styles.dropDownItem}>Настройки</Link>
-                    
-                    <div className={`${styles.dropDownItem} ${styles.exitItem}`} onClick={() => {logout(); navigate('/')}}>Выйти</div>
+        <div className={clsx(styles.overlay, isActive && styles.menuActive)} onClick={close}>
+
+            <div
+                className={clsx(styles.menuBody, isActive && styles.active)}
+                onClick={e => e.stopPropagation()}
+            >
+
+                <div className={styles.menuHeader}>
+
+                    <div className={styles.authBox}>
+
+                        <img
+                            className={styles.userIcon}
+                            src="/user_icon.png"
+                            alt="user icon"
+                        />
+                        
+                        <span className={styles.username}>{user?.username}</span>
+
+                    </div>
+
+                    <div className={styles.crossIconContainer}>
+                        <img
+                            className={styles.crossIcon}
+                            onClick={close}
+                            src="/cancel.png"
+                            alt="cross icon"
+                        />
+                    </div>
+
                 </div>
-            )}
-        </>
+
+
+                <div className={styles.menuContent}>
+                    
+                    {user?.isSeller && (
+                        <div className={styles.menuOption}>
+                            Лоты
+                        </div>
+                    )}
+
+                    <div className={styles.menuOption}>
+                        Ставки
+                    </div>
+                    
+
+                    <div className={styles.menuOption} onClick={() => {navigate('/settings'); close()}}>
+                        Настройки
+                    </div>
+
+                    <div className={styles.exitOption} onClick={() => {logout(); close()}}>
+                        Выйти
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
     )
 }
 

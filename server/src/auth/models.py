@@ -10,7 +10,7 @@ class User(Base):
 
     id = mapped_column(sa.Integer, primary_key=True)
 
-    username = mapped_column(sa.String, unique=True, index=True, nullable=False)
+    username = mapped_column(sa.String(20), unique=True, index=True, nullable=False)
 
     email = mapped_column(sa.String, unique=True, index=True, nullable=False)
     email_is_verified = mapped_column(sa.Boolean, nullable=False, default=False)
@@ -21,6 +21,6 @@ class User(Base):
 
     created_via_google = mapped_column(sa.Boolean, nullable=False, default=False)
 
-    password = mapped_column(sa.String)
+    password = mapped_column(sa.String(64))
 
     is_seller = mapped_column(sa.Boolean, nullable=False, default=False)

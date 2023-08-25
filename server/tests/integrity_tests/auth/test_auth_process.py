@@ -5,10 +5,13 @@ import src.auth.schemas as _auth_schemas
 from httpx import AsyncClient
 
 
-class TestAuth:
+@pytest.mark.usefixtures('create_tables')
+class TestRegistration:
 
-    async def test_registration(self, client: AsyncClient, test_user: dict):
-        
+    async def test_valid_registration(self, client: AsyncClient, test_user: dict):
+
+        test_user.pop('phoneNumber')
+
         create_user_response = await client.post(
             '/auth/registration',
             json=test_user,
@@ -18,9 +21,57 @@ class TestAuth:
         assert isinstance(create_user_response.json(), str)
 
 
-    async def test_login(self, client: AsyncClient, test_user: dict):
+    @pytest.mark.parametrize('test_user', [
+        {
+            'username': 'Disco@Boy',
+            'email': 'anotherothervalid@example.com',
+            'password': '',
+        },
+    ])
+    async def test_invalid_registration(self, client: AsyncClient, test_user: dict):
 
-        login_user_response = await client.post(
+        create_user_response = await client.post(
+            '/auth/registration',
+            json=test_user,
+        )
+
+        assert create_user_response.status_code in (422, 409)
+
+
+@pytest.mark.usefixtures('create_tables', 'create_user')
+class TestLogin:
+
+    @pytest.mark.parametrize('credentials', [
+        {
+            'email': 'non_existing@example.com',
+            'password': 'valid_password'
+        },
+        {
+            'email': 'valid@example.com',
+            'password': ''
+        },
+    ])
+    async def test_invalid_login(self, client: AsyncClient, credentials: dict):
+
+        login_response = await client.post(
+
+            '/auth/login',
+
+            json=json.dumps(
+                f'grant_type=&username={credentials["email"]}&password={credentials["password"]}&scope=&client_id=&client_secret='
+            ),
+
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+        )
+
+        assert login_response.status_code in (422, 401)
+
+
+    async def test_valid_login(self, client: AsyncClient, test_user: dict):
+
+        login_response = await client.post(
 
             '/auth/login',
 
@@ -33,26 +84,32 @@ class TestAuth:
             },
         )
 
-        assert login_user_response.status_code == 200
-        assert isinstance(login_user_response.json(), str)
+        assert login_response.status_code == 200
+        assert isinstance(login_response.json(), str)
 
 
-class TestUserPermissions:
+@pytest.mark.usefixtures('create_tables', 'create_user')
+class TestUpdateUser:
 
-    async def test_update_user_data(
+    @pytest.mark.parametrize('test_data', [
+        {
+            'username': 'newValidUsername',
+            'email': 'newValidEmail@example.com',
+            'phoneNumber': '+79999999999',
+        },
+    ])
+    async def test_valid_update_user(
             self,
+            test_data: dict,
             client: AsyncClient,
             token: str,
-            test_user: dict,
         ):
-
-        test_user['phone_number'] = '+79133441134'
 
         update_user_response = await client.put(
 
             '/auth/update-user',
 
-            json=test_user,
+            json=test_data,
 
             headers={
                 'Authorization': f'Bearer {token}',
@@ -60,12 +117,44 @@ class TestUserPermissions:
         )
 
         assert update_user_response.status_code == 204
+    
 
+    @pytest.mark.parametrize('test_data', [
+        {
+            'username': '',
+            'email': 'invalidEmail.com',
+            'phoneNumber': '7999999999',
+        },
+    ])
+    async def test_invalid_update_user(
+            self,
+            test_data: dict,
+            client: AsyncClient,
+            token: str,
+        ):
+
+
+        update_user_response = await client.put(
+
+            '/auth/update-user',
+
+            json=test_data,
+
+            headers={
+                'Authorization': f'Bearer {token}',
+            },
+        )
+
+        assert update_user_response.status_code == 422
+
+
+@pytest.mark.usefixtures('create_tables', 'create_user')
+class TestGetUser:
 
     async def test_get_user(
             self,
             client: AsyncClient,
-            token: str
+            token: str,
         ):
 
         get_user_response = await client.get(
@@ -79,7 +168,10 @@ class TestUserPermissions:
 
         assert get_user_response.status_code == 200
         assert _auth_schemas.ReadUserSchema(**get_user_response.json())
-    
+
+
+@pytest.mark.usefixtures('create_tables', 'create_user')
+class TestRequestEmailMessage:
 
     @pytest.mark.skipif("not config.getoption('--runslow')", reason='Need --runslow option')
     async def test_request_email_verification(
@@ -99,6 +191,9 @@ class TestUserPermissions:
 
         assert request_email_verification_response.status_code == 204
 
+
+@pytest.mark.usefixtures('create_tables', 'create_user', 'add_phone')
+class TestRequestPhoneCall:
 
     @pytest.mark.skipif("not config.getoption('--runslow')", reason='Need --runslow option')
     async def test_request_phone_verification(

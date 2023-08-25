@@ -7,23 +7,22 @@ import useModalsStore from '@/stores/modalsStore'
 import RegistrationModal from '../../Modals/Auth/RegistrationModal'
 import CompanyName from './CompanyName/CompanyName'
 import LoginModal from '@/components/Modals/Auth/LoginModal'
-import UserMenu from './UserMenu/UserMenu'
 import useUserContext from '@/context/useUserContext'
 import ResetPasswordModal from '@/components/Modals/Warnings/ResetPasswordModal'
-import MobileUserMenu from './MobileUserMenu/MobileUserMenu'
+import UserMenu from './UserMenu/UserMenu'
+
+
 
 
 const Header = () => {
-	const [showUserMenu, setShowUserMenu] = useState<boolean>(false)
 
-	const { token, user } = useUserContext()
+	const { user } = useUserContext()
 
 	const {
-		mobileUserMenuActive,
-		setMobileUserMenuActive,
 		setLoginModalActive,
-		setRegistrationModalActive,
 	} = useModalsStore()
+
+	const [userMenuActive, setUserMenuActive] = useState(false)
 
 	return (
 		<header className={styles.header}>
@@ -31,45 +30,31 @@ const Header = () => {
 
 				<CompanyName />
 
-				<div className={styles.authBox}>
+				{user ? (
+					<div
+						className={styles.authBox}
+						onClick={() => setUserMenuActive(true)}
+					>
 
-					{(token && user) ? (
-						<>
-							<div className={styles.userBox} onMouseLeave={() => setShowUserMenu(false)} onMouseEnter={() => setShowUserMenu(true)}>
-								<img className={styles.userIcon} src="/user_icon.png" alt="user icon" />
-								<span className={styles.username}>{user.username}</span>
-								<UserMenu isActive={showUserMenu} user={user} />
-							</div>
-						</>
-					) : (
-						<>
-							<span
-								className={styles.registrationHref}
-								onClick={() => setRegistrationModalActive(true)}
-							>
-								Регистрация
-							</span>
-							<div
-								className={styles.loginHref}
-								onClick={() => setLoginModalActive(true)}
-							>
-								Войти
-							</div>
-						</>
-					)}
-				</div>
-				
-				<img
-					className={styles.burgerMenu}
-					src={mobileUserMenuActive ? '/cancel.png' : '/burger_menu.png'}
-					onClick={() => setMobileUserMenuActive(!mobileUserMenuActive)}
-					alt="burger menu"
-				/>
+						<img
+							className={styles.userIcon}
+							src='/user_icon.png'
+							alt="burger menu"
+						/>
+
+						<span className={styles.username}>{user?.username}</span>
+
+					</div>
+				) : (
+					<div className={styles.loginButton} onClick={() => setLoginModalActive(true)}>Войти</div>
+				)}
+
 
 			</div>
-			
-			{mobileUserMenuActive && <MobileUserMenu token={token} user={user} />}
 
+				
+
+			<UserMenu isActive={userMenuActive} close={() => setUserMenuActive(false)} />
 			<LoginModal />
 			<RegistrationModal />
 			<ResetPasswordModal />

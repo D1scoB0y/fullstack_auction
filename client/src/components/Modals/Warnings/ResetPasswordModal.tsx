@@ -10,7 +10,7 @@ import { requestPasswordReset } from '@/services/userServices/userDataManiulatio
 import Modal from '../Modal'
 import Button from '@/components/UI/Button/Button'
 import Input from '@/components/UI/Form/Input/Input'
-import HiddenErrorMessage from '@/components/UI/Form/ErrorMessage/HiddenErrorMessage'
+import ErrorMessage from '@/components/UI/Form/ErrorMessage/ErrorMessage'
 
 
 const ResetPasswordModal = () => {
@@ -63,7 +63,7 @@ const ResetPasswordModal = () => {
 
             <form onSubmit={onSubmit} noValidate>
 
-                <HiddenErrorMessage errorText={email.error || afterSubmitError} />
+                <ErrorMessage errorText={email.error || afterSubmitError} />
 
                 <Input
                     value={email.value}

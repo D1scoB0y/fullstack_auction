@@ -1,7 +1,7 @@
 import { FC, memo } from "react"
 
 import styles from './Button.module.css'
-import ButtonLoadingOverlay from "../ModalLoaderOverlay/ButtonLoadingOverlay"
+import ButtonLoadingOverlay from "./ButtonLoadingOverlay/ButtonLoadingOverlay"
 
 
 interface IButtonProps {

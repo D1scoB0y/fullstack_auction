@@ -1,7 +1,5 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import { Routes, Route } from "react-router-dom";
-import { Helmet } from 'react-helmet-async';
-
 
 import './styles/globals.css'
 
@@ -12,7 +10,6 @@ import LandingPage from './pages/LandingPage/LandingPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import EmailVerificationPage from './pages/EmailVerificationPage/EmailVerificationPage';
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
-import useModalsStore from './stores/modalsStore';
 
 
 const Protected: FC<{children: JSX.Element}> = ({children}) => {
@@ -25,37 +22,8 @@ const Protected: FC<{children: JSX.Element}> = ({children}) => {
 
 const App = () => {
 
-	const [isAnyModalActive, setIsAnyModalActive] = useState<boolean>(false)
-
-	const modalsData = useModalsStore()
-
-	useEffect(() => {
-
-		setIsAnyModalActive(
-			modalsData.changePasswordModalActive ||
-			modalsData.emailWarningModalActive ||
-			modalsData.loginModalActive ||
-			modalsData.phoneVerificationModalActive ||
-			modalsData.registrationModalActive ||
-			modalsData.resetPasswordModalActive
-		)
-
-	}, [modalsData])
-
 	return (
 		<>
-			{isAnyModalActive && (
-				<Helmet>
-					<style type="text/css">{`
-						html {
-							overflow: hidden;
-						}
-					`}</style>
-				</Helmet>
-			)}
-			
-	
-	
 			<Routes>
 
 				<Route path='/' element={<Layout />}>
