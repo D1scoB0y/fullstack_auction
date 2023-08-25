@@ -1,8 +1,7 @@
 name: test
 on: [push]
 jobs:
-	make-setup:
-		name: 
+  make-setup:
 		runs-on: ubuntu-latest
 		steps:
 			- name: checkout
