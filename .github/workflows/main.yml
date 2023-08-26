@@ -15,8 +15,7 @@ jobs:
         image: postgres
 
         env:
-          POSTGRES_USER: auction_admin 
-          POSTGRES_PASSWORD: zelel228
+          POSTGRES_PASSWORD: postgres
         
         options: >-
           --health-cmd pg_isready
