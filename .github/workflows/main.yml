@@ -45,11 +45,15 @@ jobs:
       - name: Creating db tables
         working-directory: server
         run: |
-          PYTHONPATH=. alembic revision --autogenerate
-          PYTHONPATH=. alembic upgrade head
+          pip install alembic
+          alembic revision --autogenerate
+          alembic upgrade head
         env:
           TEST_DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_auction_db
 
       - name: Run tests
         working-directory: server
-        run: pytest --runslow
+        run: pytest
+
+        env:
+          SECRET_KEY: febItAjUSmjlh63WzXCO8YQURqDpr7EI

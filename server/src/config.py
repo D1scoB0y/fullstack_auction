@@ -17,8 +17,6 @@ class Config(BaseConfig):
 
     CLIENT_ORIGIN: str
 
-    CELERY_BROKER_URL: str
-
     MAIL_SENDER: str
     MAIL_PASSWORD: str
 
