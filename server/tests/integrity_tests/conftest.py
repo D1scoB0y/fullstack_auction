@@ -12,18 +12,6 @@ from src.config import config
 import src.auth.user_getters as _user_getters
 
 
-from dotenv import load_dotenv
-
-from os import environ
-
-load_dotenv()
-
-if config.TEST_DB_URL:
-    test_db_url = config.TEST_DB_URL
-else:
-    test_db_url = environ.get('TEST_DB_URL')
-
-
 test_async_engine = create_async_engine(config.TEST_DB_URL, echo=False)
 test_async_session_maker = async_sessionmaker(test_async_engine, expire_on_commit=False)
 
