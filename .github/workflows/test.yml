@@ -17,4 +17,5 @@ jobs:
           python3.10 -m venv venv
           source venv/bin/activate
       - name: Installing requirements
-        run: pip install -r r.txt
+        working-directory: server
+        run: pip intall -r r.txt
