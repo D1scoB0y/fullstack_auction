@@ -4,16 +4,16 @@ on: workflow_dispatch
 
 jobs:
 
-  setup-postgres-container:
+  server-tests:
 
     runs-on: ubuntu-latest
 
     services:
       
       postgres:
-        
+      
         image: postgres
-        
+
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_auction_db
@@ -23,10 +23,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-  server-tests:
-    runs-on: ubuntu-latest
-    needs: [setup-postgres-container]
 
     steps:
 
