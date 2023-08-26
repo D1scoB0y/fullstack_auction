@@ -34,7 +34,7 @@ jobs:
       - name: Initiate Database
         run: |
           psql -c "CREATE USER auction_admin" postgresql://postgres:postgres@localhost:5432/postgres
-          psql -c "ALTER USER auction_admin WITH PASSWORD zelel228;" postgresql://postgres:postgres@localhost:5432/postgres
+          psql -c "ALTER USER auction_admin WITH PASSWORD 'zelel228;'" postgresql://postgres:postgres@localhost:5432/postgres
           psql -c "CREATE DATABASE test_auction_db" postgresql://auction_admin:zelel228@localhost:5432/postgres
 
       - name: Get code
