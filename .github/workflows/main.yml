@@ -18,6 +18,7 @@ jobs:
         shell: bash
         working-directory: server
     steps:
+      - run: ls
       - name: Get python env
         run: |
           pip install --upgrade pip
