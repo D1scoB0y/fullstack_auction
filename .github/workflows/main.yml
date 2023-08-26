@@ -18,4 +18,4 @@ jobs:
           source venv/bin/activate
       - name: Installing requirements
         working-directory: server
-        run: pip intall -r r.txt
+        run: pip install -r r.txt
