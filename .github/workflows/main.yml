@@ -51,7 +51,7 @@ jobs:
           alembic revision --autogenerate
           alembic upgrade head
         env:
-          TEST_DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_auction_db
+          TEST_DB_URL: postgresql+asyncpg://auction_admin:zelel228@localhost:5432/test_auction_db
 
       - name: Run tests
         working-directory: server
@@ -60,4 +60,4 @@ jobs:
           pytest
 
         env:
-          SECRET_KEY: febItAjUSmjlh63WzXCO8YQURqDpr7EI
+          SECRET_KEY: test_secret_key
