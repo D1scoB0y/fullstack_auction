@@ -13,10 +13,10 @@ jobs:
   setup-server:
     runs-on: ubuntu-latest
     needs: [setup]
-    # defaults:
-    #   run:
-    #     shell: bash
-    #     working-directory: server
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./server
     steps:
       - run: ls
       - name: Get python env
