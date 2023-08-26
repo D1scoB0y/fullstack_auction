@@ -15,8 +15,8 @@ jobs:
         image: postgres
 
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: auction_admin
+          POSTGRES_PASSWORD: zelel228
           POSTGRES_DB: test_auction_db
         
         options: >-
@@ -52,7 +52,7 @@ jobs:
           alembic revision --autogenerate
           alembic upgrade head
         env:
-          TEST_DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_auction_db
+          TEST_DB_URL: postgresql+asyncpg://auction_admin:zelel228@localhost:5432/test_auction_db
 
       - name: Run tests
         working-directory: server
