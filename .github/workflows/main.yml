@@ -26,6 +26,13 @@ jobs:
           - 5432:5432
 
     steps:
+      - name: Install PostgreSQL client
+        run: |
+          apt-get update
+          apt-get install --yes postgresql-client
+
+      - name: Initiate Database
+        run: psql -f init_test_db.sql postgresql://postgres:postgres@localhost:5432/postgres
 
       - name: Get code
         uses: actions/checkout@v3
