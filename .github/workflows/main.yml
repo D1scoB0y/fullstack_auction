@@ -1,21 +1,56 @@
 name: Setup
+
 on: workflow_dispatch
+
 jobs:
-  setup:
+
+  setup-postgres-container:
+
+    services:
+      
+      postgres:
+        
+        image: postgres
+        
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_auction_db
+        
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+  server-tests:
     runs-on: ubuntu-latest
+
     steps:
+
       - name: Get code
         uses: actions/checkout@v3
+
       - name: Setup python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Get python env
+
+      - name: Installing requirements
         working-directory: server
         run: |
           pip install --upgrade pip
           python3.10 -m venv venv
           source venv/bin/activate
-      - name: Installing requirements
+          pip install -r r.txt
+
+      - name: Creating db tables
         working-directory: server
-        run: pip install -r r.txt
+        run: |
+          alembic revision --autogenerate
+          alembic upgrade head
+        env:
+          TEST_DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_auction_db
+
+      - name: Run tests
+        working-directory: server
+        run: pytest --runslow
