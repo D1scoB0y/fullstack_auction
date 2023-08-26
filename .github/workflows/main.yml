@@ -49,6 +49,4 @@ jobs:
           source venv/bin/activate
           pytest
 
-        env:
-          TEST_DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_auction_db
-          SECRET_KEY: test_secret_key
+        
