@@ -1,8 +1,32 @@
-name: Test_workflow
+name: Setup
 on: workflow_dispatch
 jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - name: first
-        run: echo "hello world"
+      - name: Get code
+        run: actions/checkout@v3
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Get python venv
+        run: |
+          cd server
+          pip install --upgrade pip
+          python3.10 -m venv venv
+          source venv/bin/activate
+          cd ..
+  setup-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Go to server dir
+        run: cd server
+      - name: Get python venv
+        run: |
+          pip install --upgrade pip
+          python3.10 -m venv venv
+          source venv/bin/activate
+      - name: Installing requirements
+        run: pip intall -r r.txt
+      - run: cd ..
