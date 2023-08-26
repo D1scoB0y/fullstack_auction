@@ -28,8 +28,8 @@ jobs:
     steps:
       - name: Install PostgreSQL client
         run: |
-          apt-get update
-          apt-get install --yes --no-install-recommends postgresql-client
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends postgresql-client
 
       - name: Initiate Database
         run: psql -f init_test_db.sql postgresql://postgres:postgres@localhost:5432/postgres
