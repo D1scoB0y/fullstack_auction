@@ -33,9 +33,9 @@ jobs:
 
       - name: Initiate Database
         run: |
-          psql -h localhost -p 5432 -U postgres -c "CREATE USER auction_admin"
-          psql -h localhost -p 5432 -U postgres -c "ALTER USER auction_admin WITH PASSWORD zelel228;"
-          psql -h localhost -p 5432 -U auction_admin -c "CREATE DATABASE test_auction_db;"
+          psql -h localhost -p 5432 -U postgres -W postgres -c "CREATE USER auction_admin"
+          psql -h localhost -p 5432 -U postgres -W postgres -c "ALTER USER auction_admin WITH PASSWORD zelel228;"
+          psql -h localhost -p 5432 -U auction_admin -W zelel228 -c "CREATE DATABASE test_auction_db;"
 
       - name: Get code
         uses: actions/checkout@v3
