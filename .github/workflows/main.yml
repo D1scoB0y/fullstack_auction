@@ -36,14 +36,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
 
-      - name: Initiate Database
-        run: |
-          psql -c "CREATE USER auction_admin WITH PASSWORD 'zelel228';" postgresql://postgres:postgres@localhost:5432/postgres
-          psql -c "ALTER USER auction_admin CREATEDB;" postgresql://postgres:postgres@localhost:5432/postgres
-          psql -c "CREATE DATABASE test_auction_db;" postgresql://auction_admin:zelel228@localhost:5432/postgres
-
       - name: Get code
         uses: actions/checkout@v3
+
+      - name: Initiate db for testing
+        working-directory: server
+        run: bash ./src/scripts/create_test_db.sh
 
       - name: Setup python
         uses: actions/setup-python@v4
