@@ -3,7 +3,6 @@ import json
 from fastapi import Depends, APIRouter, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi_cache.decorator import cache
 
 import src.database as _db
 import src.auth.schemas as _auth_schemas
