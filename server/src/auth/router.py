@@ -80,7 +80,6 @@ async def change_password_path(
 
 
 @router.get('/get-user', tags=['Authentication'])
-@cache(expire=60)
 async def get_user_path(
         user: _auth_models.User = Depends(_auth_user_getters.get_current_user),
     ):
