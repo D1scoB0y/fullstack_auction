@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseSettings
 
 
@@ -12,16 +14,16 @@ class BaseConfig(BaseSettings):
 
 class Config(BaseConfig):
 
-    DB_URL: str
-    TEST_DB_URL: str
+    DB_URL: Optional[str]
+    TEST_DB_URL: Optional[str]
 
-    CLIENT_ORIGIN: str
+    CLIENT_ORIGIN: Optional[str]
 
-    MAIL_SENDER: str
-    MAIL_PASSWORD: str
+    MAIL_SENDER: Optional[str]
+    MAIL_PASSWORD: Optional[str]
 
-    PHONE_SERVICE_API_KEY: str
-    PHONE_SERVICE_COMPAIGN_ID: str
+    PHONE_SERVICE_API_KEY: Optional[str]
+    PHONE_SERVICE_COMPAIGN_ID: Optional[str]
 
     class Config:
         env_file = 'dev.env' if BaseConfig().DEV_MODE == 'true' else 'prod.env' # type: ignore
