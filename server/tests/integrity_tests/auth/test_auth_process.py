@@ -8,7 +8,9 @@ from httpx import AsyncClient
 @pytest.mark.usefixtures('create_tables')
 class TestRegistration:
 
-    async def test_valid_registration(self, client: AsyncClient, test_user: dict):
+    async def test_valid_registration(self, client: AsyncClient, test_user):
+
+        test_user = test_user()
 
         test_user.pop('phoneNumber')
 
@@ -21,18 +23,18 @@ class TestRegistration:
         assert isinstance(create_user_response.json(), str)
 
 
-    @pytest.mark.parametrize('test_user', [
+    @pytest.mark.parametrize('test_data', [
         {
             'username': 'Disco@Boy',
             'email': 'anotherothervalid@example.com',
             'password': '',
         },
     ])
-    async def test_invalid_registration(self, client: AsyncClient, test_user: dict):
+    async def test_invalid_registration(self, client: AsyncClient, test_data: dict):
 
         create_user_response = await client.post(
             '/auth/registration',
-            json=test_user,
+            json=test_data,
         )
 
         assert create_user_response.status_code in (422, 409)
@@ -69,7 +71,9 @@ class TestLogin:
         assert login_response.status_code in (422, 401)
 
 
-    async def test_valid_login(self, client: AsyncClient, test_user: dict):
+    async def test_valid_login(self, client: AsyncClient, test_user):
+
+        test_user = test_user()
 
         login_response = await client.post(
 
@@ -191,6 +195,27 @@ class TestRequestEmailMessage:
 
         assert request_email_verification_response.status_code == 204
 
+    @pytest.mark.skipif("not config.getoption('--runslow')", reason='Need --runslow option')
+    async def test_second_request_email_verification(
+            self,
+            client: AsyncClient,
+            token: str,
+        ):
+        '''Второй идентичный первому тест необходим для
+        тестирования ограничения на кол-во запросов на
+        отправку письма (можно раз в 1 минуту или вернется 429)'''
+        
+        request_email_verification_response = await client.get(
+
+            "/auth/mail/verification-message-request",
+
+            headers={
+                'Authorization': f'Bearer {token}',
+            },
+        )
+
+        assert request_email_verification_response.status_code == 429
+
 
 @pytest.mark.usefixtures('create_tables', 'create_user', 'add_phone')
 class TestRequestPhoneCall:
@@ -212,3 +237,25 @@ class TestRequestPhoneCall:
         )
 
         assert verification_call_response.status_code == 204
+
+    
+    @pytest.mark.skipif("not config.getoption('--runslow')", reason='Need --runslow option')
+    async def test_second_request_phone_verification(
+            self,
+            client: AsyncClient,
+            token: str,
+        ):
+        '''Второй идентичный первому тест необходим для
+        тестирования ограничения на кол-во запросов на
+        звонок (можно раз в 2 минуты или вернется 429)'''
+
+        verification_call_response = await client.get(
+
+            "/auth/mobile/verification-call-request",
+
+            headers={
+                'Authorization': f'Bearer {token}',
+            },
+        )
+
+        assert verification_call_response.status_code == 429

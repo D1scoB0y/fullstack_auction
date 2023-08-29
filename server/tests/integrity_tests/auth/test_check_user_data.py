@@ -8,8 +8,10 @@ class TestIsUserDataUnique:
     async def test_check_username(
             self,
             client: AsyncClient,
-            test_user: dict,
+            test_user,
         ):
+
+        test_user = test_user()
 
         check_username_response = await client.get(
 
@@ -26,8 +28,10 @@ class TestIsUserDataUnique:
     async def test_check_email(
             self,
             client: AsyncClient,
-            test_user: dict,
+            test_user,
         ):
+
+        test_user = test_user()
 
         check_email_response = await client.get(
 

@@ -30,6 +30,8 @@ async def verification_call(phone_number: str, verif_code: int) -> int|None:
         async with AsyncClient() as http:
 
             response = await http.post('https://zvonok.com/manager/cabapi_external/api/v1/phones/flashcall/', data=call_data)
+            
+            print(response.json())
 
             if response.json()['status'] != 'ok':
                 raise HTTPException(status_code=400, detail='Request to verification call rejected. HINT: check request data for issues')

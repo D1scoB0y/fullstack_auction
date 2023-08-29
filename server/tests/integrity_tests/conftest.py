@@ -1,4 +1,5 @@
 from typing import AsyncGenerator
+import random
 
 import pytest
 import src.auth.schemas as _auth_schemas
@@ -12,7 +13,7 @@ from src.config import config
 import src.auth.user_getters as _user_getters
 
 
-test_async_engine = create_async_engine(config.TEST_DB_URL, echo=False)
+test_async_engine = create_async_engine(config.TEST_DB_URL, echo=False) # type: ignore
 test_async_session_maker = async_sessionmaker(test_async_engine, expire_on_commit=False)
 
 
@@ -36,24 +37,20 @@ async def create_tables():
 
 
 @pytest.fixture(scope='session')
-async def test_user_for_fixtures() -> dict:
-    return {
+async def test_user():
+
+    return lambda: {
         'username': 'DiscoBoy',
         'email': 'fake@example.com',
-        'phoneNumber': '+79999999999',
+        'phoneNumber': '+7910' + str(random.randint(1111111, 9999999)),
         'password': 'strong_password'
     }
 
 
-@pytest.fixture
-async def test_user(test_user_for_fixtures: dict) -> dict:
-    return test_user_for_fixtures.copy()
-
-
 @pytest.fixture(scope='class')
-async def create_user(test_user_for_fixtures: dict) -> None:
+async def create_user(test_user) -> None:
 
-    test_user = test_user_for_fixtures.copy()
+    test_user = test_user()
 
     test_user.pop('phoneNumber')
 
@@ -68,11 +65,36 @@ async def create_user(test_user_for_fixtures: dict) -> None:
 
 
 @pytest.fixture(scope='class')
-async def token(test_user_for_fixtures: dict) -> str:
+async def add_phone(test_user) -> None:
+
+    user_data = test_user()
+
+    del user_data['password']
+
+    async with test_async_session_maker() as session:
+
+        user = await _user_getters.get_user_by_email(user_data['email'], session)
+
+        if user is None:
+            raise ValueError('Username is not found')
+
+        user_data = _auth_schemas.UpdateUserSchema(**user_data)
+
+        await _auth_service.update_user(
+            user_data,
+            user,
+            session,
+        )
+
+
+@pytest.fixture(scope='class')
+async def token(test_user) -> str:
+
+    test_user = test_user()
 
     credentials = OAuth2PasswordRequestForm(
-        username=test_user_for_fixtures['email'],
-        password=test_user_for_fixtures['password'],
+        username=test_user['email'],
+        password=test_user['password'],
         client_id='',
         client_secret='',
         scope='',
@@ -87,26 +109,3 @@ async def token(test_user_for_fixtures: dict) -> str:
         )
 
     return token
-
-
-@pytest.fixture(scope='class')
-async def add_phone(test_user_for_fixtures: dict) -> None:
-
-    user_data = test_user_for_fixtures.copy()
-
-    del user_data['password']
-
-    async with test_async_session_maker() as session:
-
-        user = await _user_getters.get_user_by_email(test_user_for_fixtures['email'], session)
-
-        if user is None:
-            raise ValueError('Username is not found')
-
-        user_data = _auth_schemas.UpdateUserSchema(**user_data)
-
-        await _auth_service.update_user(
-            user_data,
-            user,
-            session,
-        )

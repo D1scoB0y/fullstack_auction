@@ -1,3 +1,4 @@
+import time
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,6 +8,7 @@ import src.auth.security as _auth_security
 import src.auth.models as _auth_models
 import src.auth.mail.client as _mail_client
 import src.auth.user_getters as _auth_user_getters
+import src.redis_client as _redis
 
 
 router = APIRouter(prefix='/mail')
@@ -18,6 +20,16 @@ async def verification_message_request_path(
         user: _auth_models.User = Depends(_auth_user_getters.get_current_user),
     ):
     '''Request to send an email with an email verification link'''
+
+    # Получаем время последнего запроса
+    last_request = _redis.client.get(user.email)
+
+    if last_request:
+
+        # Если последний запрос был меньше 60с назад, бросаем 429
+        if time.time() - float(last_request) < 60:
+            raise HTTPException(status_code=429, detail='Too frequent verification requests')
+    
 
     if user.email_is_verified:
         raise HTTPException(status_code=409, detail='User\'s email is already verified')
@@ -33,11 +45,14 @@ async def verification_message_request_path(
         bg_tasks,
     )
 
+    # Сохраняем время текущего запроса
+    _redis.client.set(user.email, time.time())
 
-@router.get('/validate-verification-token', tags=['Email verification'])
+
+@router.get('/validate-verification-token', status_code=204,tags=['Email verification'])
 async def validate_verification_token_path(
         token: str,
-        session: AsyncSession = Depends(_db.get_session)
+        session: AsyncSession = Depends(_db.get_session),
     ):
     '''Checking verification token'''
 
@@ -56,5 +71,6 @@ async def validate_verification_token_path(
     user.email_is_verified = True
     await session.commit()
     await session.refresh(user)
-    
-    return _auth_schemas.ReadUserSchema.from_orm(user)
+
+    # Удаляем информацию из redis о времени последнего запроса на отправку письма
+    _redis.client.delete(user.email)
