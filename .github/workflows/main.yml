@@ -55,6 +55,9 @@ jobs:
           source venv/bin/activate
           pip install -r r.txt
 
+      - name: Creating .env file
+        run: echo "${{ secrets.TESTING_ENV }}" > dev.env
+
       - name: Run tests
         working-directory: server
         run: |

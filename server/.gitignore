@@ -1,9 +1,6 @@
-.env.development
-.env.production
-
 /venv
 
 **/__pycache__
 .pytest_cache
 
-**/client_secrets.json
+*.env
