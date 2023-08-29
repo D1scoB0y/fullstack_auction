@@ -8,7 +8,6 @@ import PageTitle from '@/components/UI/PageTitle/PageTitle'
 
 
 import EmailVerificatoinModal from '@/components/Modals/Warnings/EmailVerificationModal'
-import PhoneVerificationModal from '@/components/Modals/PhoneVerification/PhoneVerificationModal'
 import ChangePasswordModal from '@/components/Modals/ChangePassword/ChangePasswordModal'
 
 import SettingsToggleMenu from '@/components/UI/SettingsToggleMenu/SettingsToggleMenu'
@@ -40,7 +39,6 @@ const SettingsPage = () => {
             )}
 
             <EmailVerificatoinModal />
-            <PhoneVerificationModal />
             <ChangePasswordModal />
         
         </>

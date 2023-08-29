@@ -10,6 +10,7 @@ import src.auth.models as _auth_models
 import src.auth.user_getters as _auth_user_getters
 import src.redis_client as _redis
 
+
 router = APIRouter(prefix='/mobile')
 
 

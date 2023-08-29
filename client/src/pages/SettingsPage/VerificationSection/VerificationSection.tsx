@@ -1,23 +1,36 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+
+import clsx from 'clsx'
 
 import styles from './VerificationSection.module.css'
 import useUserContext from '@/context/useUserContext'
 
-import { emailVerificationRequest, requestPhoneCall } from '@/services/userServices/userDataVerificationService'
+import { emailVerificationRequest, requestPhoneCall, isPhoneCodeValid } from '@/services/userServices/userDataVerificationService'
 
 import Button from '@/components/UI/Button/Button'
 import Line from '@/components/UI/Line/Line'
 import Snackbar from '@/components/UI/Snackbar/Snackbar'
-import useModalsStore from '@/stores/modalsStore'
+import Input from '@/components/UI/Form/Input/Input'
+import useInput from '@/hooks/useInput'
+import ErrorMessage from '@/components/UI/Form/ErrorMessage/ErrorMessage'
+import Timer from '@/components/UI/Timer/Timer'
+import useFormValid from '@/hooks/useFormValid'
 
 
 const VerificationSection = () => {
     
-    const { user, token } = useUserContext()
+    const [phoneInProcess, setPhoneInProcess] = useState<boolean>(false)
+    const [codeError, setCodeError] = useState<string>('')
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [timer, setTimer] = useState<number>(0)
+
+    const { user, token, updateUserState } = useUserContext()
 
     const snackbarRef = useRef(null)
 
-    const { setPhoneVerificationModalActive } = useModalsStore()
+    const code = useInput('', {required: true, minLength: 4, onlyNumbers: true})
+
+    const isValid = useFormValid(codeError, code)
 
     const startEmailVerification = async () => {
 
@@ -38,14 +51,46 @@ const VerificationSection = () => {
         }
     }
 
-    const startPhoneVerification = () => {
-        requestPhoneCall(token)
-        setPhoneVerificationModalActive(true)
+    const startPhoneVerification = async () => {
+
+        const isSuccess = await requestPhoneCall(token)
+
+        if (isSuccess) {
+            setTimer(120)
+            setPhoneInProcess(true)
+        } else {
+            // @ts-ignore
+            snackbarRef.current.show(
+                'fail',
+                'Слишком частые запросы! Подождите немного'
+            )
+        }
+    }
+
+    const onPhoneCodeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        setIsLoading(true)
+
+        const isCodeValid = await isPhoneCodeValid(token, code.value)
+
+        if (isCodeValid) {
+            // @ts-ignore
+            snackbarRef.current.show(
+                'success',
+                'Номер телефона подтвержден!'
+            )
+            setPhoneInProcess(false)
+            updateUserState()
+        } else {
+            setCodeError('Код недействителен')
+        }
+
+        setIsLoading(false)
     }
 
     return (
         <div className={styles.verificationsSection}>
-
 
             <span className={styles.optionTitle}>Электронная почта</span>
 
@@ -109,22 +154,70 @@ const VerificationSection = () => {
                 )}
 
             </div>
-
-            {!user?.phoneNumberIsVerified && (
-                <span className={styles.optionHint}>
-                    После нажатия на кнопку вам позвонят. 
-                    Введите 4 последние цифры номера в диалоговом окне.
-                </span>
-            )}
             
+            {phoneInProcess ? (
+                <form onSubmit={onPhoneCodeSubmit} noValidate>
 
-            {!user?.phoneNumberIsVerified && (
-                <Button
-                    text='Позвонить'
-                    onClick={startPhoneVerification}
-                    disabled={!user?.phoneNumber}
-                    style={{marginTop: 24}}
-                />
+                    <ErrorMessage errorText={code.error || codeError} />
+
+                    <Input
+                        value={code.value}
+                        onChange={
+                            (value: string) => {
+                                setCodeError('')
+                                code.onChange(value)
+                            }
+                        }
+                        placeholder='Код'
+                        maxLength={4}
+                    />
+
+                    <Button
+                        text='Подтвердить'
+                        isLoading={isLoading}
+                        disabled={!isValid}
+                        style={{marginTop: 24}}
+                    />
+
+                    <div className={styles.timerContainer}>
+                        <span
+                            className={clsx(styles.callAgain, !timer && styles.callAgainActive)}
+                            onClick={() => {
+                                if (!timer) {
+                                    setTimer(120)
+                                    requestPhoneCall(token)
+                                }
+                            }}
+                        >
+                            Позвонить еще раз
+                        </span>
+
+                        <Timer
+                            timer={timer}
+                            setTimer={setTimer}
+                            className={styles.timer}
+                        />
+                    </div>
+                    
+                </form>
+            ) : (
+                <>
+                    {!user?.phoneNumberIsVerified && (
+                        <>
+                            <span className={styles.optionHint}>
+                                После нажатия на кнопку вам позвонят. 
+                                Введите 4 последние цифры номера в диалоговом окне.
+                            </span>
+                        
+                            <Button
+                                text='Позвонить'
+                                onClick={startPhoneVerification}
+                                disabled={!user?.phoneNumber}
+                                style={{marginTop: 24}}
+                            />
+                        </>
+                    )}
+                </>
             )}
 
             <Snackbar ref={snackbarRef}/>

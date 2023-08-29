@@ -7,14 +7,12 @@ interface IModalsStore {
     loginModalActive: boolean
     registrationModalActive: boolean
     emailWarningModalActive: boolean
-    phoneVerificationModalActive: boolean
     changePasswordModalActive: boolean
     resetPasswordModalActive: boolean
 
     setLoginModalActive: TypeChangeState
     setRegistrationModalActive: TypeChangeState
     setEmailWarningModalActive: TypeChangeState
-    setPhoneVerificationModalActive: TypeChangeState
     setChangePasswordModalActive: TypeChangeState
     setResetPasswordModalActive: TypeChangeState
 }
@@ -26,7 +24,6 @@ const useModalsStore = create<IModalsStore>(
             loginModalActive: false,
             registrationModalActive: false,
             emailWarningModalActive: false,
-            phoneVerificationModalActive: false,
             changePasswordModalActive: false,
             resetPasswordModalActive: false,
 
@@ -48,13 +45,6 @@ const useModalsStore = create<IModalsStore>(
                 set(state => ({
                     ...state,
                     emailWarningModalActive: value
-                }))
-            },
-
-            setPhoneVerificationModalActive: (value) => {
-                set(state => ({
-                    ...state,
-                    phoneVerificationModalActive: value
                 }))
             },
 

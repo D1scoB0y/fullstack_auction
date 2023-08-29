@@ -3,7 +3,6 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database as _db
-import src.auth.schemas as _auth_schemas
 import src.auth.security as _auth_security
 import src.auth.models as _auth_models
 import src.auth.mail.client as _mail_client
@@ -27,7 +26,7 @@ async def verification_message_request_path(
     if last_request:
 
         # Если последний запрос был меньше 60с назад, бросаем 429
-        if time.time() - float(last_request) < 60:
+        if time.time() - float(last_request) < 60: #type: ignore
             raise HTTPException(status_code=429, detail='Too frequent verification requests')
     
 

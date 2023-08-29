@@ -48,7 +48,6 @@
     color: var(--red);
 }
 
-
 .optionHint{
     display: block;
 
@@ -61,6 +60,36 @@
     color: var(--muted-text);
 }
 
+.timerContainer{
+    display: flex;
+
+    margin-top: 12px;
+
+}
+
+.callAgain{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.callAgainActive{
+    color: var(--blue);
+    cursor: pointer;
+}
+
+.callAgainActive:hover{
+    color: var(--hovered-blue);
+    text-decoration: underline;
+}
+
+.timer{
+    padding-left: 12px;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-text);
+}
 
 @media screen and (min-width: 768px) {
     .statusIcon{
@@ -72,5 +101,3 @@
         margin-left: 16px;
     }
 }
-
-
