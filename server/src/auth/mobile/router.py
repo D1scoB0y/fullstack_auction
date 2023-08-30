@@ -37,8 +37,6 @@ async def verification_call_request(
 
     await _mobile_service.verification_call(user.phone_number, verif_code)
 
-    print('\nOK\n')
-
     user.phone_number_verif_code = verif_code
     await session.commit()
 

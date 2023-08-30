@@ -18,11 +18,15 @@ import useFormValid from '@/hooks/useFormValid'
 
 
 const VerificationSection = () => {
-    
+
+    const [emailTimer, setEmailTimer] = useState<number>(0)
+
     const [phoneInProcess, setPhoneInProcess] = useState<boolean>(false)
+    const [phoneTimer, setPhoneTimer] = useState<number>(0)
     const [codeError, setCodeError] = useState<string>('')
+
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [timer, setTimer] = useState<number>(0)
+
 
     const { user, token, updateUserState } = useUserContext()
 
@@ -37,6 +41,7 @@ const VerificationSection = () => {
         const isSuccess = await emailVerificationRequest(token)
 
         if (isSuccess) {
+            setEmailTimer(60)
             // @ts-ignore
             snackbarRef.current.show(
                 'success',
@@ -56,7 +61,7 @@ const VerificationSection = () => {
         const isSuccess = await requestPhoneCall(token)
 
         if (isSuccess) {
-            setTimer(120)
+            setPhoneTimer(120)
             setPhoneInProcess(true)
         } else {
             // @ts-ignore
@@ -115,17 +120,35 @@ const VerificationSection = () => {
                 )}
 
             </div>
-            
-            {!user?.emailIsVerified && (
-                <span className={styles.optionHint}>После нажатия на кнопку мы отправим вам письмо.</span>
-            )}
 
             {!user?.emailIsVerified && (
-                <Button
-                    text='Отправить письмо'
-                    onClick={startEmailVerification}
-                    style={{marginTop: 24}}
-                />
+                <>
+                    {emailTimer ? (
+                       
+                        <div className={styles.timerContainer}>
+
+                            <span className={styles.callAgain}>
+                                Отправить еще раз
+                            </span>
+
+                            <Timer
+                                timer={emailTimer}
+                                setTimer={setEmailTimer}
+                                className={styles.timer}
+                            />
+                        </div>
+                    ) : (
+                        <>
+                            <span className={styles.optionHint}>После нажатия на кнопку мы отправим вам письмо.</span>
+
+                            <Button
+                                text='Отправить письмо'
+                                onClick={startEmailVerification}
+                                style={{marginTop: 24}}
+                            />
+                        </>
+                    )}
+                </>
             )}
 
             <Line />
@@ -181,10 +204,10 @@ const VerificationSection = () => {
 
                     <div className={styles.timerContainer}>
                         <span
-                            className={clsx(styles.callAgain, !timer && styles.callAgainActive)}
+                            className={clsx(styles.callAgain, !phoneTimer && styles.callAgainActive)}
                             onClick={() => {
-                                if (!timer) {
-                                    setTimer(120)
+                                if (!phoneTimer) {
+                                    setPhoneTimer(120)
                                     requestPhoneCall(token)
                                 }
                             }}
@@ -193,8 +216,8 @@ const VerificationSection = () => {
                         </span>
 
                         <Timer
-                            timer={timer}
-                            setTimer={setTimer}
+                            timer={phoneTimer}
+                            setTimer={setPhoneTimer}
                             className={styles.timer}
                         />
                     </div>

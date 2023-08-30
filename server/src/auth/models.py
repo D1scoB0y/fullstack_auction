@@ -2,10 +2,10 @@ import sqlalchemy as sa
 from sqlalchemy.orm import mapped_column
 
 
-from src.database import Base
+import src.database as _db
 
 
-class User(Base):
+class User(_db.Base):
     __tablename__ = 'users'
 
     id = mapped_column(sa.Integer, primary_key=True)

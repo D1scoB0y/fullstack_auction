@@ -1,5 +1,6 @@
 .snackbar{
     width: max-content;
+    max-width:340px;
 
     position: fixed;
     top: 40px;

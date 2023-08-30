@@ -6,13 +6,11 @@ type TypeChangeState = (value: boolean) => void
 interface IModalsStore {
     loginModalActive: boolean
     registrationModalActive: boolean
-    emailWarningModalActive: boolean
     changePasswordModalActive: boolean
     resetPasswordModalActive: boolean
 
     setLoginModalActive: TypeChangeState
     setRegistrationModalActive: TypeChangeState
-    setEmailWarningModalActive: TypeChangeState
     setChangePasswordModalActive: TypeChangeState
     setResetPasswordModalActive: TypeChangeState
 }
@@ -23,7 +21,6 @@ const useModalsStore = create<IModalsStore>(
         (set) => ({
             loginModalActive: false,
             registrationModalActive: false,
-            emailWarningModalActive: false,
             changePasswordModalActive: false,
             resetPasswordModalActive: false,
 
@@ -38,13 +35,6 @@ const useModalsStore = create<IModalsStore>(
                 set(state => ({
                     ...state,
                     registrationModalActive: value
-                }))
-            },
-
-            setEmailWarningModalActive: (value) => {
-                set(state => ({
-                    ...state,
-                    emailWarningModalActive: value
                 }))
             },
 

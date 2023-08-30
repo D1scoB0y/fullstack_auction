@@ -1,0 +1,8 @@
+.newLotForm{
+    width: 300px;
+
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 32px;
+}

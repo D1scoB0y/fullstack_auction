@@ -30,5 +30,5 @@
 }
 
 .changePasswordHref:hover{
-    border-bottom: 1px solid var(--blue);
+    text-decoration: underline;
 }

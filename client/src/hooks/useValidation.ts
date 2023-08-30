@@ -3,10 +3,18 @@ import { useEffect, useState } from "react"
 
 export interface IValidations {
     required?: boolean
+
     minLength?: number
+
+    minNumber?: number
+    maxNumber?: number
+
     onlyNumbers?: boolean
+
     avoidSpecialSymbols?: boolean
+
     isEmail?: boolean
+
     isPhoneNumber?: boolean
 }
 
@@ -32,6 +40,22 @@ const useValidation: TypeUseValidation = (value, validations) => {
                     // @ts-ignore
                     if (value.length < validations[validation]) {
                         setError(`Минимальная длина ${validations[validation]} символов`)
+                        return
+                    }
+                    break
+                
+                case 'minNumber':
+                    // @ts-ignore
+                    if (Number(value) < validations[validation]) {
+                        setError(`Минимальное значение: ${validations[validation]}`)
+                        return
+                    }
+                    break
+                
+                case 'maxNumber':
+                    // @ts-ignore
+                    if (Number(value) > validations[validation]) {
+                        setError(`Максимальное значение: ${validations[validation]}`)
                         return
                     }
                     break

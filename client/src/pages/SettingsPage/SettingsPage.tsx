@@ -6,8 +6,6 @@ import { Helmet } from 'react-helmet-async'
 
 import PageTitle from '@/components/UI/PageTitle/PageTitle'
 
-
-import EmailVerificatoinModal from '@/components/Modals/Warnings/EmailVerificationModal'
 import ChangePasswordModal from '@/components/Modals/ChangePassword/ChangePasswordModal'
 
 import SettingsToggleMenu from '@/components/UI/SettingsToggleMenu/SettingsToggleMenu'
@@ -38,7 +36,6 @@ const SettingsPage = () => {
                 <VerificationSection />
             )}
 
-            <EmailVerificatoinModal />
             <ChangePasswordModal />
         
         </>

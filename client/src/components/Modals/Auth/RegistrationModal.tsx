@@ -167,7 +167,7 @@ const RegistrationModal = () => {
                     text='Создать аккаунт'
                     isLoading={isLoading}
                     disabled={!isFormValid}
-                    style={{marginTop: 24}}
+                    style={{marginTop: 24, width: 300}}
                 />
             </form>
 

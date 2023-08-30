@@ -1,0 +1,46 @@
+.dropzone{
+    width: 680px;
+    height: 300px;
+
+    border-radius: 8px;
+
+    border: 1px solid var(--border-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 0.2s;
+
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+.dropzoneDragged{
+    border-color: var(--blue);
+}
+
+.dropzoneError{
+    border-color: var(--red);
+}
+
+.dropzoneHintContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dropzoneHint{
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--muted-text);
+}
+
+.dropzoneSmallHint{
+    padding-top: 8px;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-text);
+}
