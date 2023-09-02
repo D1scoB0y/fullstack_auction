@@ -11,6 +11,7 @@ import SettingsPage from './pages/SettingsPage/SettingsPage';
 import EmailVerificationPage from './pages/EmailVerificationPage/EmailVerificationPage';
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
 import CreateLotPage from './pages/CreateLotPage/CreateLotPage';
+import LotPage from './pages/LotPage/LotPage';
 
 
 const Protected: FC<{children: JSX.Element}> = ({
@@ -44,7 +45,8 @@ const App = () => {
 					<Route path='/settings' element={<Protected children={<SettingsPage />} />} />
 					<Route path='/create-lot' element={<OnlyForSeller children={<CreateLotPage />} />} />
 					<Route path='/email-verification' element={<Protected children={<EmailVerificationPage />} />} /> 
-					<Route path='/reset-password' element={<ResetPasswordPage />} /> 
+					<Route path='/reset-password' element={<ResetPasswordPage />} />
+					<Route path='/lot/:lotId' element={<LotPage />}/>
 					<Route path='/404' element={<>404 not found</>} />
 					<Route path='*' element={<>404 not found</>}/>
 

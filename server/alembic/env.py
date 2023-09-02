@@ -16,6 +16,7 @@ from src.config import config as app_config
 from src.database import Base
 
 from src.auth.models import User
+from src.auction.models import Lot
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

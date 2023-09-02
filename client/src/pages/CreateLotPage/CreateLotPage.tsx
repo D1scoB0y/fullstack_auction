@@ -1,13 +1,17 @@
-
+import { useState } from 'react'
 
 import styles from './CreateLotPage.module.css'
 
 import PageTitle from '@/components/UI/PageTitle/PageTitle'
 import NewLotForm from './NewLotForm/NewLotForm'
 import FileDropzone from '@/components/UI/FileDropzone/FileDropzone'
+import ImagePreview from '@/components/UI/ImagePreview/ImagePreview'
+
 
 const CreateLotPage = () => {
 
+    const [files, setFiles] = useState<File[]>([])
+    const [previews, setPreviews] = useState<string[]>([])
 
     return (
         <>
@@ -15,9 +19,34 @@ const CreateLotPage = () => {
             
             <div className={styles.newLotFormContainer}>
 
-                <FileDropzone />
+                <div>
+                    <FileDropzone
+                        previews={previews}
+                        setFiles={setFiles}
+                        setPreviews={setPreviews}
+                    />
 
-                <NewLotForm />
+                    <div className={styles.previewsContainer}>
+
+                        {previews.map((src, index) => (
+
+                            <ImagePreview
+                                key={index}
+                                src={src}
+                                index={index}
+                                files={files}
+                                previews={previews}
+                                setFiles={setFiles}
+                                setPreviews={setPreviews}
+                            />
+
+                        ))}
+
+                    </div>
+
+                </div>
+
+                <NewLotForm files={files} />
 
             </div>
         </>

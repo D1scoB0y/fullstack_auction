@@ -1,48 +1,72 @@
-import { useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 
 import clsx from 'clsx'
-
 
 import styles from './FileDropzone.module.css'
 
 
-const FileDropzone = () => {
+interface IFileDropzoneProps {
+    previews: string[]
+    setFiles: Dispatch<SetStateAction<File[]>>
+    setPreviews: Dispatch<SetStateAction<string[]>>
+}
+
+
+const FileDropzone: FC<IFileDropzoneProps> = ({
+    previews,
+    setFiles,
+    setPreviews,
+}) => {
 
     const [drag, setDrag] = useState<boolean|null>(false)
-
-    const [isValidDrag, setIsValidDrag] = useState<boolean>(true)
-
-    const [files, setFiles] = useState<object[]>([])
-
-    const [previews, setPeviews] = useState<string[]>([])
+    const [dragError, setDragError] = useState<string>('')
 
 
-    const isFileValid = (fileType: string): boolean => {
+    const wrongFileSize = () => {
+        setDrag(true)
+        setDragError('Максимальный вес одного файла - 4 MB')
 
-        const fileExtension = fileType.split('/')[1]
-
-        console.log(fileExtension)
-
-        return ['jpg', 'webp', 'png', 'bmp'].includes(fileExtension)
+        setTimeout(() => {
+            setDrag(false)
+            setDragError('')
+        }, 1200)
     }
+
+    const isDragValid = (dataTransfer: DataTransfer): boolean => {
+
+        if (dataTransfer.items.length > 12 || previews.length + dataTransfer.items.length > 12) {
+            setDragError('Максимум 12 изображений')
+            return false
+        }
+
+        for (const i of dataTransfer.items) {
+
+            const fileExtension = i.type.split('/')[1]
+
+            if (!['jpg', 'jpeg', 'webp', 'png', 'bmp'].includes(fileExtension)) {
+                setDragError('Только jpg, png, bmp, webp')
+                return false
+            }
+        }
+        
+        setDragError('')
+        return true
+    } 
 
     const onDragStart = (e: React.DragEvent<HTMLDivElement>) => {
 
-        e.preventDefault();
+        e.preventDefault()
 
         setDrag(true)
 
-        const fileType = e.dataTransfer.items[0].type
-
-        setIsValidDrag(isFileValid(fileType))
+        isDragValid(e.dataTransfer)
     }
 
     const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
 
         e.preventDefault()
 
-        setIsValidDrag(true)
-
+        setDragError('')
         setDrag(false)
     }
 
@@ -50,50 +74,59 @@ const FileDropzone = () => {
         
         e.preventDefault()
 
-        const fileType = e.dataTransfer.items[0].type
+        if (!dragError) {
 
-        const isValid = isFileValid(fileType)
+            for (const file of e.dataTransfer.files) {
 
-        if (isValid) {
+                if (file.size > (1024**2)*4) {
+                    wrongFileSize()
+                    return
+                }
 
-            const newFile = e.dataTransfer.files[0]
-
-            setPeviews(
-                prev => ([
-                    ...prev,
-                    URL.createObjectURL(newFile)
-                ])
-            )
+                setPreviews(
+                    prev => ([
+                        ...prev,
+                        URL.createObjectURL(file)
+                    ])
+                )
             
-            setFiles(
-                prev => ([
-                    ...prev,
-                    newFile,
-                ])
-            )
+                setFiles(
+                    prev => ([
+                        ...prev,
+                        file,
+                    ])
+                )
+            }
         }
+
+        setDragError('')
+        setDrag(false)
     }
+
 
     return (
         <div
             className={clsx(
                 styles.dropzone,
                 drag && styles.dropzoneDragged,
-                !isValidDrag && styles.dropzoneError
+                dragError && styles.dropzoneError
             )}
-
-            onDragStart={e => onDragStart(e)}
-            onDragLeave={e => onDragLeave(e)}
-            onDragOver={e => onDragStart(e)}
-            onDrop={e => onDrop(e)}
         >
+            <div
+                className={styles.dropzoneOverlay}
+
+                onDragStart={e => onDragStart(e)}
+                onDragLeave={e => onDragLeave(e)}
+                onDragOver={e => onDragStart(e)}
+                onDrop={e => onDrop(e)}
+            />
 
             {drag ? (
                 <>
-                    {isValidDrag ? (
-                        <span className={styles.dropzoneHint}>+ Файл</span>
+                    {dragError ? (
+                        <span className={styles.dropzoneHint}>{dragError}</span>
                     ) : (
-                        <span className={styles.dropzoneHint}>Недопустимый файл</span>
+                        <span className={styles.dropzoneHint}>+ Файл</span>
                     )}
                 </>
             ) : (
@@ -102,7 +135,6 @@ const FileDropzone = () => {
                     <span className={styles.dropzoneSmallHint}>Форматы: jpg, png, bmp, webp</span>
                 </div>
             )}
-
         </div>
     )
 }

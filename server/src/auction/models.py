@@ -15,8 +15,14 @@ class Lot(_db.Base):
 
     description = mapped_column(sa.String(500))
 
+    base_price = mapped_column(sa.Integer, nullable=False)
+
+    reserve_price = mapped_column(sa.Integer, nullable=False)
+
     creation_date = mapped_column(sa.DateTime, nullable=False, default=_auction_utils.current_datetime())
 
     seller_id = mapped_column(sa.Integer, sa.ForeignKey('users.id'))
 
-    images = mapped_column(sa.String, nullable=False)
+    end_date = mapped_column(sa.DateTime, nullable=False)
+
+    images = mapped_column(sa.String, nullable=True)

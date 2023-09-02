@@ -14,16 +14,19 @@ class BaseConfig(BaseSettings):
 
 class Config(BaseConfig):
 
-    DB_URL: Optional[str]
-    TEST_DB_URL: Optional[str]
+    DB_URL: str
+    TEST_DB_URL: str
 
-    CLIENT_ORIGIN: Optional[str]
+    CLIENT_ORIGIN: str
 
-    MAIL_SENDER: Optional[str]
-    MAIL_PASSWORD: Optional[str]
+    MAIL_SENDER: str
+    MAIL_PASSWORD: str
 
-    PHONE_SERVICE_API_KEY: Optional[str]
-    PHONE_SERVICE_COMPAIGN_ID: Optional[str]
+    PHONE_SERVICE_API_KEY: str
+    PHONE_SERVICE_COMPAIGN_ID: str
+
+    YOS_KEY_ID: str
+    YOS_SECRET_KEY: str
 
     class Config:
         env_file = 'dev.env' if BaseConfig().DEV_MODE == 'true' else 'prod.env' # type: ignore

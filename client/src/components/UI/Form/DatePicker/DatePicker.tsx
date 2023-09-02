@@ -1,14 +1,24 @@
 
 
+import { Dispatch, FC, SetStateAction } from 'react'
 import styles from './DataPicker.module.css'
 
 
-const DatePicker = () => {
+interface IDatePickerProps {
+    endDate: string
+    setEndDate: Dispatch<SetStateAction<string>>
+}
+
+const DatePicker: FC<IDatePickerProps> = ({
+    endDate,
+    setEndDate,
+}) => {
     return (
         <input
-            type="datetime-local"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
             className={styles.datePicker}
-            lang='ru'
+            type="datetime-local"
         />
     )
 }

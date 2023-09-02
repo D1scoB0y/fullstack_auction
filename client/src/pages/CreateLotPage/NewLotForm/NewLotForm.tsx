@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { FC, useState } from 'react'
 
 import styles from './NewLotForm.module.css'
 
 import useInput from '@/hooks/useInput'
+import { createLot } from '@/services/auctionService/lotService'
 
 import HiddenErrorMessage from '@/components/UI/Form/HiddenErrorMessage/HiddenErrorMessage'
 import Input from '@/components/UI/Form/Input/Input'
@@ -11,11 +12,20 @@ import TextArea from '@/components/UI/Form/TextArea/TextArea'
 import Button from '@/components/UI/Button/Button'
 import useFormValid from '@/hooks/useFormValid'
 import DatePicker from '@/components/UI/Form/DatePicker/DatePicker'
+import useUserContext from '@/context/useUserContext'
 
 
-const NewLotForm = () => {
+interface INewLotFormProps {
+    files: File[]
+}
+
+const NewLotForm: FC<INewLotFormProps> = ({
+    files,
+}) => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    const [endDate, setEndDate] = useState<string>('')
 
     const title = useInput('', {required: true, minLength: 5})
     const basePrice = useInput('', {required: true, onlyNumbers: true})
@@ -30,8 +40,32 @@ const NewLotForm = () => {
         description,
     )
 
+    const { token } = useUserContext()
+
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault()
+
+        setIsLoading(true)
+
+        const lotData = {
+            title: title.value,
+            description: description.value,
+            basePrice: basePrice.value,
+            reservePrice: reservePrice.value,
+            endDate: endDate,
+            images: files,
+        }
+
+        if (token) {
+            createLot(lotData, token)
+        }
+
+        setIsLoading(false)
+    }
+
     return (
-        <form className={styles.newLotForm} onSubmit={() => {}} noValidate>
+        <form className={styles.newLotForm} onSubmit={onSubmit} noValidate>
 
             <HiddenErrorMessage errorText={title.error}/>
             
@@ -72,17 +106,19 @@ const NewLotForm = () => {
                 placeholder='Описание'
             />
 
-            <DatePicker />
+            <DatePicker endDate={endDate} setEndDate={setEndDate} />
 
             <Button
                 text='Создать'
                 disabled={!isValid}
                 isLoading={isLoading}
                 style={{marginTop: 24, width: 300}}
+
             />
 
         </form>
     )
 }
+
 
 export default NewLotForm

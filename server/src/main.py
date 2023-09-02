@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import config
 import src.auth.router as _auth_module
-
+import src.auction.router as _auction_module
 
 # Fastapi instance
 app = FastAPI()
@@ -19,3 +19,4 @@ app.add_middleware(
 
 # Routers
 app.include_router(_auth_module.router)
+app.include_router(_auction_module.router)
