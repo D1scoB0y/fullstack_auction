@@ -5,25 +5,25 @@ from io import BytesIO
 
 async def handle_images(images: list[UploadFile]) -> list[Image.Image]:
 
-    res = []
+    resized_images = []
 
     for image in images:
 
-        resized_img = await resize(image)
+        pillow_img = Image.open(BytesIO(await image.read()))
 
-        res.append(resized_img)
+        resized_img = await resize(pillow_img)
 
-    return res
+        resized_images.append(resized_img)
+
+    return resized_images
 
 
-async def resize(image: UploadFile):
-
-    pillow_img = Image.open(BytesIO(await image.read()))
+async def resize(img: Image.Image):
 
     w = 1600
 
-    k = pillow_img.height / pillow_img.width
+    k = img.height / img.width
 
-    pillow_img = pillow_img.resize(size=(w, int(w*k)))
+    resized_img = img.resize(size=(w, int(w*k)))
 
-    return pillow_img
+    return resized_img

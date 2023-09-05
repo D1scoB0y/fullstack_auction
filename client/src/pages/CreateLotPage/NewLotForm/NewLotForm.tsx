@@ -1,8 +1,9 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import styles from './NewLotForm.module.css'
 
 import useInput from '@/hooks/useInput'
+import useUserContext from '@/context/useUserContext'
 import { createLot } from '@/services/auctionService/lotService'
 
 import HiddenErrorMessage from '@/components/UI/Form/HiddenErrorMessage/HiddenErrorMessage'
@@ -12,19 +13,30 @@ import TextArea from '@/components/UI/Form/TextArea/TextArea'
 import Button from '@/components/UI/Button/Button'
 import useFormValid from '@/hooks/useFormValid'
 import DatePicker from '@/components/UI/Form/DatePicker/DatePicker'
-import useUserContext from '@/context/useUserContext'
+import Snackbar from '@/components/UI/Snackbar/Snackbar'
+import { useNavigate } from 'react-router-dom'
 
 
 interface INewLotFormProps {
     files: File[]
 }
 
+interface ISideErrors {
+    reservePriceError: string
+}
+
+
+const initialSideErrors = {
+    reservePriceError: ''
+}
+
+
 const NewLotForm: FC<INewLotFormProps> = ({
     files,
 }) => {
 
+    const [sideErrors, setSideErrors] = useState<ISideErrors>(initialSideErrors)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-
     const [endDate, setEndDate] = useState<string>('')
 
     const title = useInput('', {required: true, minLength: 5})
@@ -41,8 +53,30 @@ const NewLotForm: FC<INewLotFormProps> = ({
     )
 
     const { token } = useUserContext()
+    
+    const snackbarRef = useRef(null)
+    
+    const navigate = useNavigate()
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    useEffect(() => {
+
+        if (Number(reservePrice.value) && Number(reservePrice.value) <= Number(basePrice.value)) {
+
+            setSideErrors(prev => ({
+                ...prev,
+                reservePriceError: 'Резервная цена должна быть больше стартовой'
+            }))
+            return
+        }
+
+        setSideErrors(prev => ({
+            ...prev,
+            reservePriceError: ''
+        }))
+
+    }, [basePrice.value, reservePrice.value])
+
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault()
 
@@ -58,7 +92,18 @@ const NewLotForm: FC<INewLotFormProps> = ({
         }
 
         if (token) {
-            createLot(lotData, token)
+
+            const isCreated = await createLot(lotData, token)
+
+            if (isCreated) {
+                navigate('/')
+            } else {
+                // @ts-ignore
+                snackbarRef.current.show(
+                    'fail',
+                    'Ошибка. Попробуйте позже'
+                )
+            }
         }
 
         setIsLoading(false)
@@ -83,17 +128,17 @@ const NewLotForm: FC<INewLotFormProps> = ({
                 value={basePrice.value}
                 onChange={basePrice.onChange}
                 placeholder='Начальная цена'
-                type='number'
+                maxLength={10}
             />
 
 
-            <ErrorMessage errorText={reservePrice.error}/>
+            <ErrorMessage errorText={reservePrice.error || sideErrors.reservePriceError}/>
             
             <Input
                 value={reservePrice.value}
                 onChange={reservePrice.onChange}
                 placeholder='Резервная цена'
-                type='number'
+                maxLength={10}
             />
 
 
@@ -115,6 +160,8 @@ const NewLotForm: FC<INewLotFormProps> = ({
                 style={{marginTop: 24, width: 300}}
 
             />
+
+            <Snackbar ref={snackbarRef} />
 
         </form>
     )

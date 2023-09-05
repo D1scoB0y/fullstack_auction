@@ -1,16 +1,20 @@
-from typing import AsyncGenerator
 import random
+from typing import AsyncGenerator
 
 import pytest
-import src.auth.schemas as _auth_schemas
-import src.auth.service as _auth_service
+from PIL import Image
+from httpx import AsyncClient
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
+from src.config import config
 import src.database as _db
 import src.main as _app
-from fastapi.security import OAuth2PasswordRequestForm
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from src.config import config
+import src.auth.schemas as _auth_schemas
+import src.auth.service as _auth_service
+import src.auth.models as _auth_models
 import src.auth.user_getters as _user_getters
+import src.auth.security as _auth_security
 
 
 test_async_engine = create_async_engine(config.TEST_DB_URL, echo=False) # type: ignore
@@ -88,6 +92,27 @@ async def add_phone(test_user) -> None:
 
 
 @pytest.fixture(scope='class')
+async def create_seller(test_user) -> None:
+
+    user_data = test_user()
+
+    user_data.pop('phoneNumber')
+
+    hashed_password = await _auth_security.hash_password(user_data.pop('password'))
+
+    async with test_async_session_maker() as session:
+
+        seller = _auth_models.User(
+            **user_data,
+            is_seller=True,
+            password=hashed_password,
+        )
+
+        session.add(seller)
+        await session.commit()
+
+
+@pytest.fixture(scope='class')
 async def token(test_user) -> str:
 
     test_user = test_user()
@@ -109,3 +134,21 @@ async def token(test_user) -> str:
         )
 
     return token
+
+
+@pytest.fixture(scope='session')
+async def test_images(tmp_path_factory):
+
+    images = []
+
+    allowed_extensions = ['png', 'jpg', 'bmp']
+
+    for image_index in range(random.randrange(1, 13)):
+
+        dir = tmp_path_factory.mktemp("data") / f"{image_index}.{random.choice(allowed_extensions)}"
+
+        Image.new("RGB", size=(1, 1)).save(dir)
+
+        images.append(dir)
+
+    return images

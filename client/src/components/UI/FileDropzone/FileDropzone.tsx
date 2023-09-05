@@ -1,8 +1,10 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
-
 import clsx from 'clsx'
 
 import styles from './FileDropzone.module.css'
+
+import { resizeImage } from '@/utils/resizer'
+import Loader from '../Loader/Loader'
 
 
 interface IFileDropzoneProps {
@@ -10,7 +12,6 @@ interface IFileDropzoneProps {
     setFiles: Dispatch<SetStateAction<File[]>>
     setPreviews: Dispatch<SetStateAction<string[]>>
 }
-
 
 const FileDropzone: FC<IFileDropzoneProps> = ({
     previews,
@@ -20,8 +21,9 @@ const FileDropzone: FC<IFileDropzoneProps> = ({
 
     const [drag, setDrag] = useState<boolean|null>(false)
     const [dragError, setDragError] = useState<string>('')
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
-
+    
     const wrongFileSize = () => {
         setDrag(true)
         setDragError('Максимальный вес одного файла - 4 MB')
@@ -70,9 +72,14 @@ const FileDropzone: FC<IFileDropzoneProps> = ({
         setDrag(false)
     }
 
-    const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    const onDrop = async (e: React.DragEvent<HTMLDivElement>) => {
         
         e.preventDefault()
+
+        setDragError('')
+        setDrag(false)
+
+        setIsLoading(true)
 
         if (!dragError) {
 
@@ -80,16 +87,19 @@ const FileDropzone: FC<IFileDropzoneProps> = ({
 
                 if (file.size > (1024**2)*4) {
                     wrongFileSize()
+                    setIsLoading(false)
                     return
                 }
 
+                const imgURL = await resizeImage(file)
+                
                 setPreviews(
                     prev => ([
                         ...prev,
-                        URL.createObjectURL(file)
+                        imgURL,
                     ])
                 )
-            
+
                 setFiles(
                     prev => ([
                         ...prev,
@@ -99,8 +109,7 @@ const FileDropzone: FC<IFileDropzoneProps> = ({
             }
         }
 
-        setDragError('')
-        setDrag(false)
+        setIsLoading(false)
     }
 
 
@@ -130,10 +139,16 @@ const FileDropzone: FC<IFileDropzoneProps> = ({
                     )}
                 </>
             ) : (
-                <div className={styles.dropzoneHintContainer}>
-                    <span className={styles.dropzoneHint}>Перетащите файлы для загрузки</span>
-                    <span className={styles.dropzoneSmallHint}>Форматы: jpg, png, bmp, webp</span>
-                </div>
+                <>
+                    {isLoading ? (
+                        <Loader width={64} height={64} />
+                    ) : (
+                        <div className={styles.dropzoneHintContainer}>
+                            <span className={styles.dropzoneHint}>Перетащите файлы для загрузки</span>
+                            <span className={styles.dropzoneSmallHint}>Форматы: jpg, png, bmp, webp</span>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     )

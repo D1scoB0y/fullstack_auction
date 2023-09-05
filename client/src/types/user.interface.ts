@@ -24,4 +24,5 @@ export interface IUpdateData {
     phoneNumber: string|null
 }
 
+
 export interface ISettingsData extends IUpdateData {}
