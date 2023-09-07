@@ -1,10 +1,13 @@
-from typing import Annotated
+import json
 import datetime as dt
+from typing import Annotated
 
 from pydantic import BaseModel, Field, validator, root_validator
 from fastapi import UploadFile, Form
 
 import src.auction.validators as _auction_validators
+import src.auction.models as _auction_models
+import src.auction.utils as _auction_utils
 
 
 class CreateLotSchema(BaseModel):
@@ -64,6 +67,36 @@ class CreateLotSchema(BaseModel):
             end_date=end_date,
             images=images,
         )
+
+
+class PreviewLotSchema(BaseModel):
+
+    image: str
+    title: str
+    current_bid: str = Field(alias='currentBid')
+    formatted_time_to_end: str = Field(alias='formattedTimeToEnd')
+
+
+    @classmethod
+    def from_lot(cls, lot: _auction_models.Lot):
+
+        first_image = json.loads(lot.images)[0]
+
+        lot_closed_in = lot.end_date - dt.datetime.utcnow()
+
+        formatted_time_to_end = _auction_utils.short_formatted_timedelta(lot_closed_in)
+
+        formatted_current_bid = f'{lot.current_bid:,}'
+
+        return cls(
+            image=first_image,
+            title=lot.title,
+            current_bid=formatted_current_bid, #type: ignore
+            formatted_time_to_end=formatted_time_to_end, #type: ignore
+        )
+    
+    class Config:
+        allow_population_by_field_name = True
 
 
 class ReadLotSchema(BaseModel):

@@ -45,7 +45,7 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
 
     useEffect(() => {
 
-        const checkToken = async () => {
+        (async () => {
 
             if (token) {
 
@@ -59,9 +59,7 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
             }
 
             localStorage.setItem('token', token || '')
-        }
-
-        checkToken()
+        })()
     }, [token])
 
 

@@ -59,7 +59,7 @@ const UserMenu: FC<IUserMenuProps> = ({
                 <div className={styles.menuContent}>
                     
                     {user?.isSeller && (
-                        <div className={styles.menuOption} onClick={() => {navigate('/create-lot'); close()}}>
+                        <div className={styles.menuOption} onClick={() => {navigate('/lots'); close()}}>
                             Лоты
                         </div>
                     )}

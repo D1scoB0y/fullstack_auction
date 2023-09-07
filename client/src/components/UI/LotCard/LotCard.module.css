@@ -1,0 +1,64 @@
+.lotCard{
+    width: 306px;
+
+    max-height: 515px;
+
+    cursor: pointer;
+}
+
+.imgContainer{
+    width: 100%;
+    height: 385px;
+}
+
+.img{
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.title{
+    display: block;
+
+    width: 100%;
+
+    padding-top: 16px;
+
+    font-family: 'Lora', sans-serif;
+
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--black);
+}
+
+.currentBidText{
+    display: block;
+
+    padding-top: 8px;
+
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.currentBid{
+    font-family: 'Lora', sans-serif;
+
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--black);
+}
+
+.timeToEnd{
+    display: block;
+
+    padding-top: 8px;
+
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted-text);
+}
+
+
+

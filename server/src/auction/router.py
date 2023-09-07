@@ -35,3 +35,12 @@ async def get_lot_path(
     ):
 
     return await _auction_service.get_lot_by_id(lot_id, session)
+
+
+@router.get('/lots', response_model=list[_auction_schemas.PreviewLotSchema], tags=['Lots'])
+async def get_lots_path(
+        page: int,
+        session: AsyncSession = Depends(_db.get_session), 
+    ):
+
+    return await _auction_service.get_lots(page, session)

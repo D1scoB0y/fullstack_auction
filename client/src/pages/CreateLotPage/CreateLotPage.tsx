@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 import styles from './CreateLotPage.module.css'
 
+import { Helmet } from 'react-helmet-async'
+
 import PageTitle from '@/components/UI/PageTitle/PageTitle'
 import NewLotForm from './NewLotForm/NewLotForm'
 import FileDropzone from '@/components/UI/FileDropzone/FileDropzone'
@@ -15,6 +17,11 @@ const CreateLotPage = () => {
 
     return (
         <>
+
+            <Helmet>
+                <title>Новый лот | FotoJäger`s Auctions</title>
+            </Helmet>
+
             <PageTitle text='Новый лот' />
             
             <div className={styles.newLotFormContainer}>

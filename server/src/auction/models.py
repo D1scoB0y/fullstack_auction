@@ -26,3 +26,5 @@ class Lot(_db.Base):
     end_date = mapped_column(sa.DateTime, nullable=False)
 
     images = mapped_column(sa.String, nullable=True)
+
+    current_bid = mapped_column(sa.Integer, nullable=False)
