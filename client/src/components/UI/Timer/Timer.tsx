@@ -1,4 +1,6 @@
-import { Dispatch, FC, SetStateAction, useEffect } from "react"
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
+
+import { formatTime } from "@/utils/timeFormatter"
 
 
 interface ITimerProps {
@@ -13,21 +15,27 @@ const Timer: FC<ITimerProps>  = ({
     className,
 }) => {
 
+    const [formattedTime, setFormattedTime] = useState<string>('')
+
     useEffect(() => {
+
+        setFormattedTime(formatTime(timer))
 
         if (timer > 0) {
 
-            const timer = setTimeout(
-                () => setTimer(prev => prev - 1),
+            const t = setTimeout(
+                () => {
+                    setTimer(prev => prev - 1)
+                },
                 1000
             )
 
-            return () => clearTimeout(timer);
+            return () => clearTimeout(t);
         }
     })
 
     if (timer > 0) {
-        return <span className={className}>{timer}</span>
+        return <span className={className}>{formattedTime}</span>
     }
 }
 

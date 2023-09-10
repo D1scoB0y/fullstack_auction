@@ -121,7 +121,7 @@ const LoginForm = () => {
                         text='Войти'
                         isLoading={isLoading}
                         disabled={!isFormValid}
-                        style={{marginTop: 24, width: 300}}
+                        style={{marginTop: 24}}
                     />
                 </form>
                     

@@ -10,7 +10,7 @@ export interface ILot {
 export interface ILotPreview {
     title: string
     currentBid: number
-    formattedTimeToEnd: string
+    timeToEnd: number
     image: string
 }
 

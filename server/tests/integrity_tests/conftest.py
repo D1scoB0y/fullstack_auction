@@ -1,6 +1,7 @@
 import random
 from typing import AsyncGenerator
 
+import boto3
 import pytest
 from PIL import Image
 from httpx import AsyncClient
@@ -15,6 +16,10 @@ import src.auth.service as _auth_service
 import src.auth.models as _auth_models
 import src.auth.user_getters as _user_getters
 import src.auth.security as _auth_security
+import src.auction.images.cloud_service as _cloud_service
+
+
+from src.config import config
 
 
 test_async_engine = create_async_engine(config.TEST_DB_URL, echo=False) # type: ignore
@@ -152,3 +157,24 @@ async def test_images(tmp_path_factory):
         images.append(dir)
 
     return images
+
+
+@pytest.fixture(scope='class')
+async def create_bucket():
+
+    client = await _cloud_service._get_aws_client()
+
+    client.create_bucket(
+        ACL='public-read',
+        Bucket=config.YOS_BUCKET,
+    )
+
+    yield
+
+    s3 = boto3.resource('s3', endpoint_url="https://storage.yandexcloud.net")
+
+    bucket = s3.Bucket(config.YOS_BUCKET) # type: ignore
+
+    bucket.object_versions.delete()
+
+    bucket.delete()

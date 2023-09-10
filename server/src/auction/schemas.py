@@ -7,7 +7,6 @@ from fastapi import UploadFile, Form
 
 import src.auction.validators as _auction_validators
 import src.auction.models as _auction_models
-import src.auction.utils as _auction_utils
 
 
 class CreateLotSchema(BaseModel):
@@ -74,7 +73,7 @@ class PreviewLotSchema(BaseModel):
     image: str
     title: str
     current_bid: str = Field(alias='currentBid')
-    formatted_time_to_end: str = Field(alias='formattedTimeToEnd')
+    time_to_end: str = Field(alias='timeToEnd')
 
 
     @classmethod
@@ -82,9 +81,9 @@ class PreviewLotSchema(BaseModel):
 
         first_image = json.loads(lot.images)[0]
 
-        lot_closed_in = lot.end_date - dt.datetime.utcnow()
+        timedelta = lot.end_date - dt.datetime.utcnow()
 
-        formatted_time_to_end = _auction_utils.short_formatted_timedelta(lot_closed_in)
+        seconds_to_end = timedelta.total_seconds()
 
         formatted_current_bid = f'{lot.current_bid:,}'
 
@@ -92,7 +91,7 @@ class PreviewLotSchema(BaseModel):
             image=first_image,
             title=lot.title,
             current_bid=formatted_current_bid, #type: ignore
-            formatted_time_to_end=formatted_time_to_end, #type: ignore
+            time_to_end=seconds_to_end, #type: ignore
         )
     
     class Config:

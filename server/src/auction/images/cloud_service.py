@@ -31,7 +31,7 @@ async def upload_images(lot_id: int, images: list[Image.Image]):
 
     img_links = []
 
-    src_prefix = 'https://storage.yandexcloud.net/fotojager/'
+    src_prefix = f'https://storage.yandexcloud.net/{config.YOS_BUCKET}/'
 
     for index, img in enumerate(images):
 
@@ -43,6 +43,6 @@ async def upload_images(lot_id: int, images: list[Image.Image]):
 
         img_bytes = img_bytes.getvalue()
 
-        aws_client.upload_fileobj(BytesIO(img_bytes), 'fotojager', f'{lot_id}/{index}.jpg')
+        aws_client.upload_fileobj(BytesIO(img_bytes), config.YOS_BUCKET, f'{lot_id}/{index}.jpg')
 
     return img_links

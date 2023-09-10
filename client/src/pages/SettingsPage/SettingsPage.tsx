@@ -8,7 +8,7 @@ import PageTitle from '@/components/UI/PageTitle/PageTitle'
 
 import ChangePasswordModal from '@/components/Modals/ChangePassword/ChangePasswordModal'
 
-import SettingsToggleMenu from '@/components/UI/SettingsToggleMenu/SettingsToggleMenu'
+import ToggleMenu from '@/components/UI/ToggleMenu/ToggleMenu'
 
 import UserDataSection from './UserDataSection/UserDataSection'
 import VerificationSection from './VerificationSection/VerificationSection'
@@ -16,7 +16,7 @@ import VerificationSection from './VerificationSection/VerificationSection'
 
 const SettingsPage = () => {
 
-    const [pageState, setPageState] = useState<'userData' | 'verification'>('userData')
+    const [menuToggled, setMenuToggled] = useState<boolean>(false)
 
     return (
         <>
@@ -28,9 +28,9 @@ const SettingsPage = () => {
 
             <PageTitle text='Настройки профиля' />
 
-            <SettingsToggleMenu state={pageState} setState={setPageState} />
+            <ToggleMenu options={['Личные данные', 'Верификация']} toggled={menuToggled} setToggled={setMenuToggled} />
 
-            {(pageState === 'userData') ? (
+            {!menuToggled ? (
                 <UserDataSection />
             ) : (
                 <VerificationSection />

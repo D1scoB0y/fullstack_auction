@@ -2,9 +2,9 @@ import { useState, useEffect } from "react"
 
 import { Helmet } from "react-helmet-async"
 
-import LotCard from "@/components/UI/LotCard/LotCard"
 import { ILotPreview } from "@/types/auction.interface"
 import { getLots } from "@/services/auctionService/lotService"
+import LotsGrid from "@/components/UI/LotsGrid/LotsGrid"
 
 
 const LandingPage = () => {
@@ -20,7 +20,6 @@ const LandingPage = () => {
             if (lots) {
                 setLots(lots)
             }
-            console.log(lots)
         })()
     }, [])
 
@@ -35,13 +34,8 @@ const LandingPage = () => {
                 />
             </Helmet>
 
-            <div>
-
-                {lots?.map(lot => <LotCard lot={lot} />)}
-
-            </div>
+            <LotsGrid lots={lots}/>
         </>
-
     )
 }
 

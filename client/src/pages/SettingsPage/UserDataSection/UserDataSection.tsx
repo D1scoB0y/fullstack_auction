@@ -200,7 +200,7 @@ const UserDataSection = () => {
 
 
             <Button
-                text='Сохранить настройки'
+                text='Сохранить'
                 className={styles.saveChangesButton}
                 isLoading={isLoading}
                 disabled={!isFormValid}

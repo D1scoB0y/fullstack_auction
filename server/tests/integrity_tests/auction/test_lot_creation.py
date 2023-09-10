@@ -23,7 +23,7 @@ def invalid_end_date() -> str:
     return end_date.strftime('%Y-%m-%dT%H:%M')
 
 
-@pytest.mark.usefixtures('create_tables', 'create_seller')
+@pytest.mark.usefixtures('create_tables', 'create_bucket', 'create_seller')
 class TestLotCreation:
 
     @pytest.mark.parametrize('lot_data', [

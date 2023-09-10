@@ -1,0 +1,9 @@
+.lotsContainer{
+    padding-top: 24px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 306px);
+    grid-template-rows: repeat(auto-fit, 515px);
+    gap: 16px 9px;
+    justify-content: center;
+}

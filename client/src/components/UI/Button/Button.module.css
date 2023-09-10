@@ -1,7 +1,9 @@
 .button{
     width: 100%;
+    max-width: 432px;
+
     height: 50px;
- 
+
     display: block;
 
     border-radius: 4px;
@@ -33,6 +35,8 @@
 
 @media screen and (min-width: 480px) {
     .button{
-        width: 220px
+        max-width: 300px;
     }
 }
+
+

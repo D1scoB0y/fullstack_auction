@@ -1,8 +1,9 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 
 import styles from './LotCard.module.css'
 
 import { ILotPreview } from '@/types/auction.interface'
+import Timer from '../Timer/Timer'
 
 
 interface ILotCardProps {
@@ -13,6 +14,7 @@ const LotCard: FC<ILotCardProps> = ({
     lot,
 }) => {
 
+    const [timeToEnd, setTimeToEnd] = useState<number>(lot.timeToEnd)
 
     return (
         <div className={styles.lotCard}>
@@ -22,6 +24,7 @@ const LotCard: FC<ILotCardProps> = ({
                     className={styles.img}
                     src={lot.image}
                     alt="lot image"
+                    loading='lazy'
                 />
             </div>
 
@@ -31,8 +34,11 @@ const LotCard: FC<ILotCardProps> = ({
 
             <span className={styles.currentBid}>₽ {lot.currentBid}</span>
 
-            <span className={styles.timeToEnd}>Осталось: {lot.formattedTimeToEnd}</span>
- 
+            <Timer
+                timer={timeToEnd}
+                setTimer={setTimeToEnd}
+                className={styles.timer}
+            />
 
         </div>
     )

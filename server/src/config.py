@@ -28,6 +28,8 @@ class Config(BaseConfig):
     YOS_KEY_ID: str
     YOS_SECRET_KEY: str
 
+    YOS_BUCKET: str
+
     class Config:
         env_file = 'dev.env' if BaseConfig().DEV_MODE == 'true' else 'prod.env' # type: ignore
 
