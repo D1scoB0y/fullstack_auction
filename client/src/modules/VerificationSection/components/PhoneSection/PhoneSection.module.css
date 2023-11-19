@@ -1,0 +1,106 @@
+.verificationsSection{
+    width: 100%;
+    max-width: 432px;
+    margin: auto;
+}
+
+.optionTitle{
+    display: block;
+    padding-top: 24px;
+    font-size: 16px;
+    font-weight: 400;
+    
+}
+
+.optionStatus{
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.statusIcon{
+    width: 24px;
+    height: 24px;
+}
+
+.greenStatusDescription{
+    margin-left: 12px;
+    text-align: justify;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--green);
+}
+
+.redStatusDescription{
+    margin-left: 12px;
+    text-align: justify;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--red);
+}
+
+.optionHint{
+    display: block;
+    padding-top: 24px;
+    text-align: justify;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.timerContainer{
+    display: flex;
+    margin-top: 12px;
+
+}
+
+.callAgain{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.callAgainActive{
+    color: var(--blue);
+    cursor: pointer;
+}
+
+.callAgainActive:hover{
+    color: var(--hovered-blue);
+    text-decoration: underline;
+}
+
+.timer{
+    padding-left: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-text);
+}
+
+.callButton{
+    width: 100%;
+    margin-top: 24px;
+}
+
+@media screen and (min-width: 480px) {
+    .callButton{
+        width: 240px;
+        margin-top: 24px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .statusIcon{
+        width: 32px;
+        height: 32px;
+    }
+    
+    .statusDescription{
+        margin-left: 16px;
+    }
+
+    .callButton{
+        width: 240px;
+        margin-top: 24px;
+    }
+}

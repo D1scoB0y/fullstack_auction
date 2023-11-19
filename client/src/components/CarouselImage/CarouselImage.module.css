@@ -1,0 +1,17 @@
+.imageContainer{
+    min-width: 100%;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgb(30 30 30);
+    
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.image {
+    width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}

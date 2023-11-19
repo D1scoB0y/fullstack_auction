@@ -1,0 +1,74 @@
+.bidsBlock{
+    width: 100%;
+    margin-top: 14px;
+    padding: 14px 0;
+    border-radius: 12px;
+}
+
+.label{
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-text);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.bid{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.bidderUsername{
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--black);
+}
+
+.timeFromPlacing{
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-text);
+    margin-top: -2px;
+}
+
+.bidValue{
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--black);
+}
+
+.showMore{
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--blue);
+    cursor: pointer;
+    user-select: none;
+    margin-top: 16px;
+}
+
+.showMore:hover{
+    color: var(--hovered-blue);
+}
+
+
+@media screen and (min-width: 768px) {
+    .bidsBlock{
+        margin-top: 24px;
+        border: 1px solid var(--border-color);
+    }
+
+    .bid{
+        padding: 0 24px;
+    }
+
+    .showMore{
+        padding-left: 24px;
+    }
+}

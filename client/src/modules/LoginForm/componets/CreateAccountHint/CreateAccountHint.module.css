@@ -1,0 +1,24 @@
+.createAccountHint{
+    display: flex;
+    width: max-content;
+    padding-top: 24px;
+    margin: auto;
+}
+
+.createAccountHintText{
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted-text);
+}
+
+.createAccountHintHref{
+    margin-left: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--blue);
+    cursor: pointer;
+}
+
+.createAccountHintHref:hover{
+    color: var(--hovered-blue);
+}

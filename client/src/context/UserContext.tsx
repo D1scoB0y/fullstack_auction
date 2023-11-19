@@ -1,36 +1,31 @@
-import { FC, createContext, useCallback, useEffect, useState } from "react";
-import { getUser } from "@/services/userServices/helperService";
-import { ILoginData, IRegistrationData } from "@/types/user.interface";
-import { loginUser, registerUser, loginUserWithGoogle } from "@/services/userServices/authService";
-
-import { IUser } from "@/types/user.interface";
+import { FC, createContext, useCallback, useContext, useEffect, useState } from 'react'
+import UserService from '../api/UserService'
+import type { User, GetToken, CreateUser } from '../types/user'
 
 
 export interface IUserContext {
-    user: IUser|null
-    token: string|null
+    user: User | null
+    token: string | null
     updateUserState: () => Promise<void>
-    registration: (registrationData: IRegistrationData) => Promise<boolean>
-    login: (loginData: ILoginData) => Promise<boolean>
+    registration: (registrationData: CreateUser) => Promise<{
+        success: boolean,
+        token: string | null,
+        errorPresentation: string
+    }>
+    login: (loginData: GetToken) => Promise<boolean>
     loginWithGoogle: (accessToken: string) => Promise<boolean>
     logout: () => void
 }
 
-const UserContext = createContext<IUserContext|null>(null) 
+const UserContext = createContext<IUserContext | null>(null)
 
-const UserProvider: FC<{children: React.ReactNode}> = ({ 
-    children,
-}) => {
-
-    const [token, setToken] = useState<string|null>(localStorage.getItem('token'))
-    const [user, setUser] = useState<IUser|null>(null)
-
+const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [token, setToken] = useState<string | null>(localStorage.getItem('token'))
+    const [user, setUser] = useState<User | null>(null)
 
     const updateUserState = useCallback(async () => {
-
         if (token) {
-
-            const user = await getUser(token)
+            const user = await UserService.getUser(token)
 
             if (user) {
                 setUser(user)
@@ -38,18 +33,14 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
         }
     }, [token])
 
-
     useEffect(() => {
         updateUserState()
     }, [])
 
     useEffect(() => {
-
         (async () => {
-
             if (token) {
-
-                const user = await getUser(token)
+                const user = await UserService.getUser(token)
 
                 if (user) {
                     setUser(user)
@@ -62,21 +53,18 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
         })()
     }, [token])
 
+    const registration = async (registrationData: CreateUser) => {
+        const res = await UserService.createUser(registrationData)
 
-    const registration = async (registrationData: IRegistrationData) => {
-        const token = await registerUser(registrationData)
-
-        if (token) {
-            setToken(token)
-            return true
+        if (res.success) {
+            setToken(res.token)
         }
 
-        return false
+        return res
     }
 
-    const login = async (loginData: ILoginData) => {
-
-        const token = await loginUser(loginData)
+    const login = async (loginData: GetToken) => {
+        const token = await UserService.getToken(loginData)
 
         if (token) {
             setToken(token)
@@ -87,8 +75,7 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
     }
 
     const loginWithGoogle = async (accessToken: string) => {
-        
-        const token = await loginUserWithGoogle(accessToken)
+        const token = await UserService.getTokenWithGoogle(accessToken)
 
         if (token) {
             setToken(token)
@@ -120,8 +107,10 @@ const UserProvider: FC<{children: React.ReactNode}> = ({
     )
 }
 
+const useUserContext = () => useContext(UserContext) as IUserContext
 
 export {
     UserContext,
     UserProvider,
+    useUserContext,
 }

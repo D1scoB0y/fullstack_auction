@@ -1,0 +1,16 @@
+.requestTimerText{
+    width: max-content;
+    display: block;
+    margin: auto;
+    padding-top: 8px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.requestTimer{
+    padding-left: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-text);
+}

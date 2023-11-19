@@ -1,0 +1,72 @@
+.info{
+    width: 100%;
+}
+
+.title{
+    display: block;
+    padding-top: 24px;
+    font-family: Lora, sans-serif;
+    font-size: 22px;
+    line-height: 26px;
+    font-weight: 500;
+}
+
+.timeToEnd{
+    display: block;
+    font-size: 15px;
+    font-weight: 400; 
+}
+
+.timer{
+    padding-left: 6px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.endDate{
+    display: block;
+    padding-top: 4px;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.currentBid{
+    width: max-content;
+    display: block;
+    margin-top: 14px;
+    padding: 6px 12px;
+    background: var(--blue);
+    font-family: Lora, sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--white);
+}
+
+.form{
+    margin-top: 16px;
+}
+
+.description{
+    display: block;
+    white-space: pre-wrap;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: black;
+}
+
+@media screen and (min-width: 768px) {
+    .title{
+        padding-top: 0;
+    }
+
+    .info{
+        min-width: 348px;
+        max-width: 348px;
+        height: max-content;
+        padding: 36px 24px;
+        border: 1px solid var(--border-color);
+        border-right: 4px solid var(--blue);
+    }
+}

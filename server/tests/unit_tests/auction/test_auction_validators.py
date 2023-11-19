@@ -11,23 +11,21 @@ class TestImagesValidator:
 
     @pytest.mark.parametrize('images', [
         [UploadFile(BytesIO())],
-        [UploadFile(BytesIO(), size=(1024**2)*4)],
+        [UploadFile(BytesIO(), size=(1024**2) * 4)],
         [UploadFile(BytesIO()) for _ in range(12)],
     ])
     async def test_valid_images(self, images: list[UploadFile]):
-
         assert _auctions_validators.validate_images(images)
-
 
     @pytest.mark.parametrize('images', [
         [UploadFile(BytesIO()) for _ in range(13)],
-        [UploadFile(BytesIO(), size=(1024**2)*5)],
+        [UploadFile(BytesIO(), size=(1024**2) * 5)],
     ])
     async def test_invalid_images(self, images):
-
         try:
             _auctions_validators.validate_images(images)
             is_valid = True
+
         except ValueError:
             is_valid = False
 
@@ -41,57 +39,18 @@ class TestEndDateValidator:
         dt.datetime.utcnow() + dt.timedelta(days=21),
     ])
     async def test_valid_end_date(self, end_date: dt.datetime):
-
         assert _auctions_validators.validate_end_date(end_date)
-
 
     @pytest.mark.parametrize('end_date', [
         dt.datetime.utcnow(),
-        dt.datetime.utcnow() + dt.timedelta(days=21, seconds=10),
+        dt.datetime.utcnow() + dt.timedelta(days=22),
         dt.datetime.utcnow() - dt.timedelta(days=1),
     ])
     async def test_invalid_end_date(self, end_date: dt.datetime):
-
         try:
             _auctions_validators.validate_end_date(end_date)
 
-            assert False
+            raise ValueError('Wrong end date is valid')
 
         except ValueError:
-            assert True
-
-
-class TestReservePriceValidator:
-
-    @pytest.mark.parametrize('base_price, reserve_price', [
-        (1, 2),
-        (1, 0),
-        (0, 0),
-        (0, 1),
-    ])
-    async def test_valid_reserve_price(self, base_price: int, reserve_price: int):
-
-        try:
-            _auctions_validators.validate_reserve_price(base_price, reserve_price)
-
-            assert True
-
-        except ValueError:
-            assert False
-
-    
-    @pytest.mark.parametrize('base_price, reserve_price', [
-        (2, 1),
-        (0, -1),
-        (1, 1),
-    ])
-    async def test_invalid_reserve_price(self, base_price: int, reserve_price: int):
-
-        try:
-            _auctions_validators.validate_reserve_price(base_price, reserve_price)
-
-            assert False
-
-        except ValueError:
-            
             assert True

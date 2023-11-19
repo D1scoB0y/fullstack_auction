@@ -1,0 +1,29 @@
+.counter{
+    width: max-content;
+    height: 32px;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 101;
+
+    padding: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Roboto Mono', monospace;
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+    word-spacing: 4px;
+    cursor: default;
+}
+
+@media screen and (min-width: 1024px) {
+	.counter{
+        top: 36px;
+        left: 36px;
+    }
+}

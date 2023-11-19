@@ -1,28 +1,22 @@
-import React from "react"
 import ReactDOM from 'react-dom/client'
-import App from "./App"
-import { BrowserRouter } from "react-router-dom"
-
-import { HelmetProvider } from 'react-helmet-async';
-import { UserProvider } from './context/UserContext';
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import App from './App.tsx'
+import { UserProvider } from './context/UserContext.tsx'
+import { HelmetProvider } from 'react-helmet-async'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import './assets/globals.css'
+import { SnackbarProvider } from './context/SnackbarContext.tsx'
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-	<React.StrictMode>
-
-		<BrowserRouter>
-
-			<HelmetProvider>
-				<UserProvider>
-					<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
-
-						<App />
-
-					</GoogleOAuthProvider>
-				</UserProvider>
-			</HelmetProvider>
-
-		</BrowserRouter>
-	</React.StrictMode>
+    <GoogleOAuthProvider
+        clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}
+    >
+        <HelmetProvider>
+            <UserProvider>
+                <SnackbarProvider>
+                    <App />
+                </SnackbarProvider>
+            </UserProvider>
+        </HelmetProvider>
+    </GoogleOAuthProvider>,
 )

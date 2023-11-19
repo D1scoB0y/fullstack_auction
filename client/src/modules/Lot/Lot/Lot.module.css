@@ -1,0 +1,14 @@
+.galleryInfoContainer{
+    display: flex;
+}
+
+.lotDetails{
+    width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+    .lotDetails{
+        width: max-content;
+        margin-left: 18px;
+    }
+}

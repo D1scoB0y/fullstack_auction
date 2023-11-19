@@ -1,0 +1,22 @@
+.pageTitle{
+    display: block;
+    padding-top: 20px;
+    font-family: Lora, serif;
+    font-size: 24px;
+    font-weight: 400;
+    
+}
+
+
+@media screen and (min-width: 768px) {
+    .pageTitle{
+        padding-top: 24px; 
+    }
+}
+
+
+@media screen and (min-width: 1024px) {
+    .pageTitle{
+        font-size: 24px;
+    }
+}

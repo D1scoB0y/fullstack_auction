@@ -1,0 +1,8 @@
+.formHint{
+    display: block;
+    margin-top: 32px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-text);
+    text-align: justify;
+}

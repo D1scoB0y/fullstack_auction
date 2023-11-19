@@ -1,0 +1,49 @@
+.helpBlock{
+    width: 100%;
+    margin-top: 14px;
+    padding: 14px 0;
+}
+
+.label{
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-text);
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mediaOption{
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+.mediaHref{
+    display: inline;
+    padding-left: 8px;
+    color: var(--blue);
+}
+
+.mediaHref:hover{
+    display: inline;
+    color: var(--hovered-blue);
+    text-decoration: underline;
+}
+
+.qrcode{
+    display: block;
+    width: 240px;
+    margin: auto;
+}
+
+@media screen and (min-width: 768px) {
+    .helpBlock{
+        margin-top: 24px;
+        border: 1px solid var(--border-color);
+    }
+}

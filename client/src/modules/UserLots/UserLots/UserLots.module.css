@@ -1,0 +1,9 @@
+.newLotButton {
+    width: 220px;
+}
+
+@media screen and (min-width: 480px) {
+	.newLotHref {
+        width: 260px;
+    }
+}

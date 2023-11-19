@@ -2,9 +2,10 @@ import datetime as dt
 
 from starlette.datastructures import UploadFile as StarletteFile
 
+import src.auction.utils as _auction_utils
+
 
 def validate_images(images: list[StarletteFile]) -> list[StarletteFile]:
-    
     if not len(images):
         raise ValueError('Minimum 1 image')
 
@@ -18,30 +19,19 @@ def validate_images(images: list[StarletteFile]) -> list[StarletteFile]:
 
         if img.size:
 
-            if img.size > (1024**2)*4:  # 4 MB
+            if img.size > (1024**2) * 4:  # 4 MB
                 raise ValueError('Max image size is 4 MB')
-            
+
     return images
 
 
 def validate_end_date(end_date: dt.datetime) -> dt.datetime:
+    end_date = end_date.replace(tzinfo=None)
 
-    if end_date < dt.datetime.utcnow():
+    if end_date <= _auction_utils.current_datetime():
         raise ValueError('The auction end date must be later than the auction creation date.')
-    
-    if end_date - dt.datetime.utcnow() > dt.timedelta(days=21):
+
+    if end_date - _auction_utils.current_datetime() > dt.timedelta(days=21):
         raise ValueError('Max auction duration - 21 days')
-    
+
     return end_date
-
-
-def validate_reserve_price(base_price: int, reserve_price: int) -> int:
-
-    if reserve_price < 0:
-        raise ValueError('Reserve price must be >= 0')
-    
-    if reserve_price and base_price:
-        if reserve_price <= base_price:
-            raise ValueError('Reserve price must be greater than base price')
-
-    return reserve_price

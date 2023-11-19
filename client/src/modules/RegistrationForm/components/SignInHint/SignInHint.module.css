@@ -1,0 +1,24 @@
+.signInHint{
+    display: flex;
+    width: max-content;
+    padding-top: 24px;
+    margin: auto;
+}
+
+.signInHintText{
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted-text);
+}
+
+.signInHintHref{
+    margin-left: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--blue);
+    cursor: pointer;
+}
+
+.signInHintHref:hover{
+    color: var(--hovered-blue);
+}

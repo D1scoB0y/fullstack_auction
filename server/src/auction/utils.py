@@ -1,46 +1,31 @@
 import datetime as dt
+import pytz
+
+
+intervals = [
+    (10, 1),
+    (100, 5),
+    (200, 10),
+    (500, 20),
+    (1000, 50),
+    (2000, 100),
+    (5000, 200),
+    (10000, 400),
+    (20000, 1000),
+    (50000, 2500),
+    (100000, 5000),
+    (200000, 10000),
+    (500000, 20000),
+]
+
+
+def next_minimal_bid(current_bid: int) -> int:
+    for interval in intervals:
+        if current_bid <= interval[0]:
+            return current_bid + interval[1]
+    return current_bid + 40_000
 
 
 def current_datetime() -> dt.datetime:
-    return dt.datetime.utcnow()
-
-
-def time_unit_postfix(time: int, postfix1, postfix2, postfix3):
-
-    if time in range(5, 21) or time % 10 in range(5, 10) or time % 10 == 0:
-        return postfix2
-    elif time % 10 == 1:
-        return postfix1
-    else:
-        return postfix3
-
-
-def short_formatted_timedelta(timedelta: dt.timedelta):
-
-    total_seconds = timedelta.total_seconds()
-
-    days = total_seconds // (3600*24)
-    total_seconds %= (3600*24)
-
-    hours = total_seconds // 3600
-    total_seconds %= 3600
-
-    minutes = total_seconds // 60
-    total_seconds %= 60
-
-    res = ''
-
-    if days:
-        res += str(int(days)) + 'д'
-    
-    if hours:
-        res += ' ' + str(int(hours)) + 'ч'
-    
-    if minutes:
-        res += ' ' + str(int(minutes)) + 'с'
-
-    return res
-
-
-def full_formatted_timedelta(timedelta: dt.timedelta):
-    pass
+    """Returns utc datetime"""
+    return dt.datetime.now(tz=pytz.utc).replace(tzinfo=None)

@@ -1,60 +1,71 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-
-import { ILot } from '@/types/auction.interface'
-
-import styles from './LotPage.module.css'
-import { getLot } from '@/services/auctionService/lotService'
-import Loader from '@/components/UI/Loader/Loader'
+import { Lot } from "../../modules/Lot"
+import PageMetaInfo from "../../components/PageMetaInfo/PageMetaInfo"
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import { LotCarousel } from "../../modules/LotCarousel"
+import { MobileLotCarousel } from "../../modules/Lot"
+import { useLotStore } from "../../modules/Lot"
+import PageSpinner from "../../UI/PageSpinner/PageSpinner"
 
 
 const LotPage = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const { lotId } = useParams()
+    const { id } = useParams()
 
-    if (!lotId) {
+    if (!id) {
         return <>404 not found</>
     }
 
-    const [lot, setLot] = useState<ILot|null>(null)
+    const {
+        lot,
+        fetchLot,
+    } = useLotStore()
 
     useEffect(() => {
-
-        (async() => {
-
-            const fetchedLot = await getLot(lotId)
-            
-            if (fetchedLot) {
-                setLot(fetchedLot)
-            }
-        })()
+        setIsLoading(true)
+        fetchLot(id)
     }, [])
 
+    useEffect(() => {
+        if (!lot) {
+            setIsLoading(true)
+            const t = setTimeout(
+                () => setIsLoading(false),
+                2000,
+            )
+            return () => clearTimeout(t)
+        }
+    }, [lot])
+
+    if (!lot && isLoading) {
+        return <PageSpinner />
+    }
+
     if (!lot) {
-        return (
-            <Loader
-                width={100}
-                height={100} 
-            />
-        )
+        return <>404 not found</>
     }
 
     return (
-        <div>
-            {lot && (
-                <>
-                    {JSON.parse(lot.images).map((src: string) => (
-                        <img
-                            className={styles.img}
-                            src={src}
-                            alt="auction image"
-                        />
-                    ))}
-                </>
-            )}
-        </div>
+        <>
+            <PageMetaInfo
+                title={lot?.title}
+                description={lot?.description.slice(0, 180)}
+            />
+
+            <MobileLotCarousel
+                images={lot.images}
+            />
+
+            <div className="content">
+                <Lot />
+            </div>
+
+            <LotCarousel
+                images={lot.images}
+            />
+        </>
     )
 }
-
 
 export default LotPage

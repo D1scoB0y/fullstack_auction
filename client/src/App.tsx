@@ -1,63 +1,59 @@
-import { FC } from 'react';
-import { Routes, Route } from "react-router-dom";
+import { lazy } from "react"
+import {
+    Routes,
+    Route,
+    BrowserRouter,
+} from "react-router-dom"
 
-import './styles/globals.css'
+import { Layout } from "./modules/Layout"
 
-import useUserContext from './context/useUserContext';
+const AuthorizedOnly = lazy(() => import("./components/AuthorizedOnly/AuthorizedOnly"))
+const UnauthorizedOnly = lazy(() => import("./components/UnauthorizedOnly/UnauthorizedOnly"))
+const SellersOnly = lazy(() => import("./components/SellersOnly/SellersOnly"))
 
-import Layout from './components/Layout/Layout';
-import LandingPage from './pages/LandingPage/LandingPage'
-import SettingsPage from './pages/SettingsPage/SettingsPage';
-import EmailVerificationPage from './pages/EmailVerificationPage/EmailVerificationPage';
-import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
-import CreateLotPage from './pages/CreateLotPage/CreateLotPage';
-import LotPage from './pages/LotPage/LotPage';
-import LotsPage from './pages/LotsPage/LotsPage';
-
-
-const Protected: FC<{children: JSX.Element}> = ({
-	children,
-}) => {
-
-	const { token } = useUserContext()
-
-	return token ? children : <>404 not found</>
-}
-
-const OnlyForSeller: FC<{children: JSX.Element}> = ({
-	children,
-}) => {
-
-	const { user } = useUserContext()
-
-	return user?.isSeller ? children : <>404 not found</>
-}
+const Login = lazy(() => import('./pages/Login/Login'))
+const Registration = lazy(() => import('./pages/Registration/Registration'))
+const ResetPasswordStep1 = lazy(() => import("./pages/ResetPasswordStep1/ResetPasswordStep1"))
+const ResetPasswordStep2 = lazy(() => import("./pages/ResetPasswordStep2/ResetPasswordStep2"))
+const Settings = lazy(() => import("./pages/Settings/Settings"))
+const EmailVerification = lazy(() => import("./pages/EmailVerification/EmailVerification"))
+const ChangePassword = lazy(() => import("./pages/ChangePassword/ChangePassword"))
+const PhoneVerification = lazy(() => import("./pages/PhoneVerification/PhoneVerification"))
+const Lots = lazy(() => import("./pages/Lots/Lots"))
+const CreateLot = lazy(() => import("./pages/CreateLot/CreateLot"))
+const Home = lazy(() => import("./pages/Home/Home"))
+const LotPage = lazy(() => import("./pages/LotPage/LotPage"))
+const Bids = lazy(() => import("./pages/Bids/Bids"))
 
 
 const App = () => {
-
-	return (
-		<>
-			<Routes>
-
-				<Route path='/' element={<Layout />}>
-
-					<Route path='/' element={<LandingPage />} />
-					<Route path='/settings' element={<Protected children={<SettingsPage />} />} />
-					<Route path='/lots' element={<OnlyForSeller children={<LotsPage />} />} />
-					<Route path='/new-lot' element={<OnlyForSeller children={<CreateLotPage />} />} />
-					<Route path='/email-verification' element={<Protected children={<EmailVerificationPage />} />} /> 
-					<Route path='/reset-password' element={<ResetPasswordPage />} />
-					<Route path='/lot/:lotId' element={<LotPage />}/>
-					<Route path='/404' element={<>404 not found</>} />
-					<Route path='*' element={<>404 not found</>}/>
-
-				</Route>
-
-			</Routes>
-		</>
-	)
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Layout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/lot/:id" element={<LotPage />} />
+                    <Route element={<UnauthorizedOnly />}>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/registration" element={<Registration />} />
+                        <Route path="/reset-password-step-1" element={<ResetPasswordStep1 />} />
+                        <Route path="/reset-password-step-2" element={<ResetPasswordStep2 />} />
+                    </Route>
+                    <Route element={<AuthorizedOnly />}>
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/email-verification" element={<EmailVerification />} />
+                        <Route path="/change-password" element={<ChangePassword />} />
+                        <Route path="/phone-verification" element={<PhoneVerification />} />
+                        <Route path="/bids" element={<Bids />} />
+                        <Route element={<SellersOnly />}>
+                            <Route path="/lots" element={<Lots />} />
+                            <Route path="/create-lot" element={<CreateLot />} />
+                        </Route>
+                    </Route>
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    )
 }
-
 
 export default App

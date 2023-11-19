@@ -1,0 +1,49 @@
+.toggleMenu{
+    width: 100%;
+    margin-top: 32px;
+    display: flex;
+}
+
+.menuSection{
+    width: 50%;
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid var(--border-color);
+    transition: all 0.15s;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--muted-text);
+    cursor: pointer;
+}
+
+.activeSection{
+    color: var(--black);
+    border-color: var(--blue);
+}
+
+.verificationContainer{
+    width: max-content;
+    display: flex;
+    align-items: center;
+}
+
+.verificationStatusImage{
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+}
+
+
+@media screen and (min-width: 480px) {
+	.menuSection{
+        font-size: 16px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .menuSection{
+        padding: 16px 0;
+    }
+}

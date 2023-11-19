@@ -3,7 +3,7 @@
 **/__pycache__
 .pytest_cache
 
-dev.env
+.env
 prod.env
 test.env
 

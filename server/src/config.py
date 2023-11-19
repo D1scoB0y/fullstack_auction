@@ -1,26 +1,22 @@
-from typing import Optional
-
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class BaseConfig(BaseSettings):
+class Config(BaseSettings):
+
+    model_config = SettingsConfigDict(env_file='.env')
 
     SECRET_KEY: str
-    DEV_MODE: str
-
-    class Config:
-        env_file = 'dev.env'
-
-
-class Config(BaseConfig):
 
     DB_URL: str
-    TEST_DB_URL: str
 
     CLIENT_ORIGIN: str
 
     MAIL_SENDER: str
     MAIL_PASSWORD: str
+
+    GOOGLE_RECAPTCHA_KEY_ID: str
+    GOOGLE_RECAPTCHA_SECRET_KEY: str
+    GOOGLE_RECAPTCHA_MIN_SCORE: float
 
     PHONE_SERVICE_API_KEY: str
     PHONE_SERVICE_COMPAIGN_ID: str
@@ -30,8 +26,5 @@ class Config(BaseConfig):
 
     YOS_BUCKET: str
 
-    class Config:
-        env_file = 'dev.env' if BaseConfig().DEV_MODE == 'true' else 'prod.env' # type: ignore
 
-
-config = Config() # type: ignore
+config = Config()  # type: ignore
