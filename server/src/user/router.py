@@ -26,7 +26,7 @@ router = APIRouter(prefix='/auth')
 )
 @_utils.catch_unexpected_errors
 async def create_user(
-    data: _user_schemas.RegistrationUserSchema,
+    data: _user_schemas.RegistrationUser,
     client: AsyncClient = Depends(_client.get_client),
     session: AsyncSession = Depends(_db.get_session),
 ):
@@ -58,7 +58,7 @@ async def create_user(
 )
 @_utils.catch_unexpected_errors
 async def login_user(
-    credentials: _user_schemas.LoginUserSchema,
+    credentials: _user_schemas.LoginUser,
     session: AsyncSession = Depends(_db.get_session),
 ):
     try:
@@ -80,7 +80,7 @@ async def login_user(
 )
 @_utils.catch_unexpected_errors
 async def login_with_google(
-    data: _user_schemas.LoginWithGoogleSchema,
+    data: _user_schemas.LoginWithGoogle,
     session: AsyncSession = Depends(_db.get_session),
     client: AsyncClient = Depends(_client.get_client),
 ):
@@ -107,7 +107,7 @@ async def login_with_google(
 )
 @_utils.catch_unexpected_errors
 async def update_user(
-    user_data: _user_schemas.UpdateUserSchema,
+    user_data: _user_schemas.UpdateUser,
     user: _user_models.User = Depends(_user_utils.get_current_user),
     session: AsyncSession = Depends(_db.get_session),
 ):
@@ -131,7 +131,7 @@ async def update_user(
 )
 @_utils.catch_unexpected_errors
 async def change_password(
-    data: _user_schemas.ChangePasswordSchema,
+    data: _user_schemas.ChangePassword,
     user: _user_models.User = Depends(_user_utils.get_current_user),
     session: AsyncSession = Depends(_db.get_session),
 ):
@@ -151,7 +151,7 @@ async def change_password(
 
 @router.get(
     '/users',
-    response_model=_user_schemas.ReadUserSchema,
+    response_model=_user_schemas.ReadUser,
     status_code=status.HTTP_200_OK,
     tags=['Authentication'],
 )
@@ -159,7 +159,7 @@ async def change_password(
 async def get_user(
     user: _user_models.User = Depends(_user_utils.get_current_user),
 ):
-    return _user_schemas.ReadUserSchema.model_validate(user).model_dump(by_alias=True)
+    return _user_schemas.ReadUser.model_validate(user).model_dump(by_alias=True)
 
 
 @router.get(
@@ -289,7 +289,7 @@ async def request_password_reset(
 )
 @_utils.catch_unexpected_errors
 async def reset_password(
-    reset_password_data: _user_schemas.ResetPasswordSchema,
+    reset_password_data: _user_schemas.ResetPassword,
     session: AsyncSession = Depends(_db.get_session),
 ):
     try:

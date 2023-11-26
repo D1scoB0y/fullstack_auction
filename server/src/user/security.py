@@ -17,12 +17,12 @@ def check_password(password: str, hashed_password: str) -> bool:
 
 
 def generate_jwt(payload: dict) -> str:
-    return jwt.encode(payload, config.SECRET_KEY, algorithm="HS256")
+    return jwt.encode(payload, config.SECRET_KEY, algorithm='HS256')
 
 
 def parse_jwt(token: str) -> dict[str, Any]:
     try:
-        payload = jwt.decode(token, config.SECRET_KEY, algorithms=["HS256"])
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=['HS256'])
     except jwt.exceptions.InvalidTokenError:
         raise _user_exception.InvalidJwtError('JWT is unparsable')
 

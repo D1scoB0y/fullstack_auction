@@ -33,7 +33,7 @@ const LotInfo: FC<{ lot: Lot }> = ({
                         />
                 </span>
             ) : (
-                <span className={styles.timeToEnd}>
+                <span className={styles.closed}>
                     Закрыт
                 </span>
             )}

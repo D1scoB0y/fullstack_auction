@@ -29,7 +29,7 @@ const Timer: FC<Props> = ({
     useEffect(() => {
         setFormattedTime(formatTime(localTimer, !!withSeconds))
 
-        if (timer > 0) {
+        if (localTimer > 0) {
             const t = setTimeout(
                 () => setLocalTimer(prev => prev - 1),
                 1000,

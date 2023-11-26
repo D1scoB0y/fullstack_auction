@@ -9,7 +9,7 @@ import PageSpinner from "../../UI/PageSpinner/PageSpinner"
 
 
 const LotPage = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const { id } = useParams()
 

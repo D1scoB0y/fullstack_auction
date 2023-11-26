@@ -4,10 +4,13 @@ import { UserBid } from "../../../types/auction"
 import getBids from "../api/getBids"
 import { useUserContext } from "../../../context/UserContext"
 import styles from './UserBids.module.css'
+import Pagination from "../../../components/Pagination/Pagination"
 
 
 const UserBids = () => {
     const [bids, setBids] = useState<UserBid[]>([])
+    const [page, setPage] = useState<number>(1)
+    const [bidsQty, setBidsQty] = useState<number>(0)
 
     const {
         token,
@@ -15,15 +18,32 @@ const UserBids = () => {
 
     useEffect(() => {
         (async () => {
-            const fetchedBids = await getBids(token as string)
-            setBids(fetchedBids)
+            const res = await getBids(page, token as string)
+
+            if (res) {
+                setBids(res.bids)
+                setBidsQty(res.bidsQty)
+            }
         })()
-    }, [])
+    }, [page])
 
     return (
-        <div className={styles.bidsContainer}>
-            {bids.map(bid => <Bid key={bid.lotId} bid={bid} />)}
-        </div>
+        bids.length ? (
+            <>
+                <div className={styles.bidsContainer}>
+                    {bids.map(bid => <Bid key={bid.lotId} bid={bid} />)}
+                </div>
+                <Pagination
+                    currentPage={page}
+                    onPageChange={setPage}
+                    totalPages={Math.ceil(bidsQty / 16)}
+                />
+            </>
+        ) : (
+            <div className={styles.noBids}>
+                Ставок пока нет
+            </div>
+        )
     )
 }
 

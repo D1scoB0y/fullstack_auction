@@ -1,6 +1,7 @@
 .gallery{
     display: none;
     gap: 6px;
+    flex-grow: 1;
 }
 
 .galleryImageContainer{

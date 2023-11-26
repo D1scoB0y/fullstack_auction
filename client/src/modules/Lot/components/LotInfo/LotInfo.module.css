@@ -17,6 +17,14 @@
     font-weight: 400; 
 }
 
+.closed{
+    width: max-content;
+    display: block;
+    color: black;
+    font-size: 14px;
+    font-weight: 500;
+}
+
 .timer{
     padding-left: 6px;
     font-size: 15px;

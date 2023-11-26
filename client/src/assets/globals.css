@@ -29,6 +29,10 @@ body{
 	height: 100%;
 }
 
+body {
+	overflow-y: scroll;
+}
+
 #root{
 	min-height: 100%;
 	display: grid;

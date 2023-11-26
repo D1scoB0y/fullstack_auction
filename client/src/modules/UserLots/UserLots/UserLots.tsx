@@ -1,26 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ToggleMenu from '../../../components/ToggleMenu/ToggleMenu'
 import { Link } from 'react-router-dom'
 import Button from '../../../UI/Button/Button'
 import styles from './UserLots.module.css'
-import LotsGrid from '../../../UI/LotsGrid/LotsGrid'
 import { LotPreview } from '../../../types/auction'
-import AuctionService from '../../../api/AuctionService'
+import ActiveLots from '../components/ActiveLots/ActiveLots'
+import ArchivedLots from '../components/ArchivedLots/ArchivedLots'
 
 
 const UserLots = () => {
-    const [lots, setLots] = useState<LotPreview[]>([])
+    const [activeLots, setActiveLots] = useState<LotPreview[]>([])
+    const [archivedLots, setAtchivedLots] = useState<LotPreview[]>([])
     const [menuToggled, setMenuToggled] = useState<boolean>(false)
-
-    useEffect(() => {
-        (async () => {
-            const lots = await AuctionService.getLots(1)
-
-            if (lots) {
-                setLots(lots)
-            }
-        })()
-    }, [])
 
     return (
         <>
@@ -41,9 +32,15 @@ const UserLots = () => {
             />
 
             {menuToggled ? (
-                <LotsGrid lots={lots?.filter(lot => lot.timeToEnd <= 0)} />
+                <ArchivedLots
+                    lots={archivedLots}
+                    setLots={setAtchivedLots}
+                />
             ) : (
-                <LotsGrid lots={lots?.filter(lot => lot.timeToEnd > 0)} />
+                <ActiveLots
+                    lots={activeLots}
+                    setLots={setActiveLots}
+                />
             )}
         </>
     )

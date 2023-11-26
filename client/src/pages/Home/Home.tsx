@@ -3,20 +3,27 @@ import { LotPreview } from "../../types/auction"
 import AuctionService from "../../api/AuctionService"
 import LotsGrid from "../../UI/LotsGrid/LotsGrid"
 import PageMetaInfo from "../../components/PageMetaInfo/PageMetaInfo"
+import styles from './Home.module.css'
+import Pagination from "../../components/Pagination/Pagination"
 
+
+const LOTS_PER_PAGE = 15
 
 const Home = () => {
     const [lots, setLots] = useState<LotPreview[] | null>(null)
+    const [page, setPage] = useState<number>(1)
+    const [lotsQty, setLotQty] = useState<number>(0)
 
     useEffect(() => {
         (async () => {
-            const lots = await AuctionService.getLots(1)
+            const res = await AuctionService.getLots(page)
 
-            if (lots) {
-                setLots(lots)
+            if (res) {
+                setLotQty(res.lotsQty)
+                setLots(res.lots)
             }
         })()
-    }, [])
+    }, [page])
 
     return (
         <>
@@ -29,10 +36,19 @@ const Home = () => {
             />
 
             <div className="content">
-                {lots && lots.length ? (
-                    <LotsGrid lots={lots.filter(lot => lot.timeToEnd >= 0)} />
+                {lots?.length ? (
+                    <>
+                        <LotsGrid lots={lots} />
+                        <Pagination
+                            currentPage={page}
+                            onPageChange={setPage}
+                            totalPages={Math.ceil(lotsQty / LOTS_PER_PAGE)}
+                        />
+                    </>
                 ) : (
-                    <>Лотов пока нет</>
+                    <div className={styles.noLots}>
+                        Лотов пока нет
+                    </div>
                 )}
             </div>
         </>

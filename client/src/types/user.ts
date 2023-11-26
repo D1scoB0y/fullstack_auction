@@ -7,6 +7,7 @@ export interface User {
     phoneNumberIsVerified: boolean
     isSeller: boolean
     createdViaGoogle: boolean
+    contacts: string | null
 }
 
 export interface GetToken {
@@ -22,4 +23,5 @@ export interface UpdateUser {
     username: string
     email: string
     phoneNumber: string | null
+    contacts: string | null
 }

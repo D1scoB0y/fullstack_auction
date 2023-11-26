@@ -26,6 +26,10 @@ const Bid: FC<{ bid: UserBid }> = ({
                 <div className={styles.bidInfo}>
                     <span className={styles.title}>{bid.lotTitle}</span>
 
+                    <span className={styles.currentBidText}>
+                        {timer > 0 ? <>Текущая ставка</> : <>Финальная ставка</>}
+                    </span>
+
                     <span className={styles.currentBidValue}>₽ {formatPrice(bid.currentBid)}</span>
 
                     <span
@@ -36,7 +40,10 @@ const Bid: FC<{ bid: UserBid }> = ({
                                 : styles.leading,
                         )}
                     >
-                        {isOverbidded ? <>Ставка перебита</> : <>Вы лидируете</>}
+                        {isOverbidded
+                            ? <>Ставка перебита</>
+                            : timer > 0 ? <>Вы лидируете</> : <>Вы победили!</>
+                        }
                     </span>
 
                     {timer > 0 ? (
@@ -44,9 +51,10 @@ const Bid: FC<{ bid: UserBid }> = ({
                             timer={timer}
                             setTimer={setTimer}
                             className={styles.timer}
+                            withSeconds
                         />
                     ) : (
-                        <span className={styles.timeToEnd}>
+                        <span className={styles.closed}>
                             Закрыт
                         </span>
                     )}

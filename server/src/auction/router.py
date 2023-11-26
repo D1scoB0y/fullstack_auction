@@ -21,8 +21,8 @@ router = APIRouter(prefix='/auction')
 )
 @_utils.catch_unexpected_errors
 async def create_lot(
-    lot_data: _auction_schemas.CreateLotSchema = Depends(
-        _auction_schemas.CreateLotSchema.as_form,
+    lot_data: _auction_schemas.CreateLot = Depends(
+        _auction_schemas.CreateLot.as_form,
     ),
     user: _user_models.User = Depends(_user_utils.get_current_user),
     session: AsyncSession = Depends(_db.get_session),
@@ -36,34 +36,110 @@ async def create_lot(
         )
 
 
-@router.get(
-    '/lots/{lot_id}',
-    response_model=_auction_schemas.ReadLotSchema,
-    status_code=status.HTTP_200_OK,
+@router.patch(
+    '/archive-lot',
+    status_code=status.HTTP_204_NO_CONTENT,
     tags=['Lots'],
 )
 @_utils.catch_unexpected_errors
-async def get_lot(lot_id: int, session: AsyncSession = Depends(_db.get_session)):
+async def archive_lot(
+    data: _auction_schemas.ArchiveLot,
+    user: _user_models.User = Depends(_user_utils.get_current_user),
+    session: AsyncSession = Depends(_db.get_session),
+):
     try:
-        lot = await _auction_service.fetch_lot(lot_id, session)
+        await _auction_service.archive_lot(data.lot_id, user, session)
+    except _auction_exception.MissingPermissionsError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
     except _auction_exception.LotNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=e.message,
         )
 
-    return lot
-
 
 @router.get(
-    '/lots',
-    response_model=list[_auction_schemas.PreviewLotSchema],
+    '/lots/{lot_id}',
+    response_model=_auction_schemas.ReadLot,
     status_code=status.HTTP_200_OK,
     tags=['Lots'],
 )
 @_utils.catch_unexpected_errors
-async def get_lots(page: int, session: AsyncSession = Depends(_db.get_session)):
-    return await _auction_service.fetch_lots(page, session)
+async def get_lot(lot_id: int, session: AsyncSession = Depends(_db.get_session)):
+    try:
+        return await _auction_service.fetch_lot(lot_id, session)
+    except _auction_exception.LotNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.message,
+        )
+
+
+@router.get(
+    '/ended-lots/{lot_id}',
+    status_code=status.HTTP_200_OK,
+    tags=['Lots'],
+)
+@_utils.catch_unexpected_errors
+async def get_ended_lot(
+    lot_id: int,
+    user: _user_models.User = Depends(_user_utils.get_current_user),
+    session: AsyncSession = Depends(_db.get_session),
+):
+    try:
+        return await _auction_service.fetch_ended_lot(lot_id, user, session)
+    except _auction_exception.MissingPermissionsError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
+
+
+@router.get(
+    '/active-lots',
+    status_code=status.HTTP_200_OK,
+    tags=['Lots'],
+)
+@_utils.catch_unexpected_errors
+async def get_active_lots(page: int, session: AsyncSession = Depends(_db.get_session)):
+    return await _auction_service.fetch_active_lots(page, session)
+
+
+@router.get(
+    '/archived-lots',
+    status_code=status.HTTP_200_OK,
+    tags=['Lots'],
+)
+@_utils.catch_unexpected_errors
+async def get_archived_lots(
+    page: int,
+    user: _user_models.User = Depends(_user_utils.get_current_user),
+    session: AsyncSession = Depends(_db.get_session),
+):
+    return await _auction_service.fetch_archived_lots(user, page, session)
+
+
+@router.get(
+    '/ended-lots',
+    status_code=status.HTTP_200_OK,
+    tags=['Lots'],
+)
+@_utils.catch_unexpected_errors
+async def get_ended_lots(
+    page: int,
+    user: _user_models.User = Depends(_user_utils.get_current_user),
+    session: AsyncSession = Depends(_db.get_session),
+):
+    try:
+        return await _auction_service.fetch_ended_lots(page, user, session)
+    except _auction_exception.MissingPermissionsError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
 
 
 @router.post(
@@ -73,7 +149,7 @@ async def get_lots(page: int, session: AsyncSession = Depends(_db.get_session)):
 )
 @_utils.catch_unexpected_errors
 async def place_bid(
-    bid_data: _auction_schemas.PlaceBidSchema,
+    bid_data: _auction_schemas.PlaceBid,
     user: _user_models.User = Depends(_user_utils.get_current_user),
     session: AsyncSession = Depends(_db.get_session),
 ):
@@ -103,7 +179,7 @@ async def place_bid(
 
 @router.get(
     '/lot-bids',
-    response_model=list[_auction_schemas.ReadBidSchema],
+    response_model=list[_auction_schemas.ReadBid],
     status_code=status.HTTP_200_OK,
     tags=['Lots'],
 )
@@ -117,13 +193,33 @@ async def get_lot_bids(
 
 @router.get(
     '/user-bids',
-    response_model=list[_auction_schemas.ReadUserBidsSchema],
     status_code=status.HTTP_200_OK,
     tags=['Lots'],
 )
 @_utils.catch_unexpected_errors
 async def get_user_bids(
+    page: int,
     user: _user_models.User = Depends(_user_utils.get_current_user),
     session: AsyncSession = Depends(_db.get_session),
 ):
-    return await _auction_service.fetch_user_bids(user.user_id, session)
+    return await _auction_service.fetch_user_bids(page, user.user_id, session)
+
+
+@router.get(
+    '/ended-lot-bids/{lot_id}',
+    status_code=status.HTTP_200_OK,
+    tags=['Lots'],
+)
+@_utils.catch_unexpected_errors
+async def get_ended_lot_bids(
+    lot_id: int,
+    user: _user_models.User = Depends(_user_utils.get_current_user),
+    session: AsyncSession = Depends(_db.get_session),
+):
+    try:
+        return await _auction_service.fetch_ended_lot_bids(lot_id, user, session)
+    except _auction_exception.MissingPermissionsError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )

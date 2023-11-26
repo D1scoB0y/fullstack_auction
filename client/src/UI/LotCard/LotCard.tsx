@@ -3,6 +3,7 @@ import styles from './LotCard.module.css'
 import { LotPreview } from '../../types/auction'
 import Timer from '../../components/Timer/Timer'
 import { Link } from 'react-router-dom'
+import formatPrice from '../../helpers/priceFormatter'
 
 
 interface Props {
@@ -26,7 +27,7 @@ const LotCard: FC<Props> = ({
                 {timer ? (<>Текущая ставка</>) : (<>Финальная ставка</>)}
             </span>
 
-            <span className={styles.currentBid}>₽ {lot.currentBid}</span>
+            <span className={styles.currentBid}>₽ {formatPrice(lot.currentBid)}</span>
 
             {!timer ? (
                 <span className={styles.auctionClosed}>Закрыт</span>

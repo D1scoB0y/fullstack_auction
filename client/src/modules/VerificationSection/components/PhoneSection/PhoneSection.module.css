@@ -25,7 +25,6 @@
 
 .greenStatusDescription{
     margin-left: 12px;
-    text-align: justify;
     font-size: 14px;
     font-weight: 500;
     color: var(--green);
@@ -33,7 +32,6 @@
 
 .redStatusDescription{
     margin-left: 12px;
-    text-align: justify;
     font-size: 14px;
     font-weight: 500;
     color: var(--red);
@@ -42,7 +40,6 @@
 .optionHint{
     display: block;
     padding-top: 24px;
-    text-align: justify;
     font-size: 14px;
     font-weight: 400;
     color: var(--muted-text);

@@ -1,0 +1,44 @@
+.pagination {
+    padding-top: 16px;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.pagination button {
+    width: 32px;
+    height: 32px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: transparent;
+
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+
+    margin-right: 6px;
+
+    font-size: 14px;
+    font-weight: 400;
+    color: black;
+
+
+    cursor: pointer;
+}
+
+.pagination button:hover {
+    background-color: var(--hovered-bg-color);
+}
+
+.pagination button.active {
+    background: var(--hover-bg-color);
+    font-weight: 600;
+}
+
+.ellipsis{
+    color: var(--muted-text-color);
+    margin-right: 6px;
+}

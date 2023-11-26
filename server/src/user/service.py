@@ -13,7 +13,7 @@ import src.user.google_service as _google_service
 
 
 async def get_token(
-    credentials: _user_schemas.LoginUserSchema,
+    credentials: _user_schemas.LoginUser,
     session: AsyncSession,
 ) -> str:
     user = await _user_getters.get_user_by_email(credentials.email, session)
@@ -33,7 +33,7 @@ async def get_token(
 
 
 async def create_user(
-    data: _user_schemas.RegistrationUserSchema,
+    data: _user_schemas.RegistrationUser,
     session: AsyncSession,
     client: AsyncClient,
 ) -> str:
@@ -71,7 +71,7 @@ async def create_user(
 
 
 async def update_user(
-    user_data: _user_schemas.UpdateUserSchema,
+    user_data: _user_schemas.UpdateUser,
     user: _user_models.User,
     session: AsyncSession,
 ) -> None:
@@ -87,6 +87,8 @@ async def update_user(
                 'Имя пользователя уже занято',
             )
 
+        user.username = user_data.username
+
     if user_data.email != user.email:
         user_with_same_email = await _user_getters.get_user_by_email(user_data.email, session)
 
@@ -97,6 +99,7 @@ async def update_user(
             )
 
         user.email_is_verified = False
+        user.email = user_data.email
 
     if user_data.phone_number is None:
         user.phone_number_is_verified = False
@@ -114,10 +117,9 @@ async def update_user(
                 )
 
             user.phone_number_is_verified = False
+            user.phone_number = user_data.phone_number
 
-    user.username = user_data.username
-    user.email = user_data.email
-    user.phone_number = user_data.phone_number
+    user.contacts = user_data.contacts
     await session.commit()
 
 
@@ -160,7 +162,7 @@ async def manage_google_auth(
 
 
 async def change_password(
-    data: _user_schemas.ChangePasswordSchema,
+    data: _user_schemas.ChangePassword,
     user: _user_models.User,
     session: AsyncSession,
 ) -> None:

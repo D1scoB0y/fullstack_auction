@@ -16,6 +16,7 @@ const useLotStore = create<LotStore>(set => ({
     lot: null,
     bids: null,
     fetchLot: async (lotId) => {
+        set({ lot: null, bids: null })
         const [lot, bids] = await getLot(lotId)
         set({ lot, bids })
     },

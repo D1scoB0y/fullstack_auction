@@ -105,7 +105,7 @@ async def send_password_reset_message(
 
 
 async def reset_password(
-    reset_password_data: _user_schemas.ResetPasswordSchema,
+    reset_password_data: _user_schemas.ResetPassword,
     session: AsyncSession,
 ) -> None:
     payload = _user_security.parse_jwt(reset_password_data.token)

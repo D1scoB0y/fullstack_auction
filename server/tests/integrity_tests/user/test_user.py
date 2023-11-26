@@ -156,7 +156,7 @@ class TestGetUser:
         )
 
         assert get_user_response.status_code == 200
-        assert _user_schemas.ReadUserSchema(**get_user_response.json())
+        assert _user_schemas.ReadUser(**get_user_response.json())
 
 
 @pytest.mark.usefixtures('create_tables', 'create_user')

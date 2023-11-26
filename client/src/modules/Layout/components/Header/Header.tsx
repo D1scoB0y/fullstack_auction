@@ -17,23 +17,44 @@ const Header = () => {
         <header className={styles.header}>
             <div className={styles.innerHeader}>
                 <CompanyName />
-                {user ? (
-                    <div
-                        className={clsx(styles.authBox, userMenuActive && styles.hide)}
-                        onClick={() => setUserMenuActive(true)}
-                        
-                    >
-                        <img className={styles.userIcon} src="/user_icon.png" alt="burger menu" />
-                        <span className={styles.username}>{user?.username}</span>
-                    </div>
-                ) : (
+
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Link
-                        className={styles.loginButton}
-                        to="/login"
+                        className={styles.howItWorksHref}
+                        to="/how-it-works"
                     >
-                        Войти
+                        <img
+                            src="/question.png"
+                            alt="question mark"
+                            className={styles.howItWorks}
+                        />
                     </Link>
-                )}
+
+                    <Link
+                        className={styles.howItWorksDesctop}
+                        to="/how-it-works"
+                    >
+                        Как это работает?
+                    </Link>
+
+                    {user ? (
+                        <div
+                            className={clsx(styles.authBox, userMenuActive && styles.hide)}
+                            onClick={() => setUserMenuActive(true)}
+                            
+                        >
+                            <img className={styles.userIcon} src="/user_icon.png" alt="burger menu" />
+                            <span className={styles.username}>{user?.username}</span>
+                        </div>
+                    ) : (
+                        <Link
+                            className={styles.loginButton}
+                            to="/login"
+                        >
+                            Войти
+                        </Link>
+                    )}
+                </div>
             </div>
 
             <UserMenu

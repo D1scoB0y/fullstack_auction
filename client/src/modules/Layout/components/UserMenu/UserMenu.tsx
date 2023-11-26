@@ -58,6 +58,18 @@ const UserMenu: FC<Props> = ({
                         </Link>
                     )}
 
+                    {user?.isSeller && (
+                        <Link
+                            to='/ended-lots'
+                            className={styles.menuOption}
+                            onClick={() => {
+                                close()
+                            }}
+                        >
+                            Завершенные лоты
+                        </Link>
+                    )}
+
                     <Link
                         to='/bids'
                         className={styles.menuOption}

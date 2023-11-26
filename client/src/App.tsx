@@ -24,6 +24,9 @@ const CreateLot = lazy(() => import("./pages/CreateLot/CreateLot"))
 const Home = lazy(() => import("./pages/Home/Home"))
 const LotPage = lazy(() => import("./pages/LotPage/LotPage"))
 const Bids = lazy(() => import("./pages/Bids/Bids"))
+const EndedLots = lazy(() => import("./pages/EndedLots/EndedLots"))
+const EndedLot = lazy(() => import("./pages/EndedLot/EndedLot"))
+const HowItWorks = lazy(() => import("./pages/HowItWorks/HowItWorks"))
 
 
 const App = () => {
@@ -33,6 +36,7 @@ const App = () => {
                 <Route path="/" element={<Layout />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/lot/:id" element={<LotPage />} />
+                    <Route path="/how-it-works" element={<HowItWorks />} />
                     <Route element={<UnauthorizedOnly />}>
                         <Route path="/login" element={<Login />} />
                         <Route path="/registration" element={<Registration />} />
@@ -48,6 +52,8 @@ const App = () => {
                         <Route element={<SellersOnly />}>
                             <Route path="/lots" element={<Lots />} />
                             <Route path="/create-lot" element={<CreateLot />} />
+                            <Route path="/ended-lots" element={<EndedLots />} />
+                            <Route path="/ended-lot/:id" element={<EndedLot />} />
                         </Route>
                     </Route>
                 </Route>

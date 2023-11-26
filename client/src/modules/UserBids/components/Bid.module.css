@@ -26,7 +26,6 @@
 }
 
 .title{
-    width: 100%;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
@@ -37,16 +36,19 @@
     color: black;
 }
 
-.currentBidValue{
-    width: max-content;
-    margin-top: 10px;
+.currentBidText{
     display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted-text);
+}
+
+.currentBidValue{
     font-family: 'Lora', sans-serif;
     font-size: 18px;
     font-weight: 500;
-    color: white;
-    padding: 4px 8px;
-    background: var(--blue);
+    color: black;
 }
 
 .statusText{
@@ -69,20 +71,22 @@
 }
 
 .timer{
-    max-width: max-content;
     margin-top: 12px;
     display: block;
-    padding: 4px 8px;
     font-size: 13px;
     font-weight: 500;
-    color: white;
-    background: var(--blue);
+    color: black;
+}
+
+.closed{
+    margin-top: 12px;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--red);
 }
 
 .endDate{
-    width: max-content;
-    padding-top: 4px;
-    display: block;
     font-size: 14px;
     font-weight: 500;
     color: var(--muted-text);
@@ -111,7 +115,6 @@
     }
 
     .endDate{
-        padding-top: 8px;
         font-size: 15px;
     }
 }

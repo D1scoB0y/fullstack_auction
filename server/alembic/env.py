@@ -10,7 +10,7 @@ from alembic import context
 from src.config import config as app_config
 from src.database import Base
 from src.user.models import User  # noqa: F401
-from src.auction.models import Lot  # noqa: F401
+from src.auction.models import Lot, Bid  # noqa: F401
 
 
 sys.path.append(os.path.join(sys.path[0], 'src'))

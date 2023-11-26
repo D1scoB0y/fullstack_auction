@@ -1,4 +1,3 @@
-import json
 import datetime as dt
 from typing import Annotated
 
@@ -6,10 +5,9 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from fastapi import UploadFile, Form
 
 import src.auction.validators as _auction_validators
-import src.auction.models as _auction_models
 
 
-class CreateLotSchema(BaseModel):
+class CreateLot(BaseModel):
     title: str
     description: str
     base_price: int
@@ -39,7 +37,7 @@ class CreateLotSchema(BaseModel):
         images: list[UploadFile],
         description: Annotated[str, Form(max_length=500)] = '',
     ):
-        return CreateLotSchema(
+        return CreateLot(
             title=title,
             description=description,
             base_price=base_price,
@@ -48,32 +46,36 @@ class CreateLotSchema(BaseModel):
         )
 
 
-class PreviewLotSchema(BaseModel):
+class ArchiveLot(BaseModel):
+    lot_id: int = Field(alias='lotId')
+
+
+class PreviewLot(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     lot_id: int = Field(alias='id')
     image: str
     title: str
-    current_bid: str = Field(alias='currentBid')
+    current_bid: int = Field(alias='currentBid')
     time_to_end: float = Field(alias='timeToEnd')
+    status: str
 
     @staticmethod
-    def from_lot(lot: _auction_models.Lot):
-        first_image = json.loads(lot.images)[0]  # type: ignore
-        timedelta = lot.end_date - dt.datetime.utcnow()
-        seconds_to_end = timedelta.total_seconds()
-        formatted_current_bid = f'{lot.current_bid:,}'
+    def from_lot(lot: dict):
+        timedelta = lot['end_date'] - dt.datetime.utcnow()
+        lot['time_to_end'] = timedelta.total_seconds()
 
-        return PreviewLotSchema(
-            id=lot.lot_id,
-            image=first_image,
-            title=lot.title,
-            current_bid=formatted_current_bid,  # type: ignore
-            time_to_end=seconds_to_end,  # type: ignore
-        )
+        return PreviewLot(**lot)
 
 
-class ReadLotSchema(BaseModel):
+class PreviewLotResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    lots_qty: int = Field(alias='lotsQty')
+    lots: list[PreviewLot]
+
+
+class ReadLot(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     lot_id: int = Field(alias='lotId')
@@ -87,32 +89,23 @@ class ReadLotSchema(BaseModel):
     images: list[str]
 
     @staticmethod
-    def from_lot(lot: _auction_models.Lot):
-        images = json.loads(lot.images)[1:]  # type: ignore
-        timedelta = lot.end_date - dt.datetime.utcnow()
-        time_to_end = timedelta.total_seconds()
+    def from_lot(lot: dict):
+        timedelta = lot['end_date'] - dt.datetime.utcnow()
+        lot['time_to_end'] = timedelta.total_seconds()
+        lot['images'] = lot['images'][1:]
+        lot['end_date'] = str(lot['end_date'])
 
-        return ReadLotSchema(
-            lot_id=lot.lot_id,  # type: ignore
-            title=lot.title,
-            description=lot.description,
-            images=images,
-            base_price=lot.base_price,  # type: ignore
-            current_bid=lot.current_bid,  # type: ignore
-            seller_id=lot.seller_id,  # type: ignore
-            end_date=str(lot.end_date),  # type: ignore
-            time_to_end=time_to_end,  # type: ignore
-        )
+        return ReadLot(**lot)
 
 
-class PlaceBidSchema(BaseModel):
+class PlaceBid(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     lot_id: int = Field(alias='lotId')
     value: int
 
 
-class ReadBidSchema(BaseModel):
+class ReadBid(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     bidder_username: str = Field(alias='bidderUsername')
@@ -120,18 +113,14 @@ class ReadBidSchema(BaseModel):
     seconds_from_placing: int = Field(alias='secondsFromPlacing')
 
     @staticmethod
-    def from_bid(bid: _auction_models.Bid):
-        timedelta = bid.placing_date - dt.datetime.utcnow()
-        seconds_from_placing = abs(int(timedelta.total_seconds()))
+    def from_bid(bid: dict):
+        timedelta = bid['placing_date'] - dt.datetime.utcnow()
+        bid['seconds_from_placing'] = -int(timedelta.total_seconds())
 
-        return ReadBidSchema(
-            bidder_username=bid.bidder.username,  # type: ignore
-            value=bid.value,
-            seconds_from_placing=seconds_from_placing,  # type: ignore
-        )
+        return ReadBid(**bid)
 
 
-class ReadUserBidsSchema(BaseModel):
+class ReadUserBids(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     lot_id: int = Field(alias='lotId')
@@ -148,6 +137,44 @@ class ReadUserBidsSchema(BaseModel):
 
         bid['lot_end_date'] = str(bid['lot_end_date'])
         bid['time_to_end'] = int(timedelta.total_seconds())
-        bid['image'] = json.loads(bid['images'])[0]
 
-        return ReadUserBidsSchema(**bid)
+        return ReadUserBids(**bid)
+
+
+class UserBidsResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    bids_qty: int = Field(alias='bidsQty')
+    bids: list[ReadUserBids]
+
+
+class ReadEndedLot(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    lot_id: int = Field(alias='lotId')
+    title: str
+    image: str
+    end_date: str = Field(alias='endDate')
+    ended_with_bids: bool = Field(alias='endedWithBids')
+
+    @staticmethod
+    def from_lot(lot: dict):
+        lot['end_date'] = str(lot['end_date'])
+        return ReadEndedLot(**lot)
+
+
+class EndedLotsResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    lots_qty: int = Field(alias='lotsQty')
+    lots: list[ReadEndedLot]
+
+
+class ReadEndedLotBid(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    bidder_username: str = Field(alias='bidderUsername')
+    bidder_email: str = Field(alias='bidderEmail')
+    bidder_contacts: str | None = Field(alias='bidderContacts')
+    value: int
+    place: int

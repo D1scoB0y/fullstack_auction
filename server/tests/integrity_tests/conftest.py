@@ -53,7 +53,7 @@ async def test_user():
 async def create_user(test_user, client) -> None:
     test_user = test_user()
     test_user.pop('phoneNumber')
-    credentials = _user_schemas.RegistrationUserSchema(**test_user)
+    credentials = _user_schemas.RegistrationUser(**test_user)
 
     async with test_async_session_maker() as session:
 
@@ -76,7 +76,7 @@ async def add_phone(test_user) -> None:
         if user is None:
             raise ValueError('Username is not found')
 
-        user_data = _user_schemas.UpdateUserSchema(**user_data)
+        user_data = _user_schemas.UpdateUser(**user_data)
 
         await _user_service.update_user(
             user_data,
@@ -106,7 +106,7 @@ async def create_seller(test_user) -> None:
 async def token(test_user) -> str:
     test_user = test_user()
 
-    credentials = _user_schemas.LoginUserSchema(
+    credentials = _user_schemas.LoginUser(
         email=test_user['email'],
         password=test_user['password'],
         recaptcha_token=None    # type: ignore

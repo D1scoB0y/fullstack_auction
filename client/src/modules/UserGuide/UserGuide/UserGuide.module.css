@@ -1,0 +1,16 @@
+.h2{
+    font-family: 'Lora', sans-serif;
+    display: block;
+    margin-top: 24px;
+    font-size: 20px;
+    font-weight: 500;
+    color: black;
+}
+
+.par{
+    max-width: 600px;
+    margin-top: 12px;
+    display: block;
+    font-size: 14px;
+    color: black;
+}
